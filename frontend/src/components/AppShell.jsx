@@ -2,7 +2,7 @@ import { useAuth } from '../context/AuthContext';
 
 const NAV_ITEMS = [
   { id: 'trading', label: 'Trading', icon: '📈' },
-  { id: 'strategy-stats', label: 'Strategy Stats', icon: '📊' },
+  { id: 'strategy-stats', label: 'Strategy Control', icon: '📊' },
   { id: 'strategy-tester', label: 'Strategy Tester', icon: '🧪' },
   { id: 'settings', label: 'Settings', icon: '⚙️' },
 ];

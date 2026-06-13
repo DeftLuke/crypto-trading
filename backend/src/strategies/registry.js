@@ -1,7 +1,9 @@
 import smcMtf from './smc-mtf/index.js';
+import freqtrade from './freqtrade/index.js';
 
 const strategies = {
   'smc-mtf': smcMtf,
+  freqtrade,
 };
 
 export function getStrategy(id) {
@@ -14,6 +16,9 @@ export function listStrategies() {
     name: s.name,
     description: s.description,
     timeframes: s.timeframes,
+    engine: s.engine || 'native',
+    backtestInApp: s.backtestInApp !== false,
+    pythonStrategies: s.pythonStrategies || null,
   }));
 }
 

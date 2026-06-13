@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import BacktestChart from './BacktestChart';
 import BacktestEquityChart from './BacktestEquityChart';
 import BacktestProgressBar from './BacktestProgressBar';
+import FreqtradeControlPanel from './FreqtradeControlPanel';
 import {
   fetchStrategies,
   runBacktest,
@@ -27,6 +28,17 @@ const DEFAULT_STRATEGIES = [
     description:
       'Smart Money Concepts with mandatory RSI. BUY when RSI < 30, SHORT when RSI > 70. MTF: 1H → 30M → 15M OB → entry TF.',
     timeframes: ['1h', '30m', '15m', '5m', '3m'],
+    engine: 'native',
+    backtestInApp: true,
+  },
+  {
+    id: 'freqtrade',
+    name: 'Freqtrade (RSI / EMA)',
+    description:
+      'Python Freqtrade bot — control dry-run/live trading and switch Python strategies from the dashboard.',
+    timeframes: ['5m', '15m', '30m', '1h'],
+    engine: 'freqtrade',
+    backtestInApp: false,
   },
 ];
 
@@ -88,7 +100,7 @@ export default function StrategyTesterPage() {
   const [strategyId, setStrategyId] = useState('smc-mtf');
   const [symbol, setSymbol] = useState('BTCUSDT');
   const [timeframe, setTimeframe] = useState('15m');
-  const [period, setPeriod] = useState('3m');
+  const [period, setPeriod] = useState('1m');
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState(0);
   const [result, setResult] = useState(null);
@@ -110,6 +122,7 @@ export default function StrategyTesterPage() {
   }, [strategies]);
 
   const selectedStrategy = strategyOptions.find((s) => s.id === strategyId) || strategyOptions[0];
+  const isFreqtrade = strategyId === 'freqtrade';
 
   useEffect(() => {
     fetchStrategies()
@@ -125,8 +138,9 @@ export default function StrategyTesterPage() {
   }, []);
 
   useEffect(() => {
+    if (isFreqtrade) return;
     fetchBacktestEstimate(period, timeframe).then(setEstimate).catch(() => {});
-  }, [period, timeframe]);
+  }, [period, timeframe, isFreqtrade]);
 
   const executeBacktest = useCallback(async (sym, strat, tf, per) => {
     const runId = ++abortRef.current;
@@ -166,7 +180,7 @@ export default function StrategyTesterPage() {
   }, []);
 
   useEffect(() => {
-    if (!autoRunRef.current) return;
+    if (!autoRunRef.current || isFreqtrade) return;
     const shortPeriods = ['1w', '1m', '3m'];
     if (!shortPeriods.includes(period)) return;
 
@@ -174,7 +188,7 @@ export default function StrategyTesterPage() {
       executeBacktest(symbol, strategyId, timeframe, period);
     }, 400);
     return () => clearTimeout(timer);
-  }, [symbol, strategyId, timeframe, period, executeBacktest]);
+  }, [symbol, strategyId, timeframe, period, executeBacktest, isFreqtrade]);
 
   const handleRun = () => executeBacktest(symbol, strategyId, timeframe, period);
 
@@ -189,16 +203,6 @@ export default function StrategyTesterPage() {
     <div className="strategy-tester-page tv-tester">
       <header className="tester-toolbar">
         <div className="toolbar-row">
-          <div className="toolbar-field">
-            <span className="toolbar-label">Pair</span>
-            <PairSearch
-              pairs={pairs}
-              value={symbol}
-              onChange={setSymbol}
-              disabled={controlsDisabled}
-            />
-          </div>
-
           <div className="toolbar-field toolbar-field-strategy">
             <span className="toolbar-label">Strategy</span>
             <select
@@ -211,6 +215,18 @@ export default function StrategyTesterPage() {
                 <option key={s.id} value={s.id}>{s.name}</option>
               ))}
             </select>
+          </div>
+
+          {!isFreqtrade && (
+          <>
+          <div className="toolbar-field">
+            <span className="toolbar-label">Pair</span>
+            <PairSearch
+              pairs={pairs}
+              value={symbol}
+              onChange={setSymbol}
+              disabled={controlsDisabled}
+            />
           </div>
 
           <div className="toolbar-field">
@@ -255,6 +271,8 @@ export default function StrategyTesterPage() {
           >
             {running ? `Running ${progress}%` : 'Run backtest'}
           </button>
+          </>
+          )}
         </div>
 
         {selectedStrategy?.description && (
@@ -262,12 +280,35 @@ export default function StrategyTesterPage() {
         )}
       </header>
 
+      {isFreqtrade ? (
+        <div className="freqtrade-tester-wrap">
+          <div className="tester-hint">
+            Freqtrade backtests run on the server via CLI. Use <strong>Strategy Control</strong> to
+            start/stop the bot, switch Python strategies, and force-exit trades.
+          </div>
+          <FreqtradeControlPanel />
+          <section className="freqtrade-card">
+            <h2>CLI backtest (on Kali/VPS)</h2>
+            <pre className="cli-block">{`docker compose --profile freqtrade run --rm freqtrade backtesting \\
+  --config user_data/config.json \\
+  --strategy TradeGPT_RSI_Momentum \\
+  --timerange 20260301-`}</pre>
+          </section>
+        </div>
+      ) : (
+        <>
       <BacktestProgressBar
         running={running}
         estimate={estimate}
         progress={progress}
         onProgress={setProgress}
       />
+
+      {!running && (period === '3m' || period === '6m') && (timeframe === '5m' || timeframe === '3m') && (
+        <div className="tester-estimate tester-hint">
+          For <strong>3M+</strong> periods, switch entry TF to <strong>15m</strong> or <strong>30m</strong>. 5m entry is only reliable for 1W–1M.
+        </div>
+      )}
 
       {!running && period === '1y' && (
         <div className="tester-estimate tester-hint">
@@ -353,6 +394,12 @@ export default function StrategyTesterPage() {
                       <div className="metric-row"><dt>Duration</dt><dd>{(result.durationMs / 1000).toFixed(1)}s</dd></div>
                     )}
                   </dl>
+                  {result.totalTrades === 0 && (
+                    <p className="tester-hint muted">
+                      No trades matched all rules in this window (1h/30m/15m alignment + OB retest + RSI &lt; 30 buy / &gt; 70 short).
+                      Try <strong>1M</strong> or <strong>3M</strong> period, or switch entry TF to <strong>15m</strong>.
+                    </p>
+                  )}
                 </>
               )}
             </div>
@@ -410,6 +457,8 @@ export default function StrategyTesterPage() {
           )}
         </aside>
       </div>
+        </>
+      )}
     </div>
   );
 }

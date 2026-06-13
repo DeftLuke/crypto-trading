@@ -1,12 +1,13 @@
-FROM node:20-alpine
+FROM node:20-slim
 WORKDIR /app
-RUN apk add --no-cache wget
+RUN apt-get update && apt-get install -y --no-install-recommends wget ca-certificates \
+  && rm -rf /var/lib/apt/lists/*
 COPY backend/package*.json ./
 RUN npm ci --omit=dev
 COPY backend/src ./src
 COPY ai-agent/prompts ./ai-agent/prompts
 ENV NODE_ENV=production
-ENV NODE_OPTIONS=--max-old-space-size=1024
+ENV NODE_OPTIONS=--max-old-space-size=4096
 EXPOSE 3001
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
   CMD wget -qO- http://127.0.0.1:3001/api/health || exit 1

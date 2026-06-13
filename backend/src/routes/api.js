@@ -1,4 +1,7 @@
 import { Router } from 'express';
+import { fork } from 'child_process';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 import { config } from '../config/index.js';
 import { generateSignal } from '../strategy/signalEngine.js';
 import { validateTradeExecution } from '../strategy/riskManager.js';
@@ -56,16 +59,67 @@ import {
   setRuntimeApiKeys,
 } from '../services/userBinance.js';
 import { getAllFuturesSymbols } from '../services/binance.js';
+import {
+  pingFreqtrade,
+  getFreqtradeStatus,
+  getFreqtradeProfit,
+  getFreqtradeBalance,
+  getFreqtradeTrades,
+  listFreqtradeStrategies,
+  startFreqtradeBot,
+  stopFreqtradeBot,
+  getFreqtradeDaily,
+  getFreqtradePublicInfo,
+  setFreqtradeStrategy,
+  forceExitFreqtrade,
+  getFreqtradeStatsBundle,
+} from '../services/freqtrade.js';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+function runBacktestIsolated(options) {
+  return new Promise((resolve, reject) => {
+    const workerPath = join(__dirname, '../jobs/backtestWorker.js');
+    const child = fork(workerPath, [], { env: process.env });
+    let settled = false;
+    const timer = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      child.kill('SIGTERM');
+      reject(new Error('Backtest timed out after 3 minutes. Try 15m timeframe or 1M period.'));
+    }, 180000);
+
+    const finish = (fn) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timer);
+      fn();
+    };
+
+    child.on('message', (msg) => {
+      finish(() => (msg.ok ? resolve(msg.result) : reject(new Error(msg.error || 'Backtest failed'))));
+    });
+    child.on('error', (err) => finish(() => reject(err)));
+    child.on('exit', (code) => {
+      if (!settled && code !== 0) {
+        finish(() => reject(new Error('Backtest process crashed. Use 15m entry TF for 3M+ periods.')));
+      }
+    });
+    child.send(options);
+  });
+}
 
 const router = Router();
 
 // Health check
 router.get('/health', async (req, res) => {
   const n8n = await checkN8nHealth();
+  const ft = await pingFreqtrade();
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
     n8n: n8n.ok ? 'connected' : n8n.error,
+    freqtrade: ft.online ? 'connected' : ft.reason || 'offline',
   });
 });
 
@@ -480,8 +534,13 @@ router.get('/strategies', (req, res) => {
 // Strategy stats dashboard
 router.get('/strategy/stats', async (req, res) => {
   try {
+    const strategyId = req.query.strategy || 'smc-mtf';
+    if (strategyId === 'freqtrade') {
+      const ft = await getFreqtradeStatsBundle();
+      return res.json({ strategyId: 'freqtrade', ...ft });
+    }
     const stats = await getStrategyStats();
-    res.json(stats);
+    res.json({ strategyId: 'smc-mtf', engine: 'native', ...stats });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -536,13 +595,25 @@ router.post('/backtest', async (req, res) => {
       return res.status(400).json({ error: 'period (1y, 6m, 3m, 1m) or startDate+endDate required' });
     }
 
+    const tf = timeframe || '5m';
+    if ((tf === '5m' || tf === '3m') && ['3m', '6m', '1y'].includes(period)) {
+      return res.status(400).json({
+        error: 'For 3M+ backtests use 15m or 30m entry timeframe. 5m/3m entry creates too much data and may crash the server.',
+      });
+    }
+
     const strategy = getStrategy(strategyId);
+    if (!strategy?.runBacktest && strategy?.engine === 'freqtrade') {
+      return res.status(400).json({
+        error: 'Freqtrade backtests run via Freqtrade CLI. Select Freqtrade in Strategy Control to manage the bot.',
+      });
+    }
     if (!strategy?.runBacktest) {
       return res.status(400).json({ error: `Strategy ${strategyId} not found or no backtest support` });
     }
 
     const startMs = Date.now();
-    const result = await strategy.runBacktest({
+    const result = await runBacktestIsolated({
       symbol: symbol.toUpperCase(),
       entryTimeframe: timeframe || '5m',
       startDate,
@@ -669,6 +740,102 @@ router.post('/ai/learn', async (req, res) => {
     res.json(result);
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// --- Freqtrade bot (Python) — see freqtrade/README.md ---
+router.get('/freqtrade/info', (req, res) => {
+  res.json(getFreqtradePublicInfo());
+});
+
+router.get('/freqtrade/ping', async (req, res) => {
+  res.json(await pingFreqtrade());
+});
+
+router.get('/freqtrade/status', async (req, res) => {
+  try {
+    const [ping, openTrades, profit] = await Promise.all([
+      pingFreqtrade(),
+      getFreqtradeStatus().catch(() => []),
+      getFreqtradeProfit().catch(() => null),
+    ]);
+    res.json({ ping, openTrades, profit });
+  } catch (err) {
+    res.status(503).json({ error: err.message });
+  }
+});
+
+router.get('/freqtrade/strategies', async (req, res) => {
+  try {
+    const strategies = await listFreqtradeStrategies();
+    res.json({
+      strategies,
+      folder: 'freqtrade/user_data/strategies/',
+      defaults: ['TradeGPT_RSI_Momentum', 'TradeGPT_EMA_Crossover'],
+    });
+  } catch (err) {
+    res.status(503).json({ error: err.message });
+  }
+});
+
+router.get('/freqtrade/trades', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit || '50', 10);
+    res.json(await getFreqtradeTrades(limit));
+  } catch (err) {
+    res.status(503).json({ error: err.message });
+  }
+});
+
+router.get('/freqtrade/balance', async (req, res) => {
+  try {
+    res.json(await getFreqtradeBalance());
+  } catch (err) {
+    res.status(503).json({ error: err.message });
+  }
+});
+
+router.get('/freqtrade/daily', async (req, res) => {
+  try {
+    const days = parseInt(req.query.days || '7', 10);
+    res.json(await getFreqtradeDaily(days));
+  } catch (err) {
+    res.status(503).json({ error: err.message });
+  }
+});
+
+router.post('/freqtrade/start', async (req, res) => {
+  try {
+    res.json(await startFreqtradeBot());
+  } catch (err) {
+    res.status(503).json({ error: err.message });
+  }
+});
+
+router.post('/freqtrade/stop', async (req, res) => {
+  try {
+    res.json(await stopFreqtradeBot());
+  } catch (err) {
+    res.status(503).json({ error: err.message });
+  }
+});
+
+router.post('/freqtrade/strategy', async (req, res) => {
+  try {
+    const { strategy } = req.body;
+    if (!strategy) return res.status(400).json({ error: 'strategy name required' });
+    res.json(await setFreqtradeStrategy(strategy));
+  } catch (err) {
+    res.status(503).json({ error: err.message });
+  }
+});
+
+router.post('/freqtrade/force-exit', async (req, res) => {
+  try {
+    const { tradeId = 'all' } = req.body;
+    res.json(await forceExitFreqtrade(tradeId));
+  } catch (err) {
+    res.status(503).json({ error: err.message });
   }
 });
 

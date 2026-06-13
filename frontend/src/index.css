@@ -768,7 +768,7 @@ body {
 .muted { color: var(--text-secondary); font-size: 13px; }
 .status-ok { color: var(--green); font-size: 13px; margin-bottom: 16px; }
 
-.strategy-stats-page, .strategy-tester-page, .settings-page {
+.strategy-stats-page, .strategy-tester-page, .settings-page, .freqtrade-page {
   min-height: 100vh;
 }
 
@@ -1151,3 +1151,152 @@ body {
 .structure-label { font-weight: 500; }
 .structure-price { color: var(--text-primary); font-variant-numeric: tabular-nums; }
 .structure-live { margin-top: 4px; padding-top: 4px; border-top: 1px solid var(--border); color: var(--green); }
+
+/* Freqtrade bot page */
+.freqtrade-page {
+  min-height: 100vh;
+  padding: 20px 24px;
+  max-width: 1200px;
+}
+
+.freqtrade-page .page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.freqtrade-page .page-header h1 {
+  font-size: 20px;
+  margin: 0 0 6px;
+}
+
+.freqtrade-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.freqtrade-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.freqtrade-card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.freqtrade-card h2 {
+  font-size: 14px;
+  margin: 0 0 12px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.freqtrade-strategy-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.freqtrade-strategy-list li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  font-size: 13px;
+}
+
+.badge-active {
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(38, 166, 154, 0.2);
+  color: var(--green);
+}
+
+.freqtrade-workflow {
+  margin: 0;
+  padding-left: 20px;
+  line-height: 1.7;
+}
+
+.freqtrade-workflow li {
+  margin-bottom: 10px;
+}
+
+.freqtrade-workflow li strong {
+  display: block;
+  color: var(--text-primary);
+}
+
+.freqtrade-workflow li span {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.small { font-size: 12px; }
+
+.freqtrade-control-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.ft-status-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+  background: var(--red);
+}
+
+.ft-status-dot.online { background: var(--green); }
+
+.ft-strategy-picker {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.ft-strategy-picker select {
+  flex: 1;
+  min-width: 180px;
+}
+
+.freqtrade-tester-wrap {
+  padding: 16px;
+  overflow: auto;
+}
+
+.cli-block {
+  background: var(--bg-primary);
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  overflow-x: auto;
+  white-space: pre-wrap;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 0;
+}
+
+.link-btn:disabled { opacity: 0.5; cursor: not-allowed; }

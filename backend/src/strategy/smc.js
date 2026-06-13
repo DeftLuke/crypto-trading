@@ -271,3 +271,15 @@ export function analyzeSMC(candles) {
     activeSupplyOB: orderBlocks.filter((b) => b.type === 'supply'),
   };
 }
+
+/** Lighter SMC for backtest precompute — skips FVG/IDM/sweeps zones */
+export function analyzeSMCForBacktest(candles) {
+  const structure = detectMarketStructure(candles);
+  const orderBlocks = detectOrderBlocks(candles);
+  return {
+    trend: structure.trend,
+    lastCHoCH: structure.lastCHoCH,
+    activeDemandOB: orderBlocks.filter((b) => b.type === 'demand'),
+    activeSupplyOB: orderBlocks.filter((b) => b.type === 'supply'),
+  };
+}

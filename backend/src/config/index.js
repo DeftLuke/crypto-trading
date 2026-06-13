@@ -87,4 +87,13 @@ export const config = {
     obCheck: '15m',
     entry: ['5m', '3m'],
   },
+
+  freqtrade: {
+    url: process.env.FREQTRADE_URL || 'http://127.0.0.1:8081',
+    publicUrl: process.env.FREQTRADE_PUBLIC_URL || '',
+    username: process.env.FREQTRADE_API_USER || 'freqtrader',
+    password: process.env.FREQTRADE_API_PASSWORD || '',
+    enabled: process.env.FREQTRADE_ENABLED !== 'false',
+    configPath: process.env.FREQTRADE_CONFIG_PATH || '',
+  },
 };

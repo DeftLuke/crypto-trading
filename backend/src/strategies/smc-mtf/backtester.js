@@ -1,5 +1,5 @@
 import { getEMATrend, getLatestRSI } from '../../strategy/indicators.js';
-import { analyzeSMC, checkOBRetest } from '../../strategy/smc.js';
+import { analyzeSMCForBacktest, checkOBRetest } from '../../strategy/smc.js';
 import { validateMandatoryRSI } from './rules.js';
 import { calculateLevels } from '../../strategy/signalEngine.js';
 import {
@@ -26,7 +26,7 @@ function analyzeWindow(candles, index) {
 
   const emaTrend = getEMATrend(slice);
   const rsi = getLatestRSI(slice);
-  const smc = analyzeSMC(slice);
+  const smc = analyzeSMCForBacktest(slice);
   const price = slice[slice.length - 1].close;
 
   return {
@@ -35,28 +35,53 @@ function analyzeWindow(candles, index) {
     smc,
     price,
     candle: slice[slice.length - 1],
-    candles: slice,
     time: slice[slice.length - 1].time,
   };
 }
 
-/** Store only fields needed for MTF checks — avoids memory crash on 1Y runs */
+/** Step MTF precompute on long series — avoids Node segfault in Docker */
+function getPrecomputeStep(candleCount) {
+  if (candleCount > 20000) return 4;
+  if (candleCount > 8000) return 2;
+  return 1;
+}
+
+/** MTF timeline — slim SMC fields only */
 function precomputeSlimTimeline(candles) {
+  const step = getPrecomputeStep(candles.length);
   const timeline = new Array(candles.length);
+  let last = null;
   for (let i = MIN_BARS; i < candles.length; i++) {
-    const a = analyzeWindow(candles, i);
-    if (!a) continue;
-    timeline[i] = {
-      emaTrend: a.emaTrend,
-      rsi: a.rsi,
-      smc: {
-        trend: a.smc.trend,
-        lastCHoCH: a.smc.lastCHoCH,
-        activeDemandOB: a.smc.activeDemandOB,
-        activeSupplyOB: a.smc.activeSupplyOB,
-      },
-      time: a.time,
-    };
+    if (i % step === 0 || i === candles.length - 1) {
+      const a = analyzeWindow(candles, i);
+      if (a) {
+        last = {
+          emaTrend: a.emaTrend,
+          rsi: a.rsi,
+          smc: {
+            trend: a.smc.trend,
+            lastCHoCH: a.smc.lastCHoCH,
+            activeDemandOB: a.smc.activeDemandOB,
+            activeSupplyOB: a.smc.activeSupplyOB,
+          },
+          time: a.time,
+        };
+      }
+    }
+    if (last) timeline[i] = last;
+  }
+  return timeline;
+}
+
+/** Entry timeline — RSI only at signal-check bars (avoids OOM on 5m × 3M) */
+function precomputeEntryTimeline(candles, entryInterval, period) {
+  const step = getSignalCheckStep(entryInterval, period);
+  const timeline = new Array(candles.length);
+  for (let i = MIN_BARS; i < candles.length; i += step) {
+    const start = Math.max(0, i - ANALYSIS_WINDOW + 1);
+    const slice = candles.slice(start, i + 1);
+    if (slice.length < MIN_BARS) continue;
+    timeline[i] = { rsi: getLatestRSI(slice), time: candles[i].time };
   }
   return timeline;
 }
@@ -67,7 +92,20 @@ function getCachedAt(timeline, times, time) {
   return timeline[idx];
 }
 
-function runSimulation(symbol, entryCandles, times15, times30, times1h, timeline15, timeline30, timeline1h, entryInterval, period, startTime) {
+function runSimulation(
+  symbol,
+  entryCandles,
+  times15,
+  times30,
+  times1h,
+  timeline15,
+  timeline30,
+  timeline1h,
+  timelineEntry,
+  entryInterval,
+  period,
+  startTime
+) {
   const trades = [];
   let inTrade = null;
   const step = getSignalCheckStep(entryInterval, period);
@@ -119,8 +157,8 @@ function runSimulation(symbol, entryCandles, times15, times30, times1h, timeline
       continue;
     }
 
-    const entry = analyzeWindow(entryCandles, i);
-    if (!entry) {
+    const entrySnap = timelineEntry[i];
+    if (!entrySnap) {
       i++;
       continue;
     }
@@ -157,20 +195,20 @@ function runSimulation(symbol, entryCandles, times15, times30, times1h, timeline
       continue;
     }
 
-    const obRetest = checkOBRetest(entry.candles, obBlocks, direction);
+    const obRetest = checkOBRetest([bar], obBlocks, direction);
     if (!obRetest.retested || !obRetest.rejection) {
       i++;
       continue;
     }
 
     const tradeDir = direction === 'long' ? 'BUY' : 'SELL';
-    const rsiCheck = validateMandatoryRSI(tradeDir, entry.rsi);
+    const rsiCheck = validateMandatoryRSI(tradeDir, entrySnap.rsi);
     if (!rsiCheck.passed) {
       i++;
       continue;
     }
 
-    const levels = calculateLevels(tradeDir, entry.price, obRetest.block);
+    const levels = calculateLevels(tradeDir, bar.close, obRetest.block);
     inTrade = {
       direction: tradeDir,
       entry: levels.entry,
@@ -233,11 +271,20 @@ export async function runBacktest(options) {
     );
   }
 
-  // Sequential fetch — lower peak memory than Promise.all
-  const entryCandles = await fetchHistoricalCandles(symbol, entryTimeframe, fetchStart, endTime);
-  const tf15m = await fetchHistoricalCandles(symbol, '15m', fetchStart, endTime);
-  const tf30m = await fetchHistoricalCandles(symbol, '30m', fetchStart, endTime);
-  const tf1h = await fetchHistoricalCandles(symbol, '1h', fetchStart - 86400000 * 30, endTime);
+  const entryIs15m = entryTimeframe === '15m';
+  let entryCandles;
+  let tf15m;
+
+  if (entryIs15m) {
+    tf15m = await fetchHistoricalCandles(symbol, '15m', fetchStart, endTime);
+    entryCandles = tf15m;
+  } else {
+    entryCandles = await fetchHistoricalCandles(symbol, entryTimeframe, fetchStart, endTime);
+    tf15m = await fetchHistoricalCandles(symbol, '15m', fetchStart, endTime);
+  }
+
+  let tf30m = await fetchHistoricalCandles(symbol, '30m', fetchStart, endTime);
+  let tf1h = await fetchHistoricalCandles(symbol, '1h', fetchStart - 86400000 * 30, endTime);
 
   if (entryCandles.length < MIN_BARS + 10) {
     throw new Error(`Insufficient data for ${symbol} (${entryCandles.length} bars)`);
@@ -247,9 +294,16 @@ export async function runBacktest(options) {
   const times30 = tf30m.map((c) => c.time);
   const times1h = tf1h.map((c) => c.time);
 
-  const timeline15 = precomputeSlimTimeline(tf15m);
-  const timeline30 = precomputeSlimTimeline(tf30m);
   const timeline1h = precomputeSlimTimeline(tf1h);
+  tf1h = null;
+  const timeline30 = precomputeSlimTimeline(tf30m);
+  tf30m = null;
+  const timeline15 = precomputeSlimTimeline(tf15m);
+  if (!entryIs15m) tf15m = null;
+
+  const timelineEntry = entryIs15m
+    ? timeline15
+    : precomputeEntryTimeline(entryCandles, entryTimeframe, resolvedPeriod);
 
   const rawTrades = runSimulation(
     symbol,
@@ -260,6 +314,7 @@ export async function runBacktest(options) {
     timeline15,
     timeline30,
     timeline1h,
+    timelineEntry,
     entryTimeframe,
     resolvedPeriod,
     startTime

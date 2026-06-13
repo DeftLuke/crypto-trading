@@ -76,8 +76,8 @@ export async function fetchStrategies() {
   return res.json();
 }
 
-export async function fetchStrategyStats() {
-  const res = await fetch(`${API_URL}/api/strategy/stats`);
+export async function fetchStrategyStats(strategyId = 'smc-mtf') {
+  const res = await fetch(`${API_URL}/api/strategy/stats?strategy=${strategyId}`);
   return res.json();
 }
 
@@ -154,6 +154,73 @@ export async function testApiKeys(keys) {
   });
   const data = await res.json();
   if (!res.ok) throw new Error(data.error || 'Test failed');
+  return data;
+}
+
+export async function fetchFreqtradeInfo() {
+  const res = await fetch(`${API_URL}/api/freqtrade/info`);
+  return res.json();
+}
+
+export async function fetchFreqtradeStatus() {
+  const res = await fetch(`${API_URL}/api/freqtrade/status`);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Freqtrade unavailable');
+  return data;
+}
+
+export async function fetchFreqtradeStrategies() {
+  const res = await fetch(`${API_URL}/api/freqtrade/strategies`);
+  return res.json();
+}
+
+export async function startFreqtradeBot() {
+  const res = await fetch(`${API_URL}/api/freqtrade/start`, { method: 'POST' });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Start failed');
+  return data;
+}
+
+export async function stopFreqtradeBot() {
+  const res = await fetch(`${API_URL}/api/freqtrade/stop`, { method: 'POST' });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Stop failed');
+  return data;
+}
+
+export async function setFreqtradeStrategy(strategy) {
+  const res = await fetch(`${API_URL}/api/freqtrade/strategy`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ strategy }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Strategy switch failed');
+  return data;
+}
+
+export async function forceExitFreqtrade(tradeId = 'all') {
+  const res = await fetch(`${API_URL}/api/freqtrade/force-exit`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ tradeId }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Force exit failed');
+  return data;
+}
+
+export async function fetchFreqtradeBalance() {
+  const res = await fetch(`${API_URL}/api/freqtrade/balance`);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Balance unavailable');
+  return data;
+}
+
+export async function fetchFreqtradeTrades(limit = 50) {
+  const res = await fetch(`${API_URL}/api/freqtrade/trades?limit=${limit}`);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Trades unavailable');
   return data;
 }
 

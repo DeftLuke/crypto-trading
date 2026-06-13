@@ -102,6 +102,7 @@ export function downsampleCandles(candles, maxPoints = 2000) {
 export function getSignalCheckStep(entryInterval, period) {
   if (entryInterval === '3m') return period === '1y' ? 12 : 6;
   if (entryInterval === '5m') return period === '1y' ? 12 : 3;
+  if (entryInterval === '15m') return period === '1y' || period === '6m' ? 4 : 2;
   return 1;
 }
 
