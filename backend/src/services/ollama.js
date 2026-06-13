@@ -1,0 +1,141 @@
+import { config } from '../config/index.js';
+
+function useGateway() {
+  return config.ollama.viaGateway || config.ollama.url.includes('deftluke.online');
+}
+
+function ollamaHeaders() {
+  const headers = { 'Content-Type': 'application/json' };
+  if (useGateway() && config.ai.apiKey) {
+    headers['X-API-Key'] = config.ai.apiKey;
+  }
+  return headers;
+}
+
+function ollamaUrl(endpoint) {
+  const base = (useGateway() ? config.ai.gatewayUrl : config.ollama.url).replace(/\/$/, '');
+  if (useGateway()) {
+    return `${base}/ollama${endpoint.replace('/api', '')}`;
+  }
+  return `${base}${endpoint}`;
+}
+
+export async function ollamaGenerate(prompt, systemPrompt = '') {
+  const models = [config.ollama.model, config.ollama.fallbackModel].filter(Boolean);
+  const fullPrompt = systemPrompt ? `${systemPrompt}\n\n${prompt}` : prompt;
+
+  let lastError;
+  for (const model of models) {
+    try {
+      const res = await fetch(ollamaUrl('/api/generate'), {
+        method: 'POST',
+        headers: ollamaHeaders(),
+        body: JSON.stringify({
+          model,
+          prompt: fullPrompt,
+          stream: false,
+          options: { temperature: 0.3, num_predict: 500 },
+        }),
+        signal: AbortSignal.timeout(120000),
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      if (data.error) throw new Error(data.error);
+      return { text: data.response?.trim() || '', model };
+    } catch (err) {
+      lastError = err;
+      console.warn(`[Ollama] ${model} failed: ${err.message}, trying fallback...`);
+    }
+  }
+  throw lastError || new Error('All Ollama models failed');
+}
+
+export async function ollamaEmbed(text) {
+  const res = await fetch(ollamaUrl('/api/embeddings'), {
+    method: 'POST',
+    headers: ollamaHeaders(),
+    body: JSON.stringify({
+      model: config.ollama.embedModel,
+      prompt: text,
+    }),
+    signal: AbortSignal.timeout(30000),
+  });
+
+  if (!res.ok) {
+    console.warn('[Ollama] Embedding failed, storing without vector');
+    return null;
+  }
+
+  const data = await res.json();
+  return data.embedding || null;
+}
+
+export async function generateTradeLesson(signal, outcome, outcomeData, lessonType) {
+  const systemPrompt = `You are an SMC crypto trading analyst. Write a concise lesson (3-5 bullet points) from this ${lessonType} signal outcome. Be specific about what worked or failed. Include win probability assessment.`;
+
+  const prompt = `Signal Data:
+- Symbol: ${signal.symbol}
+- Direction: ${signal.direction}
+- Confidence: ${signal.confidence}%
+- Entry: ${signal.entry_price}
+- SL: ${signal.stop_loss}
+- TP1: ${signal.tp1}
+- User action: ${lessonType === 'skipped' ? 'SKIPPED (did not trade)' : 'EXECUTED'}
+- Outcome after ${outcomeData.checkMinutes}min: ${outcome}
+- Price at check: ${outcomeData.priceAtCheck}
+- Hit TP1: ${outcomeData.hitTp1}
+- Hit SL: ${outcomeData.hitSl}
+- R-multiple: ${outcomeData.rMultiple?.toFixed(2) || 'N/A'}
+- Max favorable move: ${outcomeData.maxFavorable}
+- Reasons: ${JSON.stringify(signal.reasons || {})}
+
+Write the lesson:`;
+
+  try {
+    const { text: lessonText, model: usedModel } = await ollamaGenerate(prompt, systemPrompt);
+    const embedding = await ollamaEmbed(lessonText);
+
+    return {
+      lesson_text: lessonText,
+      embedding,
+      ai_model: usedModel,
+    };
+  } catch (err) {
+    console.error('[Ollama] Lesson generation failed:', err.message);
+    return {
+      lesson_text: buildFallbackLesson(signal, outcome, outcomeData, lessonType),
+      embedding: null,
+      ai_model: 'fallback',
+    };
+  }
+}
+
+function buildFallbackLesson(signal, outcome, data, lessonType) {
+  const action = lessonType === 'skipped' ? 'Skipped' : 'Traded';
+  return `${action} ${signal.symbol} ${signal.direction} at ${signal.entry_price}.
+Outcome (${data.checkMinutes}min): ${outcome.toUpperCase()}.
+${data.hitTp1 ? 'Would have hit TP1.' : data.hitSl ? 'Would have hit SL.' : 'No clear TP/SL hit yet.'}
+Confidence was ${signal.confidence}%. ${outcome === 'win' ? 'Setup validated — consider taking similar setups.' : 'Review OB retest quality before similar entries.'}`;
+}
+
+export async function checkOllamaHealth() {
+  try {
+    const res = await fetch(ollamaUrl('/api/tags'), {
+      headers: ollamaHeaders(),
+      signal: AbortSignal.timeout(5000),
+    });
+    if (!res.ok) return { ok: false, error: `HTTP ${res.status}` };
+    const data = await res.json();
+    const models = (data.models || []).map((m) => m.name);
+    return {
+      ok: true,
+      url: useGateway() ? config.ai.gatewayUrl : config.ollama.url,
+      models,
+      hasQwen: models.some((m) => m.includes('qwen2.5')),
+      hasEmbed: models.some((m) => m.includes('nomic-embed')),
+    };
+  } catch (err) {
+    return { ok: false, error: err.message };
+  }
+}

@@ -1,0 +1,17 @@
+# Cloudflare tunnel — single connector on Kali (locally managed)
+# Copy to: /home/kali/.cloudflared/config.yml
+# Replace WINDOWS_TAILSCALE_IP with your PC Tailscale IP (run: tailscale ip -4 on Windows)
+
+tunnel: 866ccee2-ad90-40a5-b04b-f88224e6e469
+credentials-file: /home/kali/.cloudflared/866ccee2-ad90-40a5-b04b-f88224e6e469.json
+
+ingress:
+  - hostname: n8n.deftluke.online
+    service: http://127.0.0.1:5678
+  - hostname: ai.deftluke.online
+    service: http://127.0.0.1:8080
+  - hostname: api.deftluke.online
+    service: http://WINDOWS_TAILSCALE_IP:3001
+  - hostname: trade.deftluke.online
+    service: http://WINDOWS_TAILSCALE_IP:5173
+  - service: http_status:404

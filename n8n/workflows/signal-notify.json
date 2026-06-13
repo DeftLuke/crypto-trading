@@ -1,0 +1,39 @@
+{
+  "name": "Signal Notify (Production)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "signal-notify",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "webhook-signal",
+      "name": "Signal Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "signal-notify"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "=🎯 HIGH CONFIDENCE SIGNAL\n\nPair: {{ $json.body.symbol }}\nDirection: {{ $json.body.direction }}\nConfidence: {{ $json.body.confidence }}/100\n\nEntry: {{ $json.body.entry_price }}\nSL: {{ $json.body.stop_loss }}\nTP1: {{ $json.body.tp1 }}\nTP2: {{ $json.body.tp2 }}\n\n⚠️ Manual entry — Telegram BUY NOW / SKIP\n📊 Dashboard: https://trade.deftluke.online",
+        "additionalFields": {}
+      },
+      "id": "telegram-signal",
+      "name": "Send Telegram Alert",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [460, 300],
+      "credentials": { "telegramApi": { "id": "1", "name": "Telegram account" } }
+    }
+  ],
+  "connections": {
+    "Signal Webhook": {
+      "main": [[{ "node": "Send Telegram Alert", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "tags": [{ "name": "crypto-trading" }, { "name": "production" }]
+}

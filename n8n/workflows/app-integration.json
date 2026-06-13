@@ -1,0 +1,81 @@
+{
+  "name": "Trading App Integration (Production)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "app-signal",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook-app",
+      "name": "App Signal Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "app-signal"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.BACKEND_URL || 'https://api.deftluke.online' }}/api/webhook/n8n/signal",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.body || $json) }}",
+        "options": { "timeout": 15000 }
+      },
+      "id": "forward-backend",
+      "name": "Forward to Backend API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.AI_GATEWAY_URL || 'https://ai.deftluke.online' }}/chat",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "X-API-Key", "value": "={{ $env.AI_API_KEY }}" },
+            { "name": "Content-Type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"question\": \"Analyze this trading signal and estimate win probability 0-100. Reply with probability and brief reason.\",\n  \"context\": {{ JSON.stringify($('App Signal Webhook').item.json.body || $('App Signal Webhook').item.json) }}\n}",
+        "options": { "timeout": 120000 }
+      },
+      "id": "ai-analyze",
+      "name": "AI Gateway Analyze Signal",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ received: true, answer: $json.answer, model: $json.model, backend: 'https://api.deftluke.online' }) }}",
+        "options": {}
+      },
+      "id": "respond",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "App Signal Webhook": {
+      "main": [[{ "node": "Forward to Backend API", "type": "main", "index": 0 }]]
+    },
+    "Forward to Backend API": {
+      "main": [[{ "node": "AI Gateway Analyze Signal", "type": "main", "index": 0 }]]
+    },
+    "AI Gateway Analyze Signal": {
+      "main": [[{ "node": "Respond", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "tags": [{ "name": "crypto-trading" }, { "name": "production" }]
+}
