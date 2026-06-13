@@ -1,82 +1,63 @@
-# Kali Server Setup — Completed Steps & Manual Actions
+# Kali Server Setup
 
-## ✅ Done on your Kali server (100.110.210.103)
+## Services on Kali
 
-| Task | Status |
-|------|--------|
-| Ollama running | ✅ Active on `0.0.0.0:11434` |
-| `qwen2.5:7b-instruct` | ✅ Downloaded |
-| `nomic-embed-text` | ✅ Downloaded + tested |
-| `mistral:7b` fallback | ✅ Working (qwen2.5 segfaults on server — auto-fallback enabled) |
-| n8n Docker | ✅ Running on port 5678 |
-| Cloudflared tunnel token | ✅ Updated to `n8n-tunnel` |
-| n8n workflow JSONs | ✅ Copied to `/tmp/n8n-workflows/` on Kali |
+| Service | Local port | Public URL |
+|---------|------------|------------|
+| n8n | 5678 | https://n8n.deftluke.online |
+| AI Gateway | 8080 | https://ai.deftluke.online |
+| Ollama | 11434 | via AI gateway only |
+| cloudflared | — | routes all subdomains |
 
-## ⚠️ YOU must do these 2 steps manually
+## Tunnel routes (includes Windows backend)
 
-### 1. Run database migration (Supabase SQL Editor)
+File: `scripts/kali-cloudflared-config.yml`
 
-Open Supabase → SQL Editor → paste and run:
-
-`supabase/migrations/002_signal_outcomes.sql`
-
-This adds:
-- `signal_outcomes` table (15/20 min checks)
-- `user_action`, `final_outcome`, `win_probability` on signals
-- `lesson_type` on trade_lessons (skipped / executed / hypothetical)
-
-### 2. Fix Cloudflare public hostname (Error 1033)
-
-Tunnel connector is **UP** but route may be missing:
-
-1. Go to **Cloudflare Zero Trust** → **Networks** → **Tunnels** → **n8n-tunnel**
-2. **Public Hostname** tab → Add/verify:
-   - Subdomain: `n8n`
-   - Domain: `deftluke.online`
-   - Service: `http://localhost:5678`
-3. Save → wait 1–2 minutes → test https://n8n.deftluke.online
-
-### 3. Import n8n workflows
-
-On Kali, files are at `/tmp/n8n-workflows/`:
-
-- `trade-execution.json`
-- `signal-notify.json`
-- `ai-assistant.json`
-- `app-integration.json`
-
-In n8n UI → Workflows → Import → Activate each workflow.
-
-Set n8n environment variables:
-```
-BACKEND_URL=http://YOUR_PC_IP:3001
-OLLAMA_URL=http://127.0.0.1:11434
+```yaml
+ingress:
+  - hostname: n8n.deftluke.online
+    service: http://127.0.0.1:5678
+  - hostname: ai.deftluke.online
+    service: http://127.0.0.1:8080
+  - hostname: api.deftluke.online
+    service: http://WINDOWS_TAILSCALE_IP:3001
+  - hostname: trade.deftluke.online
+    service: http://WINDOWS_TAILSCALE_IP:5173
 ```
 
-## Backend `.env` (already updated)
+Apply:
 
+```bash
+WINDOWS_TAILSCALE_IP=100.119.48.19 bash scripts/apply-kali-tunnel.sh
+sudo systemctl restart cloudflared
 ```
-OLLAMA_URL=http://100.110.210.103:11434
-N8N_SIGNAL_WEBHOOK_URL=https://n8n.deftluke.online/webhook/signal-notify
+
+## DNS (Cloudflare)
+
+Add CNAME records pointing to your tunnel:
+
+- `api` → `<tunnel-id>.cfargotunnel.com`
+- `trade` → `<tunnel-id>.cfargotunnel.com`
+
+(Same tunnel as `n8n` and `ai`)
+
+## AI gateway deploy
+
+```bash
+scp -r ai-agent/gateway/* kali:~/ai-agent-gateway/
+ssh kali 'AI_API_KEY=your-key BACKEND_URL=https://api.deftluke.online bash configure-ai-subdomain.sh'
 ```
 
-Restart backend after migration: `cd backend && npm run dev`
+## n8n workflows
 
-## New features
+Import from `n8n/workflows/` — see `n8n/README.md`
 
-### Signal outcome tracking
-- Every signal → checked at **15 min** and **20 min**
-- Calculates: win/loss, TP1/SL hit, win probability %
-- Sends Telegram review message at 20 min
-- Generates AI lesson via Ollama
+Workflow JSONs copied to `/tmp/n8n-workflows/` on Kali after deploy.
 
-### Dashboard
-- **Skipped Trade Lessons** — signals you skipped + what would have happened
-- **Real Trade Lessons** — executed trades + outcomes
+## Verify
 
-### API endpoints
-- `GET /api/lessons/skipped`
-- `GET /api/lessons/executed`
-- `GET /api/lessons/stats`
-- `GET /api/signals/:id/outcomes`
-- `GET /api/ai/health`
+```bash
+curl https://n8n.deftluke.online/healthz
+curl https://ai.deftluke.online/health
+curl https://api.deftluke.online/api/health
+```
