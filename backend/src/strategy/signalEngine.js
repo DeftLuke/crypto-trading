@@ -1,5 +1,8 @@
 import { config } from '../config/index.js';
 import { runMTFAnalysis } from './mtfAnalysis.js';
+import { getStrategy } from '../strategies/registry.js';
+
+const strategy = getStrategy('smc-mtf');
 
 export function calculateConfidence(analysis) {
   if (!analysis.valid) {
@@ -24,20 +27,22 @@ export function calculateConfidence(analysis) {
     reasons.ema = { score: 0, status: 'fail', detail: 'EMA trend mismatch' };
   }
 
-  // RSI filter (15 pts)
+  // RSI filter — mandatory gates enforced in strategy layer; scoring here
   const rsi = data.entryTf?.rsi;
-  const rsiZone = data.entryTf?.rsiZone;
   if (direction === 'BUY' && rsi < 25) {
     score += 15;
-    reasons.rsi = { score: 15, status: 'pass', detail: `RSI oversold (${rsi?.toFixed(1)})` };
+    reasons.rsi = { score: 15, status: 'pass', detail: `RSI ideal oversold (${rsi?.toFixed(1)} < 25)` };
+  } else if (direction === 'BUY' && rsi < 30) {
+    score += 12;
+    reasons.rsi = { score: 12, status: 'pass', detail: `RSI oversold (${rsi?.toFixed(1)} < 30)` };
   } else if (direction === 'SELL' && rsi > 80) {
     score += 15;
-    reasons.rsi = { score: 15, status: 'pass', detail: `RSI overbought (${rsi?.toFixed(1)})` };
-  } else if (rsiZone?.zone === 'normal' && obRetest.rejection) {
-    score += 10;
-    reasons.rsi = { score: 10, status: 'pass', detail: `RSI normal (${rsi?.toFixed(1)}) with OB confirm` };
+    reasons.rsi = { score: 15, status: 'pass', detail: `RSI ideal overbought (${rsi?.toFixed(1)} > 80)` };
+  } else if (direction === 'SELL' && rsi > 70) {
+    score += 12;
+    reasons.rsi = { score: 12, status: 'pass', detail: `RSI overbought (${rsi?.toFixed(1)} > 70)` };
   } else {
-    reasons.rsi = { score: 0, status: 'neutral', detail: `RSI ${rsi?.toFixed(1)} — needs confirmation` };
+    reasons.rsi = { score: 0, status: 'fail', detail: `RSI ${rsi?.toFixed(1)} — mandatory gate failed` };
   }
 
   // SMC structure (25 pts)
@@ -130,6 +135,10 @@ export function calculateLevels(direction, entryPrice, obBlock) {
 }
 
 export async function generateSignal(symbol) {
+  if (strategy?.generateSignal) {
+    return strategy.generateSignal(symbol);
+  }
+
   const analysis = await runMTFAnalysis(symbol);
   const { confidence, reasons, direction } = calculateConfidence(analysis);
 

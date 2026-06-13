@@ -5,9 +5,10 @@ build/
 .env.local
 backend/.env
 frontend/.env
+n8n/workflows/production.env.json
 *.log
 .DS_Store
 .cursor/
 Thumbs.db
 .vite/
-nul
+deploy/.env

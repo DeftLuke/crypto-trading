@@ -1,58 +1,53 @@
-# Cloudflare Tunnel — Domain Setup
+# Cloudflare Tunnel — Production on VPS
 
-## Architecture
+## Current setup (recommended)
 
-One cloudflared connector on **Kali Linux** routes all subdomains:
+| Component | Location |
+|-----------|----------|
+| DNS | Cloudflare CNAME → tunnel |
+| Tunnel connector | **VPS** (`deploy/docker-compose.yml` → `cloudflared` service) |
+| Backend, UI, n8n, AI | **Same VPS** — all Docker, no Tailscale |
 
-| Subdomain | Target |
-|-----------|--------|
-| `api.deftluke.online` | Windows backend :3001 (via Tailscale, internal only) |
-| `trade.deftluke.online` | Windows frontend :5173 (via Tailscale, internal only) |
-| `ai.deftluke.online` | Kali AI gateway :8080 |
-| `n8n.deftluke.online` | Kali n8n :5678 |
+See **[VPS-DEPLOY.md](./VPS-DEPLOY.md)** for full instructions.
 
-## Apply tunnel config
+## Why VPS instead of Windows + Kali
 
-On Kali:
+| Old problem | VPS solution |
+|-------------|--------------|
+| Power outage on PC → everything offline | VPS runs 24/7 in datacenter |
+| Tailscale between Windows ↔ Kali | All services on one Docker network |
+| Two cloudflared connectors → 503 | Single connector on VPS |
 
-```bash
-cd ~/crypto-trading   # or copy scripts/ from repo
-WINDOWS_TAILSCALE_IP=$(# run tailscale ip -4 on Windows)
-bash scripts/apply-kali-tunnel.sh
-```
+## Cloudflare public hostnames (tunnel dashboard)
 
-Config file: `scripts/kali-cloudflared-config.yml`
-
-## Fix 503 errors
-
-503 happens when **two** cloudflared connectors use the same tunnel.
-
-**Do not run cloudflared on Windows.** Run as Admin once:
+Configure these service URLs when using `CLOUDFLARE_TUNNEL_TOKEN`:
 
 ```
-scripts\fix-cloudflared-windows.bat
+api.deftluke.online    → http://backend:3001
+trade.deftluke.online  → http://frontend:80
+n8n.deftluke.online    → http://n8n:5678
+ai.deftluke.online     → http://ai-gateway:8080
 ```
 
-## Test in browser
+## Rules
 
-- https://api.deftluke.online/api/health
-- https://trade.deftluke.online
-- https://ai.deftluke.online/health
-- https://n8n.deftluke.online/healthz
+- **One** cloudflared connector per tunnel
+- Stop Windows `start-windows-tunnel.bat` when VPS is live
+- Stop Kali `cloudflared` service
+- n8n `WEBHOOK_URL` = `https://n8n.deftluke.online/` (not localhost)
 
-## DNS
+## Test
 
-In Cloudflare DNS, add CNAME records for `api` and `trade` (if not already):
+```
+https://api.deftluke.online/api/health
+https://trade.deftluke.online
+https://n8n.deftluke.online
+https://ai.deftluke.online/health
+```
 
-- `api` → tunnel UUID `.cfargotunnel.com`
-- `trade` → tunnel UUID `.cfargotunnel.com`
+## Legacy configs (dev / deprecated)
 
-Same tunnel as `n8n` and `ai`.
+- `scripts/windows-cloudflared-config.yml` — Windows + Tailscale to Kali (deprecated)
+- `scripts/kali-cloudflared-config.yml` — Kali tunnel to Windows (deprecated)
 
-## Requirements on Windows
-
-1. Backend running: `cd backend && npm run dev`
-2. Frontend running: `cd frontend && npm run dev -- --host`
-3. Tailscale connected (for Kali tunnel to reach your PC)
-
-See [DOMAINS.md](./DOMAINS.md) for full production URL reference.
+See also: [DOMAINS.md](./DOMAINS.md) | [SSL-SETUP.md](./SSL-SETUP.md)

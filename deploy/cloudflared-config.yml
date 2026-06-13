@@ -1,0 +1,17 @@
+# All services on ONE VPS — Cloudflare tunnel routes to Docker (no Tailscale)
+# Use with: cloudflared tunnel --config deploy/cloudflared-config.yml run
+# Recommended: set CLOUDFLARE_TUNNEL_TOKEN in deploy/.env (docker compose handles tunnel)
+
+tunnel: 866ccee2-ad90-40a5-b04b-f88224e6e469
+credentials-file: /etc/cloudflared/credentials.json
+
+ingress:
+  - hostname: api.deftluke.online
+    service: http://backend:3001
+  - hostname: trade.deftluke.online
+    service: http://frontend:80
+  - hostname: n8n.deftluke.online
+    service: http://n8n:5678
+  - hostname: ai.deftluke.online
+    service: http://ai-gateway:8080
+  - service: http_status:404

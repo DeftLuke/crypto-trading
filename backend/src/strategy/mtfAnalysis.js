@@ -135,7 +135,7 @@ export async function runMTFAnalysis(symbol) {
   };
 }
 
-function summarizeTF(tf) {
+export function summarizeTF(tf) {
   if (!tf) return null;
   return {
     timeframe: tf.timeframe,
@@ -148,7 +148,48 @@ function summarizeTF(tf) {
     lastCHoCH: tf.smc.lastCHoCH,
     orderBlockCount: tf.smc.orderBlocks.filter((b) => !b.mitigated).length,
     sweeps: tf.smc.sweeps.length,
+    recentSweep: tf.smc.sweeps.slice(-1)[0] || null,
   };
+}
+
+/** Lightweight multi-timeframe bias for dashboard + Telegram. */
+export async function getMTFBias(symbol) {
+  const timeframes = ['1h', '30m', '15m', '5m'];
+  const results = await Promise.all(timeframes.map((tf) => analyzeTimeframe(symbol, tf)));
+  const bias = {};
+  for (const r of results) {
+    bias[r.timeframe] = {
+      trend: r.smc.trend,
+      ema: r.emaTrend,
+      rsi: Math.round(r.rsi),
+      bos: r.smc.lastBOS?.direction || null,
+      choch: r.smc.lastCHoCH?.direction || null,
+      sweeps: r.smc.sweeps.length,
+      obDemand: r.smc.activeDemandOB?.length || 0,
+      obSupply: r.smc.activeSupplyOB?.length || 0,
+    };
+  }
+  const bullish = Object.values(bias).filter((b) => b.trend === 'bullish').length;
+  const bearish = Object.values(bias).filter((b) => b.trend === 'bearish').length;
+  let overall = 'neutral';
+  if (bullish >= 3) overall = 'bullish';
+  else if (bearish >= 3) overall = 'bearish';
+  else if (bullish > bearish) overall = 'lean bullish';
+  else if (bearish > bullish) overall = 'lean bearish';
+
+  return { symbol, overall, timeframes: bias };
+}
+
+export function formatMTFBias(b) {
+  const icon = (t) => (t === 'bullish' ? '🟢' : t === 'bearish' ? '🔴' : '⚪');
+  let msg = `📈 <b>${b.symbol}</b> — ${b.overall.toUpperCase()}\n\n`;
+  for (const [tf, data] of Object.entries(b.timeframes)) {
+    msg += `${icon(data.trend)} <b>${tf}</b>: ${data.trend} | EMA ${data.ema} | RSI ${data.rsi}`;
+    if (data.bos) msg += ` | BOS ${data.bos}`;
+    if (data.choch) msg += ` | CHoCH ${data.choch}`;
+    msg += '\n';
+  }
+  return msg.trim();
 }
 
 export async function scanAllPairs() {

@@ -1,0 +1,25 @@
+# n8n on Kali — production HTTPS via Cloudflare tunnel
+# SSL is handled by Cloudflare (no manual cert on server)
+# Copy to Kali: /home/kali/n8n/docker-compose.yml
+
+services:
+  n8n:
+    image: n8nio/n8n:latest
+    restart: always
+    ports:
+      - "5678:5678"
+    environment:
+      N8N_HOST: n8n.deftluke.online
+      N8N_PORT: 5678
+      N8N_PROTOCOL: https
+      N8N_EDITOR_BASE_URL: https://n8n.deftluke.online/
+      WEBHOOK_URL: https://n8n.deftluke.online/
+      N8N_SECURE_COOKIE: "true"
+      N8N_PROXY_HOPS: "1"
+      NODE_ENV: production
+      GENERIC_TIMEZONE: Asia/Dhaka
+      N8N_BASIC_AUTH_ACTIVE: "true"
+      N8N_BASIC_AUTH_USER: ${N8N_BASIC_AUTH_USER:-admin}
+      N8N_BASIC_AUTH_PASSWORD: ${N8N_BASIC_AUTH_PASSWORD:-changeme}
+    volumes:
+      - ./data:/home/node/.n8n

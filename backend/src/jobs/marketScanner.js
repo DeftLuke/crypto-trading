@@ -1,88 +1,150 @@
 import { config } from '../config/index.js';
-import { generateSignal, formatSignalMessage } from '../strategy/signalEngine.js';
+import { callN8nWebhook } from '../services/n8n.js';
+import { formatSignalMessage } from '../strategy/signalEngine.js';
 import { saveSignal, logEvent, getPairStats, getSupabase } from '../services/supabase.js';
 import { sendSignalNotification } from '../services/telegram.js';
 import { binanceWs } from '../services/binanceWs.js';
 import { scheduleSignalOutcomeCheck } from './signalOutcomeTracker.js';
+import { notifyWatchlistUsers } from './agentTaskRunner.js';
+import { getStrategy } from '../strategies/registry.js';
+import { validateSignal, markSignalNotified } from '../services/signalGuard.js';
+import { isScannerRunning, updateScannerStats } from '../services/scannerState.js';
+import { getAllFuturesSymbols } from '../services/binance.js';
 
 let scanning = false;
+let scanInterval = null;
+const strategy = getStrategy('smc-mtf');
 
 export async function scanMarkets() {
+  if (!isScannerRunning()) return;
   if (scanning) return;
   scanning = true;
 
-  console.log(`[Scanner] Scanning ${config.topPairs.length} pairs...`);
+  const startTime = Date.now();
+  let pairsScanned = 0;
+  let bestSignal = null;
 
   try {
+    let symbols;
+    try {
+      symbols = await getAllFuturesSymbols(parseInt(process.env.MIN_PAIR_VOLUME || '500000', 10));
+    } catch {
+      symbols = config.topPairs;
+    }
+
     const { data: pairStats } = await getPairStats();
     const scoreMap = {};
     for (const ps of pairStats || []) {
       scoreMap[ps.symbol] = ps.strategy_score;
     }
 
-    const sortedPairs = [...config.topPairs].sort(
+    const sortedPairs = [...symbols].sort(
       (a, b) => (scoreMap[b] || 50) - (scoreMap[a] || 50)
     );
 
-    for (const symbol of sortedPairs) {
-      try {
-        binanceWs.subscribeMarkPrice(symbol, () => {});
+    console.log(`[Scanner] Scanning ${sortedPairs.length} pairs for best setup...`);
 
-        const signal = await generateSignal(symbol);
+    const batchSize = parseInt(process.env.SCAN_BATCH_SIZE || '10', 10);
+    for (let i = 0; i < sortedPairs.length; i += batchSize) {
+      if (!isScannerRunning()) break;
 
-        if (signal.direction !== 'IGNORE') {
-          console.log(`[Scanner] Signal found: ${symbol} ${signal.direction} (${signal.confidence}%)`);
+      const batch = sortedPairs.slice(i, i + batchSize);
+      const results = await Promise.allSettled(
+        batch.map(async (symbol) => {
+          binanceWs.subscribeMarkPrice(symbol, () => {});
+          const signal = await strategy.generateSignal(symbol);
+          return signal;
+        })
+      );
 
-          const { data: saved, error: saveError } = await saveSignal(signal);
+      for (const result of results) {
+        pairsScanned++;
+        if (result.status !== 'fulfilled') continue;
+        const signal = result.value;
+        if (signal.direction === 'IGNORE') continue;
 
-          if (saveError) {
-            console.error(`[Scanner] Failed to save signal: ${saveError.message || saveError}`);
-          }
-
-          const signalId = saved?.id || `local-${Date.now()}`;
-
-          try {
-            const messageId = await sendSignalNotification(signal, signalId);
-            if (messageId && saved?.id) {
-              const db = getSupabase();
-              await db?.from('signals').update({ telegram_message_id: messageId, status: 'sent' }).eq('id', saved.id);
-            }
-          } catch (tgErr) {
-            console.error(`[Scanner] Telegram notify failed: ${tgErr.message}`);
-            await logEvent('error', 'telegram', tgErr.message, { symbol, signalId });
-          }
-
-          if (saved && config.n8n.signalWebhook) {
-            await fetch(config.n8n.signalWebhook, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ ...signal, id: signalId }),
-            }).catch(() => {});
-          }
-
-          await logEvent('signal', 'scanner', formatSignalMessage(signal), {
-            symbol,
-            confidence: signal.confidence,
-          });
-
-          if (saved?.id) {
-            scheduleSignalOutcomeCheck(saved);
-          }
-
-          // Only notify one high-quality signal per scan cycle
-          break;
+        if (!bestSignal || signal.confidence > bestSignal.confidence) {
+          bestSignal = signal;
         }
-      } catch (err) {
-        await logEvent('error', 'scanner', `${symbol}: ${err.message}`);
+      }
+
+      if (bestSignal && bestSignal.confidence >= 85) break;
+    }
+
+    if (bestSignal) {
+      const guard = await validateSignal(bestSignal);
+      if (!guard.allowed) {
+        console.log(`[Scanner] Best signal blocked: ${bestSignal.symbol} — ${guard.reason}`);
+      } else {
+        await notifySignal(bestSignal);
       }
     }
+
+    await updateScannerStats({
+      lastScanAt: new Date().toISOString(),
+      pairsScanned,
+      lastSignalSymbol: bestSignal?.symbol || null,
+    });
+
+    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
+    console.log(`[Scanner] Scan complete: ${pairsScanned} pairs in ${elapsed}s. Best: ${bestSignal?.symbol || 'none'} (${bestSignal?.confidence || 0}%)`);
   } finally {
     scanning = false;
   }
 }
 
+async function notifySignal(signal) {
+  console.log(`[Scanner] Signal: ${signal.symbol} ${signal.direction} (${signal.confidence}%)`);
+
+  const { data: saved, error: saveError } = await saveSignal(signal);
+
+  if (saveError) {
+    console.error(`[Scanner] Failed to save signal: ${saveError.message || saveError}`);
+  }
+
+  const signalId = saved?.id || `local-${Date.now()}`;
+  markSignalNotified(signal);
+
+  try {
+    const messageId = await sendSignalNotification(signal, signalId);
+    if (messageId && saved?.id) {
+      const db = getSupabase();
+      await db?.from('signals').update({ telegram_message_id: messageId, status: 'sent' }).eq('id', saved.id);
+    }
+  } catch (tgErr) {
+    console.error(`[Scanner] Telegram notify failed: ${tgErr.message}`);
+    await logEvent('error', 'telegram', tgErr.message, { symbol: signal.symbol, signalId });
+  }
+
+  if (saved && config.n8n.signalWebhook) {
+    await callN8nWebhook(config.n8n.signalWebhook, { ...signal, id: signalId });
+  }
+
+  await logEvent('signal', 'scanner', formatSignalMessage(signal), {
+    symbol: signal.symbol,
+    confidence: signal.confidence,
+  });
+
+  if (saved?.id) {
+    scheduleSignalOutcomeCheck(saved);
+  }
+
+  await notifyWatchlistUsers(signal.symbol, { ...signal, id: signalId });
+}
+
 export function startScanner() {
-  scanMarkets();
-  setInterval(scanMarkets, config.strategy.scanIntervalMs);
-  console.log(`[Scanner] Started — interval ${config.strategy.scanIntervalMs}ms`);
+  if (scanInterval) return;
+  scanInterval = setInterval(scanMarkets, config.strategy.scanIntervalMs);
+  console.log(`[Scanner] Scheduler started — interval ${config.strategy.scanIntervalMs}ms (default OFF — use /startT or API to enable)`);
+}
+
+export function stopScannerScheduler() {
+  if (scanInterval) {
+    clearInterval(scanInterval);
+    scanInterval = null;
+  }
+}
+
+export async function triggerScan() {
+  return scanMarkets();
 }

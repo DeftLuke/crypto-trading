@@ -54,7 +54,7 @@
     },
     {
       "parameters": {
-        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "chatId": "600639327",
         "text": "=✅ Trade Executed\n\nSymbol: {{ $('Webhook Trigger').item.json.body.symbol }}\nDirection: {{ $('Webhook Trigger').item.json.body.direction }}\nEntry: {{ $('Webhook Trigger').item.json.body.entry_price }}\nSL: {{ $('Webhook Trigger').item.json.body.stop_loss }}\n\nSL/TP managed automatically.",
         "additionalFields": {}
       },
@@ -63,11 +63,11 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [1120, 200],
-      "credentials": { "telegramApi": { "id": "1", "name": "Telegram account" } }
+      "credentials": { "telegramApi": { "id": "SNHZjAKoQFrl7Atc", "name": "PipBotX TradeGPT" } }
     },
     {
       "parameters": {
-        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "chatId": "600639327",
         "text": "=❌ Trade Rejected\n\n{{ $json.error || 'Risk validation failed' }}\n\nChecks: {{ JSON.stringify($json.checks || []) }}",
         "additionalFields": {}
       },
@@ -76,7 +76,7 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [1120, 400],
-      "credentials": { "telegramApi": { "id": "1", "name": "Telegram account" } }
+      "credentials": { "telegramApi": { "id": "SNHZjAKoQFrl7Atc", "name": "PipBotX TradeGPT" } }
     },
     {
       "parameters": {

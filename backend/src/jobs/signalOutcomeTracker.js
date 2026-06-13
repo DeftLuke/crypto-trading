@@ -14,18 +14,21 @@ const pendingChecks = new Map();
 export function scheduleSignalOutcomeCheck(signal) {
   if (!signal?.id || signal.direction === 'IGNORE') return;
 
-  for (const minutes of [15, 20]) {
-    const key = `${signal.id}:${minutes}`;
-    if (pendingChecks.has(key)) continue;
+  // Only 20min final check — reduces duplicate alerts
+  scheduleCheck(signal, 20);
+}
 
-    const timeout = setTimeout(async () => {
-      pendingChecks.delete(key);
-      await evaluateSignalOutcome(signal.id, minutes);
-    }, minutes * 60 * 1000);
+function scheduleCheck(signal, minutes) {
+  const key = `${signal.id}:${minutes}`;
+  if (pendingChecks.has(key)) return;
 
-    pendingChecks.set(key, timeout);
-    console.log(`[OutcomeTracker] Scheduled ${minutes}min check for ${signal.symbol} (${signal.id})`);
-  }
+  const timeout = setTimeout(async () => {
+    pendingChecks.delete(key);
+    await evaluateSignalOutcome(signal.id, minutes);
+  }, minutes * 60 * 1000);
+
+  pendingChecks.set(key, timeout);
+  console.log(`[OutcomeTracker] Scheduled ${minutes}min check for ${signal.symbol} (${signal.id})`);
 }
 
 export async function evaluateSignalOutcome(signalId, checkMinutes) {
@@ -61,63 +64,68 @@ export async function evaluateSignalOutcome(signalId, checkMinutes) {
       checked_at: new Date().toISOString(),
     }, { onConflict: 'signal_id,check_minutes' });
 
-    if (checkMinutes === 20) {
-      await db.from('signals').update({
-        final_outcome: result.outcome,
-        win_probability: winProbability,
-        outcome_checked_at: new Date().toISOString(),
-      }).eq('id', signalId);
+      if (checkMinutes === 20) {
+        await db.from('signals').update({
+          final_outcome: result.outcome,
+          win_probability: winProbability,
+          outcome_checked_at: new Date().toISOString(),
+        }).eq('id', signalId);
 
-      const lessonType = signal.user_action === 'executed' ? 'executed'
-        : signal.user_action === 'skipped' ? 'skipped' : 'hypothetical';
+        const lessonType = signal.user_action === 'executed' ? 'executed'
+          : signal.user_action === 'skipped' ? 'skipped' : 'hypothetical';
 
-      const aiLesson = await generateTradeLesson(signal, result.outcome, {
-        checkMinutes,
-        priceAtCheck: currentPrice,
-        hitTp1: result.hitTp1,
-        hitSl: result.hitSl,
-        rMultiple: result.rMultiple,
-        maxFavorable: result.maxFavorable,
-      }, lessonType);
+        const aiLesson = await generateTradeLesson(signal, result.outcome, {
+          checkMinutes,
+          priceAtCheck: currentPrice,
+          hitTp1: result.hitTp1,
+          hitSl: result.hitSl,
+          rMultiple: result.rMultiple,
+          maxFavorable: result.maxFavorable,
+        }, lessonType);
 
-      await saveTradeLesson({
-        signal_id: signalId,
-        symbol: signal.symbol,
-        direction: signal.direction,
-        outcome: result.outcome,
-        lesson_type: lessonType,
-        setup_description: `${signal.direction} ${signal.symbol} @ ${signal.entry_price} — confidence ${signal.confidence}% — user: ${signal.user_action}`,
-        lesson_text: aiLesson.lesson_text,
-        embedding: aiLesson.embedding,
-        ai_model: aiLesson.ai_model,
-        win_probability: winProbability,
-        tags: [signal.symbol, signal.direction, result.outcome, lessonType, signal.user_action],
-      });
+        const lessonRow = {
+          signal_id: signalId,
+          symbol: signal.symbol,
+          direction: signal.direction,
+          outcome: result.outcome,
+          lesson_type: lessonType,
+          setup_description: `${signal.direction} ${signal.symbol} @ ${signal.entry_price} — confidence ${signal.confidence}%`,
+          lesson_text: aiLesson.lesson_text,
+          embedding: aiLesson.embedding,
+          ai_model: aiLesson.ai_model,
+          win_probability: winProbability,
+          tags: [signal.symbol, signal.direction, result.outcome, lessonType],
+        };
+        await saveTradeLesson(lessonRow);
 
-      if (signal.user_action !== 'executed') {
-        await updatePairStats(signal.symbol, result.outcome, result.rMultiple || 0);
+        const { recordLessonPattern } = await import('../services/tradeLearner.js');
+        await recordLessonPattern({
+          ...lessonRow,
+          id: signalId,
+          mtf_status: signal.mtf_status,
+        });
+
+        if (signal.user_action !== 'executed') {
+          await updatePairStats(signal.symbol, result.outcome, result.rMultiple || 0);
+        }
+
+        // Single outcome alert at 20min only — skip if user already skipped
+        if (signal.user_action !== 'skipped' && signal.status !== 'skipped') {
+          const emoji = result.outcome === 'win' ? '✅' : result.outcome === 'loss' ? '❌' : '⚪';
+          await sendAlert(
+            `${emoji} <b>Outcome — ${signal.symbol}</b>\n` +
+            `${signal.direction} → <b>${result.outcome.toUpperCase()}</b> (20min)\n` +
+            `Entry: ${signal.entry_price} → ${currentPrice}\n` +
+            `${result.hitTp1 ? '✅ Hit TP1' : result.hitSl ? '🛑 Hit SL' : '⏳ No clear hit'}`
+          );
+        }
+
+        await logEvent('info', 'outcomeTracker', `Signal ${signalId} outcome: ${result.outcome}`, {
+          symbol: signal.symbol,
+          user_action: signal.user_action,
+          winProbability,
+        });
       }
-
-      const emoji = result.outcome === 'win' ? '✅' : result.outcome === 'loss' ? '❌' : '⚪';
-      const actionLabel = signal.user_action === 'skipped' ? 'SKIPPED' : signal.user_action === 'executed' ? 'TRADED' : 'NOT ACTED';
-
-      await sendAlert(
-        `${emoji} <b>Signal Review — ${signal.symbol}</b>\n\n` +
-        `Action: ${actionLabel}\n` +
-        `Direction: ${signal.direction}\n` +
-        `Outcome (20min): <b>${result.outcome.toUpperCase()}</b>\n` +
-        `Win probability: <b>${winProbability}%</b>\n` +
-        `Entry: ${signal.entry_price} → Now: ${currentPrice}\n` +
-        `${result.hitTp1 ? '✅ Would hit TP1' : result.hitSl ? '🛑 Would hit SL' : '⏳ No clear hit'}\n\n` +
-        `<i>${aiLesson.lesson_text.slice(0, 300)}...</i>`
-      );
-
-      await logEvent('info', 'outcomeTracker', `Signal ${signalId} outcome: ${result.outcome}`, {
-        symbol: signal.symbol,
-        user_action: signal.user_action,
-        winProbability,
-      });
-    }
 
     console.log(`[OutcomeTracker] ${signal.symbol} @ ${checkMinutes}min: ${result.outcome} (${winProbability}% win prob)`);
   } catch (err) {

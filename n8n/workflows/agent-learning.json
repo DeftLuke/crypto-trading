@@ -1,0 +1,66 @@
+{
+  "name": "Agent Learning (SerpAPI)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "agent-learn",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "webhook",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "agent-learn"
+    },
+    {
+      "parameters": {
+        "url": "https://serpapi.com/search.json",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            { "name": "q", "value": "={{ $json.body.topic }} smart money trading concepts" },
+            { "name": "api_key", "value": "={{ $env.SERPAPI_KEY }}" },
+            { "name": "num", "value": "5" }
+          ]
+        },
+        "options": {}
+      },
+      "id": "serpapi",
+      "name": "SerpAPI Search",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [460, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const organic = $input.first().json.organic_results || [];\nconst results = organic.slice(0, 5).map(r => ({\n  title: r.title,\n  snippet: r.snippet,\n  url: r.link\n}));\nconst summary = results.map(r => r.snippet).join(' ').slice(0, 600);\nreturn [{ json: { topic: $('Webhook').first().json.body.topic, results, summary } }];"
+      },
+      "id": "format",
+      "name": "Format Results",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {}
+      },
+      "id": "respond",
+      "name": "Respond",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [900, 300]
+    }
+  ],
+  "connections": {
+    "Webhook": { "main": [[{ "node": "SerpAPI Search", "type": "main", "index": 0 }]] },
+    "SerpAPI Search": { "main": [[{ "node": "Format Results", "type": "main", "index": 0 }]] },
+    "Format Results": { "main": [[{ "node": "Respond", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}

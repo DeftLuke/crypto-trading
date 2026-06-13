@@ -88,6 +88,14 @@ export async function validateTradeExecution(signal) {
     checks.push({ rule: 'volatility', passed: true, message: 'Volatility OK' });
   }
 
+  const rsiDetail = signal.reasons?.rsiMandatory || signal.reasons?.rsi;
+  if (rsiDetail?.status === 'fail') {
+    passed = false;
+    checks.push({ rule: 'rsi_mandatory', passed: false, message: rsiDetail.detail || 'RSI gate failed' });
+  } else {
+    checks.push({ rule: 'rsi_mandatory', passed: true, message: rsiDetail?.detail || 'RSI OK' });
+  }
+
   const riskAmount = balance * config.strategy.riskPerTrade;
   checks.push({
     rule: 'position_size',

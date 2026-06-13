@@ -199,15 +199,22 @@ class PositionMonitor {
     await updatePairStats(trade.symbol, outcome, rMultiple);
 
     const lesson = buildTradeLesson(trade, exitPrice, pnl, outcome, reason);
-    await saveTradeLesson({
+    const lessonData = {
       trade_id: trade.id,
       symbol: trade.symbol,
       direction: trade.direction,
       outcome,
+      lesson_type: 'executed',
       setup_description: `${trade.direction} on ${trade.symbol} — entry ${entry}, SL ${trade.stop_loss}`,
       lesson_text: lesson,
       tags: [trade.symbol, trade.direction, outcome, reason],
-    });
+      pnl,
+      r_multiple: rMultiple,
+    };
+    await saveTradeLesson(lessonData);
+
+    const { learnFromTrade } = await import('../services/tradeLearner.js');
+    await learnFromTrade({ ...trade, pnl, exit_price: exitPrice, r_multiple: rMultiple }, lesson);
 
     await sendTradeUpdate(
       { ...trade, pnl, status },

@@ -1,89 +1,78 @@
 # Production Domains — deftluke.online
 
-All services are reachable on your domain without Tailscale. Tailscale is only used **inside** the Cloudflare tunnel config on Kali to reach your Windows PC.
-
 ## Public URLs
 
-| Service | URL | Runs on |
-|---------|-----|---------|
-| **Backend API** | https://api.deftluke.online | Windows PC :3001 |
-| **Dashboard** | https://trade.deftluke.online | Windows PC :5173 |
-| **AI / Ollama** | https://ai.deftluke.online | Kali :8080 (gateway → Ollama) |
-| **n8n** | https://n8n.deftluke.online | Kali :5678 |
+| Domain | Service | Where it runs |
+|--------|---------|---------------|
+| https://api.deftluke.online | Backend API (:3001) | **Kali or VPS Docker** |
+| https://trade.deftluke.online | React dashboard | **Kali or VPS Docker** |
+| https://n8n.deftluke.online | n8n workflows (:5678) | **Kali or VPS Docker** |
+| https://ai.deftluke.online | AI gateway / Ollama (:8080) | **Kali or VPS Docker** |
 
-## Health checks
+## Architecture (production — always online)
+
+**Option A — Kali server (free, no VPS):** see [KALI-24-7.md](./KALI-24-7.md)
+
+**Option B — Cloud VPS:** see [VPS-DEPLOY.md](./VPS-DEPLOY.md)
+
+```
+Internet → Cloudflare HTTPS → cloudflared on Kali (or VPS) → Docker:
+  api.deftluke.online    → http://127.0.0.1:3001
+  trade.deftluke.online  → http://127.0.0.1:5173
+  n8n.deftluke.online    → http://127.0.0.1:5678
+  ai.deftluke.online     → http://127.0.0.1:8080
+```
+
+**No Tailscale. No ngrok.** Cloudflare Tunnel is free with your custom domain.
+
+## Quick deploy
+
+**Kali (no VPS):** `bash scripts/kali-deploy.sh` — [KALI-24-7.md](./KALI-24-7.md)
+
+**VPS:** `docker compose --profile tunnel up -d --build` — [VPS-DEPLOY.md](./VPS-DEPLOY.md)
+
+Stop Windows tunnel when Kali/VPS is live (one connector per tunnel).
+
+## DNS (Cloudflare CNAME)
+
+All subdomains → tunnel `866ccee2-ad90-40a5-b04b-f88224e6e469`:
 
 ```bash
-curl https://api.deftluke.online/api/health
-curl https://ai.deftluke.online/health
-curl https://n8n.deftluke.online/healthz
+bash scripts/setup-all-dns.sh
 ```
-
-## Cloudflare tunnel (Kali only)
-
-File: `scripts/kali-cloudflared-config.yml`
-
-```yaml
-ingress:
-  - hostname: n8n.deftluke.online
-    service: http://127.0.0.1:5678
-  - hostname: ai.deftluke.online
-    service: http://127.0.0.1:8080
-  - hostname: api.deftluke.online
-    service: http://WINDOWS_TAILSCALE_IP:3001
-  - hostname: trade.deftluke.online
-    service: http://WINDOWS_TAILSCALE_IP:5173
-```
-
-Apply on Kali:
-
-```bash
-WINDOWS_TAILSCALE_IP=100.119.48.19 bash scripts/apply-kali-tunnel.sh
-sudo systemctl restart cloudflared
-```
-
-Add DNS CNAME records in Cloudflare for `api` and `trade` subdomains pointing to your tunnel (same as n8n/ai).
 
 ## Environment variables
 
-### Backend (`backend/.env`)
+Backend / `deploy/.env`:
 
 ```
 PUBLIC_API_URL=https://api.deftluke.online
-AI_GATEWAY_URL=https://ai.deftluke.online
-OLLAMA_URL=https://ai.deftluke.online
+AI_GATEWAY_URL=http://ai-gateway:8080   # internal on VPS Docker
 OLLAMA_VIA_GATEWAY=true
 ```
 
-### Frontend (`frontend/.env`)
+Frontend build args (set in `deploy/.env`):
 
 ```
 VITE_API_URL=https://api.deftluke.online
 VITE_WS_URL=wss://api.deftluke.online
 ```
 
-### n8n variables
+## Verify
 
-See `n8n/workflows/production.env.json`
-
-### AI Gateway on Kali (systemd)
-
-```
-BACKEND_URL=https://api.deftluke.online
-OLLAMA_URL=http://127.0.0.1:11434
-AI_API_KEY=your-key
+```bash
+curl https://api.deftluke.online/api/health
+curl -I https://trade.deftluke.online
+curl https://n8n.deftluke.online/healthz
+curl https://ai.deftluke.online/health
 ```
 
-## Ollama via domain
+## Legacy (do not use for production)
 
-Ollama is **not** exposed directly. All AI calls go through:
+| Old setup | Problem |
+|-----------|---------|
+| Windows PC + `start-windows-tunnel.bat` | Stops when PC loses power |
+| Kali via Tailscale `100.110.x.x` | Requires VPN + home server online |
+| `scripts/windows-cloudflared-config.yml` | Deprecated — use `deploy/` instead |
 
-- `https://ai.deftluke.online/chat` — Q&A
-- `https://ai.deftluke.online/ollama/generate` — lesson generation (X-API-Key)
-- `https://ai.deftluke.online/ollama/embeddings` — vectors (X-API-Key)
-
-## Do NOT
-
-- Run cloudflared on Windows (causes 503 conflicts)
-- Put Tailscale IPs in n8n workflows or app `.env` files
-- Expose Ollama port 11434 publicly
+Local dev only: run `backend` + `frontend` on your PC without starting the tunnel.

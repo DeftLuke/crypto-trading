@@ -38,7 +38,7 @@ export function detectMarketStructure(candles) {
   let trend = 'neutral';
 
   if (swings.highs.length < 2 || swings.lows.length < 2) {
-    return { trend, events, lastBOS: null, lastCHoCH: null };
+    return { trend, events, lastBOS: null, lastCHoCH: null, swings };
   }
 
   const recentHighs = swings.highs.slice(-3);
@@ -168,6 +168,7 @@ export function checkOBRetest(candles, orderBlocks, direction) {
 
 export function detectLiquiditySweeps(candles, swings) {
   const sweeps = [];
+  if (!swings?.highs || !swings?.lows) return sweeps;
   const recent = candles.slice(-5);
 
   for (const swingHigh of swings.highs.slice(-3)) {
@@ -199,15 +200,73 @@ export function detectLiquiditySweeps(candles, swings) {
   return sweeps;
 }
 
+/** Fair Value Gap zones */
+function detectFVG(candles) {
+  const gaps = [];
+  for (let i = 2; i < candles.length; i++) {
+    const c0 = candles[i - 2];
+    const c2 = candles[i];
+    if (c2.low > c0.high) {
+      gaps.push({ type: 'bullish_fvg', high: c2.low, low: c0.high, time: candles[i - 1].time, label: 'FVG' });
+    }
+    if (c2.high < c0.low) {
+      gaps.push({ type: 'bearish_fvg', high: c0.low, low: c2.high, time: candles[i - 1].time, label: 'FVG' });
+    }
+  }
+  return gaps.slice(-8);
+}
+
+/** Active OB zones where price is retesting now. */
+function findRetestZones(candles, orderBlocks) {
+  const last = candles[candles.length - 1];
+  if (!last) return [];
+  return orderBlocks
+    .filter((ob) => !ob.mitigated)
+    .filter((ob) => last.low <= ob.high && last.high >= ob.low)
+    .map((ob) => ({
+      type: ob.type === 'demand' ? 'ob_retest_demand' : 'ob_retest_supply',
+      high: ob.high,
+      low: ob.low,
+      time: ob.time,
+      label: ob.type === 'demand' ? 'OB Retest (Demand)' : 'OB Retest (Supply)',
+    }));
+}
+
+/** Inducement (IDM) — minor swing before the active OB. */
+function findIDMZones(candles, swings, orderBlocks) {
+  const zones = [];
+  for (const ob of orderBlocks.filter((b) => !b.mitigated).slice(-3)) {
+    const pool = ob.type === 'demand' ? swings.lows : swings.highs;
+    const before = pool.filter((s) => s.index < ob.index).slice(-2);
+    if (before.length >= 1) {
+      const pt = before[before.length - 1];
+      zones.push({
+        type: 'idm',
+        price: pt.price,
+        time: pt.time,
+        side: ob.type,
+        label: 'IDM / Liquidity',
+      });
+    }
+  }
+  return zones;
+}
+
 export function analyzeSMC(candles) {
   const structure = detectMarketStructure(candles);
   const orderBlocks = detectOrderBlocks(candles);
   const sweeps = detectLiquiditySweeps(candles, structure.swings);
+  const retestZones = findRetestZones(candles, orderBlocks);
+  const idmZones = findIDMZones(candles, structure.swings, orderBlocks);
+  const fvgZones = detectFVG(candles);
 
   return {
     ...structure,
     orderBlocks,
     sweeps,
+    retestZones,
+    idmZones,
+    fvgZones,
     activeDemandOB: orderBlocks.filter((b) => b.type === 'demand'),
     activeSupplyOB: orderBlocks.filter((b) => b.type === 'supply'),
   };

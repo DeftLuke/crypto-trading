@@ -52,6 +52,16 @@ export const config = {
     executeWebhook: process.env.N8N_EXECUTE_WEBHOOK_URL || 'https://n8n.deftluke.online/webhook/trade-execute',
     aiWebhook: process.env.N8N_AI_WEBHOOK_URL || 'https://n8n.deftluke.online/webhook/ai-assistant',
     baseUrl: process.env.N8N_BASE_URL || 'https://n8n.deftluke.online',
+    apiKey: process.env.N8N_API_KEY || '',
+  },
+
+  search: {
+    serperApiKey: process.env.SERPER_API_KEY || '',
+    serpApiKey: process.env.SERPAPI_KEY || '',
+  },
+
+  coingecko: {
+    apiKey: process.env.COINGECKO_API_KEY || '',
   },
 
   strategy: {

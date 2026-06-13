@@ -139,7 +139,7 @@ a{color:#58a6ff}</style></head>
 
 app.post('/chat', auth, async (req, res) => {
   try {
-    const { question, context } = req.body;
+    const { question, context, systemPrompt: customPrompt } = req.body;
     if (!question) return res.status(400).json({ error: 'question required' });
 
     let ctx = context;
@@ -151,7 +151,8 @@ app.post('/chat', auth, async (req, res) => {
     }
 
     const prompt = `CONTEXT:\n${JSON.stringify(ctx || {}, null, 2)}\n\nQUESTION: ${question}`;
-    const { answer, model } = await ollamaChat(prompt, systemPrompt);
+    const sys = customPrompt || systemPrompt;
+    const { answer, model } = await ollamaChat(prompt, sys);
     res.json({ answer, model, source: 'ai-gateway' });
   } catch (err) {
     res.status(500).json({ error: err.message });

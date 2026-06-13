@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import ws from 'ws';
 import { config } from '../config/index.js';
 
 let supabase = null;
@@ -11,6 +12,8 @@ export function getSupabase() {
     }
     supabase = createClient(config.supabase.url, config.supabase.serviceKey, {
       auth: { persistSession: false, autoRefreshToken: false },
+      global: { fetch },
+      realtime: { transport: ws },
     });
     console.log('[Supabase] Connected to', config.supabase.url);
   }

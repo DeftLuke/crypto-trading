@@ -30,12 +30,62 @@ async function binanceRequest(method, endpoint, params = {}, signed = false) {
   return data;
 }
 
-export async function getKlines(symbol, interval, limit = 500) {
-  return binanceRequest('GET', '/fapi/v1/klines', { symbol, interval, limit });
+export async function getKlines(symbol, interval, limit = 500, startTime = null) {
+  const params = { symbol, interval, limit };
+  if (startTime) params.startTime = startTime.toString();
+  return binanceRequest('GET', '/fapi/v1/klines', params);
+}
+
+let cachedSymbols = null;
+let symbolsCacheTime = 0;
+
+export async function getAllFuturesSymbols(minVolume = 1000000) {
+  if (cachedSymbols && Date.now() - symbolsCacheTime < 3600000) {
+    return cachedSymbols;
+  }
+
+  const info = await getExchangeInfo();
+  const tickers = await binanceRequest('GET', '/fapi/v1/ticker/24hr');
+
+  const volumeMap = {};
+  for (const t of tickers) {
+    volumeMap[t.symbol] = parseFloat(t.quoteVolume || 0);
+  }
+
+  const symbols = info.symbols
+    .filter((s) =>
+      s.status === 'TRADING' &&
+      s.contractType === 'PERPETUAL' &&
+      s.quoteAsset === 'USDT' &&
+      !s.symbol.includes('_') &&
+      volumeMap[s.symbol] >= minVolume
+    )
+    .map((s) => s.symbol)
+    .sort((a, b) => (volumeMap[b] || 0) - (volumeMap[a] || 0));
+
+  cachedSymbols = symbols;
+  symbolsCacheTime = Date.now();
+  return symbols;
 }
 
 export async function get24hrTicker(symbol) {
-  return binanceRequest('GET', '/fapi/v1/ticker/24hr', { symbol });
+  try {
+    return await binanceRequest('GET', '/fapi/v1/ticker/24hr', { symbol });
+  } catch (err) {
+    const { binanceWs } = await import('./binanceWs.js');
+    const price = binanceWs.getPrice(symbol);
+    if (price) {
+      return {
+        symbol,
+        lastPrice: String(price),
+        priceChangePercent: '0',
+        highPrice: String(price),
+        lowPrice: String(price),
+        quoteVolume: '0',
+      };
+    }
+    throw err;
+  }
 }
 
 export async function getAccountBalance() {

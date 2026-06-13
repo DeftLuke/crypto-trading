@@ -11,22 +11,24 @@ Professional SMC-based crypto futures trading platform with React dashboard, Nod
 | AI Agent | https://ai.deftluke.online |
 | n8n | https://n8n.deftluke.online |
 
-## Architecture
+## Architecture (production — always online)
 
 ```
-Scanner (Backend) → Supabase + Telegram
+Internet → Cloudflare → VPS Docker (24/7):
+  backend + scanner + Telegram bot
+  frontend dashboard
+  n8n workflows
+  Ollama + AI gateway
        ↓
-User [BUY NOW] → n8n → Backend → Binance
-       ↓
-15/20min outcome check → Ollama lessons → Dashboard
+Supabase (cloud) + Binance API + Telegram
 ```
 
-- **Backend** (Windows): strategy, Binance, Telegram, risk manager
-- **Frontend** (Windows): Lightweight Charts, signals, lessons panels
-- **Kali server**: Ollama, AI gateway, n8n, Cloudflare tunnel
-- **Supabase**: signals, trades, lessons, outcomes
+**No Tailscale. No Windows PC required.** Deploy on your **Kali server** (free) or a cloud VPS.
 
-## Quick start
+👉 **[docs/KALI-24-7.md](docs/KALI-24-7.md)** — run 24/7 on Kali + Cloudflare (no VPS, no ngrok)  
+👉 **[docs/VPS-DEPLOY.md](docs/VPS-DEPLOY.md)** — optional cloud datacenter hosting
+
+## Quick start (local dev only)
 
 ### 1. Clone and install
 
@@ -46,8 +48,9 @@ Run SQL migrations in Supabase SQL Editor:
 
 - `supabase/migrations/001_initial_schema.sql`
 - `supabase/migrations/002_signal_outcomes.sql`
+- `supabase/migrations/003_agent_assistant.sql`
 
-### 3. Run locally (development)
+### 3. Run locally
 
 ```bash
 # Terminal 1
@@ -57,44 +60,48 @@ cd backend && npm run dev
 cd frontend && npm run dev
 ```
 
-### 4. Production domains
+### 4. Production (Kali 24/7 — recommended, no VPS)
 
-See [docs/DOMAINS.md](docs/DOMAINS.md) and [docs/CLOUDFLARE-TUNNEL-FIX.md](docs/CLOUDFLARE-TUNNEL-FIX.md).
-
-On Kali, apply tunnel routes:
+On your Kali server:
 
 ```bash
-WINDOWS_TAILSCALE_IP=your-windows-ip bash scripts/apply-kali-tunnel.sh
+git clone https://github.com/DeftLuke/crypto-trading.git ~/crypto-trading
+cd ~/crypto-trading
+bash scripts/kali-deploy.sh
 ```
 
-Run frontend with host binding for tunnel:
+Uses **Cloudflare Tunnel** (free stable URLs — not ngrok). Stop Windows tunnel when Kali is live.
+
+See [docs/KALI-24-7.md](docs/KALI-24-7.md).
+
+### 4b. Production (cloud VPS — optional)
 
 ```bash
-cd frontend && npm run dev -- --host 0.0.0.0
+cd deploy && cp .env.example .env
+docker compose --profile tunnel up -d --build
 ```
+
+See [docs/VPS-DEPLOY.md](docs/VPS-DEPLOY.md).
 
 ### 5. n8n workflows
 
-Import from `n8n/workflows/` into https://n8n.deftluke.online
+```bash
+node scripts/import-n8n-workflows.js
+```
 
-Set variables from `n8n/workflows/production.env.json`:
-
-- `BACKEND_URL` = `https://api.deftluke.online`
-- `AI_GATEWAY_URL` = `https://ai.deftluke.online`
-- `AI_API_KEY`, `TELEGRAM_CHAT_ID`
-
-Activate all workflows.
+Set variables from `n8n/workflows/production.env.json` in n8n UI.
 
 ## Project structure
 
 ```
-├── backend/           Express API + strategy engine
+├── backend/           Express API + strategy engine + Telegram bot
 ├── frontend/          React dashboard (Vite)
-├── ai-agent/          Ollama gateway for Kali
+├── deploy/            Production Docker stack (VPS 24/7)
+├── ai-agent/          Ollama gateway
 ├── n8n/workflows/     Importable automation JSON
 ├── supabase/          SQL migrations
-├── scripts/           Cloudflare tunnel configs
-└── docs/              Setup guides
+├── scripts/           VPS setup + workflow import
+└── docs/              Setup guides (start with VPS-DEPLOY.md)
 ```
 
 ## Strategy

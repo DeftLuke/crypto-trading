@@ -100,7 +100,7 @@ USER QUESTION: ${question}
 
 Answer using ONLY the data above. Include win/loss/skip lessons when relevant.`;
 
-  // Try AI gateway first (subdomain or Tailscale), then direct Ollama
+  // Try AI gateway first (public domain or internal Docker URL), then direct Ollama
   const gatewayUrl = config.ai?.gatewayUrl;
 
   if (gatewayUrl && !options.forceOllama) {
@@ -118,6 +118,7 @@ Answer using ONLY the data above. Include win/loss/skip lessons when relevant.`;
         const data = await res.json();
         return { answer: data.answer, model: data.model, source: 'gateway' };
       }
+      console.warn(`[AI Agent] Gateway HTTP ${res.status}, falling back to Ollama`);
     } catch (err) {
       console.warn('[AI Agent] Gateway unavailable, using direct Ollama:', err.message);
     }

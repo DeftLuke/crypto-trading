@@ -1,0 +1,19 @@
+# DEPRECATED — do not use for production (stops when Windows loses power)
+# Production: deploy to VPS — see docs/VPS-DEPLOY.md
+#
+# Legacy config — Windows tunnel routing n8n/ai via Tailscale to Kali
+# Copy credentials to: C:\Users\<you>\.cloudflared\866ccee2-ad90-40a5-b04b-f88224e6e469.json
+
+tunnel: 866ccee2-ad90-40a5-b04b-f88224e6e469
+credentials-file: C:\Users\DEFTSHAMIM\.cloudflared\866ccee2-ad90-40a5-b04b-f88224e6e469.json
+
+ingress:
+  - hostname: api.deftluke.online
+    service: http://127.0.0.1:3001
+  - hostname: trade.deftluke.online
+    service: http://127.0.0.1:5173
+  - hostname: n8n.deftluke.online
+    service: http://100.110.210.103:5678
+  - hostname: ai.deftluke.online
+    service: http://100.110.210.103:8080
+  - service: http_status:404
