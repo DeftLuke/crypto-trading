@@ -157,6 +157,9 @@ services:
     restart: always
     ports:
       - "127.0.0.1:8081:8080"
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
     volumes:
       - ../freqtrade/user_data:/freqtrade/user_data
     env_file: .env

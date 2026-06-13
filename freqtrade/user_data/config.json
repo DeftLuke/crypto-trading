@@ -36,10 +36,20 @@
     "key": "",
     "secret": "",
     "ccxt_config": {
-      "enableRateLimit": true
+      "enableRateLimit": true,
+      "timeout": 60000,
+      "options": {
+        "defaultType": "swap",
+        "sandbox": true
+      }
     },
     "ccxt_async_config": {
-      "enableRateLimit": true
+      "enableRateLimit": true,
+      "timeout": 60000,
+      "options": {
+        "defaultType": "swap",
+        "sandbox": true
+      }
     },
     "pair_whitelist": [
       "BTC/USDT:USDT",
