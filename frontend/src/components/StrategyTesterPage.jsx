@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import BacktestChart from './BacktestChart';
 import BacktestEquityChart from './BacktestEquityChart';
+import BacktestProgressBar from './BacktestProgressBar';
 import {
   fetchStrategies,
   runBacktest,
@@ -19,7 +20,17 @@ const PERIODS = [
 
 const TIMEFRAMES = ['3m', '5m', '15m', '30m', '1h'];
 
-function PairSearch({ pairs, value, onChange }) {
+const DEFAULT_STRATEGIES = [
+  {
+    id: 'smc-mtf',
+    name: 'SMC Multi-Timeframe',
+    description:
+      'Smart Money Concepts with mandatory RSI. BUY when RSI < 30, SHORT when RSI > 70. MTF: 1H → 30M → 15M OB → entry TF.',
+    timeframes: ['1h', '30m', '15m', '5m', '3m'],
+  },
+];
+
+function PairSearch({ pairs, value, onChange, disabled }) {
   const [query, setQuery] = useState('');
   const [open, setOpen] = useState(false);
 
@@ -38,17 +49,19 @@ function PairSearch({ pairs, value, onChange }) {
         className="pair-search-input"
         value={open ? query : display}
         placeholder="Search pair…"
+        disabled={disabled}
         onChange={(e) => {
           setQuery(e.target.value.toUpperCase());
           setOpen(true);
         }}
         onFocus={() => {
+          if (disabled) return;
           setQuery('');
           setOpen(true);
         }}
         onBlur={() => setTimeout(() => setOpen(false), 200)}
       />
-      {open && filtered.length > 0 && (
+      {open && !disabled && filtered.length > 0 && (
         <ul className="pair-search-dropdown">
           {filtered.map((p) => (
             <li
@@ -70,13 +83,14 @@ function PairSearch({ pairs, value, onChange }) {
 }
 
 export default function StrategyTesterPage() {
-  const [strategies, setStrategies] = useState([]);
+  const [strategies, setStrategies] = useState(DEFAULT_STRATEGIES);
   const [pairs, setPairs] = useState([]);
   const [strategyId, setStrategyId] = useState('smc-mtf');
   const [symbol, setSymbol] = useState('BTCUSDT');
   const [timeframe, setTimeframe] = useState('15m');
   const [period, setPeriod] = useState('3m');
   const [running, setRunning] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [result, setResult] = useState(null);
   const [history, setHistory] = useState([]);
   const [error, setError] = useState('');
@@ -85,8 +99,24 @@ export default function StrategyTesterPage() {
   const abortRef = useRef(0);
   const autoRunRef = useRef(false);
 
+  const strategyOptions = useMemo(() => {
+    if (!strategies?.length) return DEFAULT_STRATEGIES;
+    const ids = new Set(strategies.map((s) => s.id));
+    const merged = [...strategies];
+    for (const d of DEFAULT_STRATEGIES) {
+      if (!ids.has(d.id)) merged.push(d);
+    }
+    return merged;
+  }, [strategies]);
+
+  const selectedStrategy = strategyOptions.find((s) => s.id === strategyId) || strategyOptions[0];
+
   useEffect(() => {
-    fetchStrategies().then(setStrategies).catch(() => {});
+    fetchStrategies()
+      .then((list) => {
+        if (Array.isArray(list) && list.length > 0) setStrategies(list);
+      })
+      .catch(() => {});
     fetchAllPairs().then((p) => {
       if (Array.isArray(p)) setPairs(p);
     }).catch(() => {});
@@ -101,7 +131,9 @@ export default function StrategyTesterPage() {
   const executeBacktest = useCallback(async (sym, strat, tf, per) => {
     const runId = ++abortRef.current;
     setRunning(true);
+    setProgress(0);
     setError('');
+    setResult(null);
 
     try {
       const res = await runBacktest({
@@ -112,6 +144,7 @@ export default function StrategyTesterPage() {
       });
 
       if (runId !== abortRef.current) return;
+      setProgress(100);
       setResult(res);
       const hist = await fetchBacktestHistory();
       if (runId === abortRef.current) setHistory(hist);
@@ -126,12 +159,14 @@ export default function StrategyTesterPage() {
       }
     }
 
-    if (runId === abortRef.current) setRunning(false);
+    if (runId === abortRef.current) {
+      setRunning(false);
+      setTimeout(() => setProgress(0), 600);
+    }
   }, []);
 
   useEffect(() => {
     if (!autoRunRef.current) return;
-    // Only auto-run short backtests — 1Y can take 30–90s and must be started manually
     const shortPeriods = ['1w', '1m', '3m'];
     if (!shortPeriods.includes(period)) return;
 
@@ -143,7 +178,7 @@ export default function StrategyTesterPage() {
 
   const handleRun = () => executeBacktest(symbol, strategyId, timeframe, period);
 
-  const selectedStrategy = strategies.find((s) => s.id === strategyId);
+  const controlsDisabled = running;
 
   const formatMoney = (v) => {
     if (v == null) return '—';
@@ -153,64 +188,90 @@ export default function StrategyTesterPage() {
   return (
     <div className="strategy-tester-page tv-tester">
       <header className="tester-toolbar">
-        <div className="toolbar-group">
-          <PairSearch pairs={pairs} value={symbol} onChange={setSymbol} />
-        </div>
+        <div className="toolbar-row">
+          <div className="toolbar-field">
+            <span className="toolbar-label">Pair</span>
+            <PairSearch
+              pairs={pairs}
+              value={symbol}
+              onChange={setSymbol}
+              disabled={controlsDisabled}
+            />
+          </div>
 
-        <div className="toolbar-group">
-          <select className="toolbar-select" value={strategyId} onChange={(e) => setStrategyId(e.target.value)}>
-            {strategies.map((s) => (
-              <option key={s.id} value={s.id}>{s.name}</option>
-            ))}
-            {strategies.length === 0 && <option value="smc-mtf">SMC Multi-Timeframe</option>}
-          </select>
-        </div>
-
-        <div className="toolbar-group tf-pills">
-          {TIMEFRAMES.map((tf) => (
-            <button
-              key={tf}
-              type="button"
-              className={`tf-pill ${timeframe === tf ? 'active' : ''}`}
-              onClick={() => setTimeframe(tf)}
+          <div className="toolbar-field toolbar-field-strategy">
+            <span className="toolbar-label">Strategy</span>
+            <select
+              className="toolbar-select strategy-select"
+              value={strategyId}
+              disabled={controlsDisabled}
+              onChange={(e) => setStrategyId(e.target.value)}
             >
-              {tf}
-            </button>
-          ))}
+              {strategyOptions.map((s) => (
+                <option key={s.id} value={s.id}>{s.name}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="toolbar-field">
+            <span className="toolbar-label">Entry TF</span>
+            <div className="toolbar-group tf-pills">
+              {TIMEFRAMES.map((tf) => (
+                <button
+                  key={tf}
+                  type="button"
+                  className={`tf-pill ${timeframe === tf ? 'active' : ''}`}
+                  disabled={controlsDisabled}
+                  onClick={() => setTimeframe(tf)}
+                >
+                  {tf}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="toolbar-field">
+            <span className="toolbar-label">Period</span>
+            <div className="toolbar-group period-pills">
+              {PERIODS.map((p) => (
+                <button
+                  key={p.id}
+                  type="button"
+                  className={`period-pill ${period === p.id ? 'active' : ''}`}
+                  disabled={controlsDisabled}
+                  onClick={() => setPeriod(p.id)}
+                >
+                  {p.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <button
+            type="button"
+            className="primary-btn toolbar-run"
+            onClick={handleRun}
+            disabled={running}
+          >
+            {running ? `Running ${progress}%` : 'Run backtest'}
+          </button>
         </div>
 
-        <div className="toolbar-group period-pills">
-          {PERIODS.map((p) => (
-            <button
-              key={p.id}
-              type="button"
-              className={`period-pill ${period === p.id ? 'active' : ''}`}
-              onClick={() => setPeriod(p.id)}
-            >
-              {p.label}
-            </button>
-          ))}
-        </div>
-
-        <button
-          type="button"
-          className="primary-btn toolbar-run"
-          onClick={handleRun}
-          disabled={running}
-        >
-          {running ? 'Running…' : 'Run'}
-        </button>
+        {selectedStrategy?.description && (
+          <p className="toolbar-strategy-desc">{selectedStrategy.description}</p>
+        )}
       </header>
 
-      {estimate && (
-        <div className="tester-estimate">
-          ~{estimate.estimatedBars?.toLocaleString()} bars
-          {estimate.estimatedSeconds > 30 && ` · est. ${estimate.estimatedSeconds}s`}
-        </div>
-      )}
-      {period === '1y' && (
+      <BacktestProgressBar
+        running={running}
+        estimate={estimate}
+        progress={progress}
+        onProgress={setProgress}
+      />
+
+      {!running && period === '1y' && (
         <div className="tester-estimate tester-hint">
-          1Y may take 30–90s. Click Run and wait — switching pair during run can fail.
+          1Y backtests take 30–90 seconds. Click <strong>Run backtest</strong> — progress bar will show status.
         </div>
       )}
 
@@ -248,8 +309,20 @@ export default function StrategyTesterPage() {
 
           {activeTab === 'overview' && (
             <div className="results-overview">
-              {!result && !running && <p className="muted">Select pair and period to backtest.</p>}
-              {running && !result && <p className="muted">Analyzing historical data…</p>}
+              {!result && !running && (
+                <p className="muted">
+                  Choose <strong>Pair</strong>, <strong>Strategy</strong>, timeframe and period, then Run.
+                </p>
+              )}
+              {running && !result && (
+                <div className="overview-running">
+                  <p className="muted">Backtest in progress…</p>
+                  <div className="mini-progress-track">
+                    <div className="mini-progress-fill" style={{ width: `${progress}%` }} />
+                  </div>
+                  <p className="muted">{progress}% — {selectedStrategy?.name}</p>
+                </div>
+              )}
 
               {result && (
                 <>
@@ -263,6 +336,7 @@ export default function StrategyTesterPage() {
                   </div>
 
                   <dl className="metrics-list">
+                    <div className="metric-row"><dt>Strategy</dt><dd>{selectedStrategy?.name}</dd></div>
                     <div className="metric-row"><dt>Total trades</dt><dd>{result.totalTrades}</dd></div>
                     <div className="metric-row"><dt>Win rate</dt><dd>{result.winRate?.toFixed(1)}%</dd></div>
                     <div className="metric-row"><dt>Profit factor</dt><dd>{result.profitFactor?.toFixed(2)}</dd></div>
@@ -275,12 +349,10 @@ export default function StrategyTesterPage() {
                     <div className="metric-row"><dt>Max consec. losses</dt><dd>{result.maxConsecutiveLosses}</dd></div>
                     <div className="metric-row"><dt>Avg R multiple</dt><dd>{result.avgRMultiple?.toFixed(2)}</dd></div>
                     <div className="metric-row"><dt>Bars analyzed</dt><dd>{result.barsAnalyzed?.toLocaleString()}</dd></div>
-                    <div className="metric-row"><dt>Duration</dt><dd>{(result.durationMs / 1000).toFixed(1)}s</dd></div>
+                    {result.durationMs != null && (
+                      <div className="metric-row"><dt>Duration</dt><dd>{(result.durationMs / 1000).toFixed(1)}s</dd></div>
+                    )}
                   </dl>
-
-                  {selectedStrategy && (
-                    <p className="form-hint" style={{ marginTop: 12 }}>{selectedStrategy.description}</p>
-                  )}
                 </>
               )}
             </div>
@@ -320,11 +392,12 @@ export default function StrategyTesterPage() {
                   className="history-row"
                   onClick={() => {
                     setSymbol(h.symbol);
-                    setStrategyId(h.strategy_id);
+                    setStrategyId(h.strategy_id || 'smc-mtf');
                     setTimeframe(h.timeframe || '15m');
                   }}
                 >
                   <span>{h.symbol?.replace('USDT', '')}</span>
+                  <span>{h.strategy_id}</span>
                   <span>{h.timeframe}</span>
                   <span>{h.total_trades} trades</span>
                   <span className={parseFloat(h.total_pnl) >= 0 ? 'green-text' : 'red-text'}>
