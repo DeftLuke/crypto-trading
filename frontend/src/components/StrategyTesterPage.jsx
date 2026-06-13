@@ -75,7 +75,7 @@ export default function StrategyTesterPage() {
   const [strategyId, setStrategyId] = useState('smc-mtf');
   const [symbol, setSymbol] = useState('BTCUSDT');
   const [timeframe, setTimeframe] = useState('15m');
-  const [period, setPeriod] = useState('1y');
+  const [period, setPeriod] = useState('3m');
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState(null);
   const [history, setHistory] = useState([]);
@@ -116,7 +116,14 @@ export default function StrategyTesterPage() {
       const hist = await fetchBacktestHistory();
       if (runId === abortRef.current) setHistory(hist);
     } catch (err) {
-      if (runId === abortRef.current) setError(err.message || 'Backtest failed');
+      if (runId === abortRef.current) {
+        const msg = err.message || 'Backtest failed';
+        setError(
+          msg === 'Failed to fetch'
+            ? 'Server timed out or restarted during backtest. Try 3M period or click Run again.'
+            : msg
+        );
+      }
     }
 
     if (runId === abortRef.current) setRunning(false);
@@ -124,6 +131,10 @@ export default function StrategyTesterPage() {
 
   useEffect(() => {
     if (!autoRunRef.current) return;
+    // Only auto-run short backtests — 1Y can take 30–90s and must be started manually
+    const shortPeriods = ['1w', '1m', '3m'];
+    if (!shortPeriods.includes(period)) return;
+
     const timer = setTimeout(() => {
       executeBacktest(symbol, strategyId, timeframe, period);
     }, 400);
@@ -195,6 +206,11 @@ export default function StrategyTesterPage() {
         <div className="tester-estimate">
           ~{estimate.estimatedBars?.toLocaleString()} bars
           {estimate.estimatedSeconds > 30 && ` · est. ${estimate.estimatedSeconds}s`}
+        </div>
+      )}
+      {period === '1y' && (
+        <div className="tester-estimate tester-hint">
+          1Y may take 30–90s. Click Run and wait — switching pair during run can fail.
         </div>
       )}
 

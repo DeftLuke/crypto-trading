@@ -102,14 +102,27 @@ export async function stopScanner() {
 }
 
 export async function runBacktest(params) {
-  const res = await fetch(`${API_URL}/api/backtest`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(params),
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || 'Backtest failed');
-  return data;
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 180000);
+
+  try {
+    const res = await fetch(`${API_URL}/api/backtest`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(params),
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Backtest failed');
+    return data;
+  } catch (err) {
+    clearTimeout(timeout);
+    if (err.name === 'AbortError') {
+      throw new Error('Backtest timed out after 3 minutes. Try 3M or 6M period.');
+    }
+    throw err;
+  }
 }
 
 export async function fetchBacktestHistory(limit = 30) {

@@ -5,8 +5,7 @@ import { calculateLevels } from '../../strategy/signalEngine.js';
 import {
   fetchHistoricalCandles,
   resolveDateRange,
-  findBarIndexAtOrBefore,
-  intervalToMs,
+  findBarIndexInTimes,
   getWarmupMs,
   getSignalCheckStep,
   computeBacktestStats,
@@ -16,8 +15,9 @@ import {
   PERIOD_PRESETS,
 } from '../backtestEngine.js';
 
-const ANALYSIS_WINDOW = 400;
+const ANALYSIS_WINDOW = 300;
 const MIN_BARS = 120;
+const MAX_BARS_SOFT = 45000;
 
 function analyzeWindow(candles, index) {
   const start = Math.max(0, index - ANALYSIS_WINDOW + 1);
@@ -40,21 +40,34 @@ function analyzeWindow(candles, index) {
   };
 }
 
-function precomputeTimeline(candles) {
+/** Store only fields needed for MTF checks — avoids memory crash on 1Y runs */
+function precomputeSlimTimeline(candles) {
   const timeline = new Array(candles.length);
   for (let i = MIN_BARS; i < candles.length; i++) {
-    timeline[i] = analyzeWindow(candles, i);
+    const a = analyzeWindow(candles, i);
+    if (!a) continue;
+    timeline[i] = {
+      emaTrend: a.emaTrend,
+      rsi: a.rsi,
+      smc: {
+        trend: a.smc.trend,
+        lastCHoCH: a.smc.lastCHoCH,
+        activeDemandOB: a.smc.activeDemandOB,
+        activeSupplyOB: a.smc.activeSupplyOB,
+      },
+      time: a.time,
+    };
   }
   return timeline;
 }
 
-function getCachedAt(timeline, candles, time) {
-  const idx = findBarIndexAtOrBefore(candles, time);
+function getCachedAt(timeline, times, time) {
+  const idx = findBarIndexInTimes(times, time);
   if (idx < MIN_BARS) return null;
   return timeline[idx];
 }
 
-function runSimulation(symbol, entryCandles, tf15m, tf30m, tf1h, timeline15, timeline30, timeline1h, entryInterval, period, startTime) {
+function runSimulation(symbol, entryCandles, times15, times30, times1h, timeline15, timeline30, timeline1h, entryInterval, period, startTime) {
   const trades = [];
   let inTrade = null;
   const step = getSignalCheckStep(entryInterval, period);
@@ -91,8 +104,6 @@ function runSimulation(symbol, entryCandles, tf15m, tf30m, tf1h, timeline15, tim
           exitTime: bar.time,
         });
         inTrade = null;
-        i++;
-        continue;
       }
       i++;
       continue;
@@ -114,9 +125,9 @@ function runSimulation(symbol, entryCandles, tf15m, tf30m, tf1h, timeline15, tim
       continue;
     }
 
-    const a1h = getCachedAt(timeline1h, tf1h, bar.time);
-    const a30 = getCachedAt(timeline30, tf30m, bar.time);
-    const a15 = getCachedAt(timeline15, tf15m, bar.time);
+    const a1h = getCachedAt(timeline1h, times1h, bar.time);
+    const a30 = getCachedAt(timeline30, times30, bar.time);
+    const a15 = getCachedAt(timeline15, times15, bar.time);
     if (!a1h || !a30 || !a15) {
       i++;
       continue;
@@ -216,27 +227,36 @@ export async function runBacktest(options) {
   const fetchStart = startTime - warmup;
   const estimatedBars = estimateBarCount(entryTimeframe, startTime, endTime);
 
-  const [entryCandles, tf15m, tf1h, tf30m] = await Promise.all([
-    fetchHistoricalCandles(symbol, entryTimeframe, fetchStart, endTime),
-    fetchHistoricalCandles(symbol, '15m', fetchStart, endTime),
-    fetchHistoricalCandles(symbol, '1h', fetchStart - 86400000 * 30, endTime),
-    fetchHistoricalCandles(symbol, '30m', fetchStart, endTime),
-  ]);
+  if (estimatedBars > MAX_BARS_SOFT) {
+    throw new Error(
+      `Too many bars (~${estimatedBars}). Use 15m+ timeframe or a shorter period (6M / 3M).`
+    );
+  }
+
+  // Sequential fetch — lower peak memory than Promise.all
+  const entryCandles = await fetchHistoricalCandles(symbol, entryTimeframe, fetchStart, endTime);
+  const tf15m = await fetchHistoricalCandles(symbol, '15m', fetchStart, endTime);
+  const tf30m = await fetchHistoricalCandles(symbol, '30m', fetchStart, endTime);
+  const tf1h = await fetchHistoricalCandles(symbol, '1h', fetchStart - 86400000 * 30, endTime);
 
   if (entryCandles.length < MIN_BARS + 10) {
     throw new Error(`Insufficient data for ${symbol} (${entryCandles.length} bars)`);
   }
 
-  const timeline15 = precomputeTimeline(tf15m);
-  const timeline30 = precomputeTimeline(tf30m);
-  const timeline1h = precomputeTimeline(tf1h);
+  const times15 = tf15m.map((c) => c.time);
+  const times30 = tf30m.map((c) => c.time);
+  const times1h = tf1h.map((c) => c.time);
+
+  const timeline15 = precomputeSlimTimeline(tf15m);
+  const timeline30 = precomputeSlimTimeline(tf30m);
+  const timeline1h = precomputeSlimTimeline(tf1h);
 
   const rawTrades = runSimulation(
     symbol,
     entryCandles,
-    tf15m,
-    tf30m,
-    tf1h,
+    times15,
+    times30,
+    times1h,
     timeline15,
     timeline30,
     timeline1h,
@@ -250,7 +270,7 @@ export async function runBacktest(options) {
   const periodCandles = entryCandles.filter(
     (c) => c.time * 1000 >= startTime && c.time * 1000 <= endTime
   );
-  const chartCandles = downsampleCandles(periodCandles, 2000);
+  const chartCandles = downsampleCandles(periodCandles, 1500);
 
   return {
     symbol,

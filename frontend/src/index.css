@@ -854,6 +854,9 @@ body {
   color: var(--text-secondary);
   background: var(--bg-primary);
 }
+.tester-hint {
+  color: var(--yellow);
+}
 .tester-error {
   padding: 8px 16px;
   color: var(--red);

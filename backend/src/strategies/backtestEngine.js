@@ -71,14 +71,14 @@ export async function fetchHistoricalCandles(symbol, interval, startTime, endTim
   return [...unique.values()].sort((a, b) => a.time - b.time);
 }
 
-export function findBarIndexAtOrBefore(candles, time) {
-  if (!candles?.length) return -1;
+export function findBarIndexInTimes(times, time) {
+  if (!times?.length) return -1;
   let lo = 0;
-  let hi = candles.length - 1;
+  let hi = times.length - 1;
   let result = -1;
   while (lo <= hi) {
     const mid = Math.floor((lo + hi) / 2);
-    if (candles[mid].time <= time) {
+    if (times[mid] <= time) {
       result = mid;
       lo = mid + 1;
     } else {
