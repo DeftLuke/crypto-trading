@@ -99,8 +99,8 @@ export async function downloadTelegramImageBase64(telegram, msg) {
   }
   if (!fileId) return null;
 
-  const link = await telegram.getFileLink(fileId);
-  const res = await fetch(link.href, { signal: AbortSignal.timeout(30000) });
+  const fileUrl = await telegram.getFileLink(fileId);
+  const res = await fetch(String(fileUrl), { signal: AbortSignal.timeout(30000) });
   if (!res.ok) throw new Error('Failed to download image from Telegram');
   const buf = Buffer.from(await res.arrayBuffer());
   if (buf.length > MAX_IMAGE_BYTES) {
