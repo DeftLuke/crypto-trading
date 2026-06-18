@@ -7,9 +7,11 @@ credentials-file: /home/kali/.cloudflared/866ccee2-ad90-40a5-b04b-f88224e6e469.j
 
 ingress:
   - hostname: api.deftluke.online
-    service: http://127.0.0.1:3001
+    service: http://127.0.0.1:3002
   - hostname: trade.deftluke.online
     service: http://127.0.0.1:5173
+  - hostname: terminal.deftluke.online
+    service: http://127.0.0.1:3000
   - hostname: n8n.deftluke.online
     service: http://127.0.0.1:5678
   - hostname: ai.deftluke.online

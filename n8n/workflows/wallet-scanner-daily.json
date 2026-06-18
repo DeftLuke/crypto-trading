@@ -1,0 +1,67 @@
+{
+  "name": "Wallet Scanner Daily",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "hours", "hoursInterval": 24, "triggerAtHour": 6 }]
+        }
+      },
+      "id": "cron-daily",
+      "name": "Daily 6AM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.PUBLIC_API_URL || 'https://api.deftluke.online' }}/api/webhook/n8n/wallet-scanner",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"action\": \"daily\" }",
+        "options": {}
+      },
+      "id": "daily-maintenance",
+      "name": "Daily Maintenance",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "minutes", "minutesInterval": 15 }]
+        }
+      },
+      "id": "cron-consensus",
+      "name": "Every 15min",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 520]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.PUBLIC_API_URL || 'https://api.deftluke.online' }}/api/webhook/n8n/wallet-scanner",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={ \"action\": \"scan\" }",
+        "options": {}
+      },
+      "id": "consensus-scan",
+      "name": "Consensus Scan",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 520]
+    }
+  ],
+  "connections": {
+    "Daily 6AM": { "main": [[{ "node": "Daily Maintenance", "type": "main", "index": 0 }]] },
+    "Every 15min": { "main": [[{ "node": "Consensus Scan", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "meta": {
+    "description": "Smart Wallet Scanner — daily wallet refresh + 15min consensus scan. Enable WALLET_SCANNER_ENABLED=true on backend first."
+  }
+}

@@ -8,6 +8,7 @@ export const config = {
   port: parseInt(process.env.PORT || '3001', 10),
   nodeEnv: process.env.NODE_ENV || 'development',
   publicApiUrl: PUBLIC_API,
+  researchApiUrl: process.env.RESEARCH_API_URL || '',
 
   supabase: {
     url: process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -17,20 +18,44 @@ export const config = {
   },
 
   binance: {
+    tradingMode: process.env.BINANCE_TRADING_MODE
+      || (process.env.BINANCE_DEMO === 'true' || process.env.BINANCE_TESTNET === 'true' ? 'demo' : 'live'),
+    demoApiKey: process.env.BINANCE_DEMO_API_KEY || process.env.BINANCE_API_KEY,
+    demoApiSecret: process.env.BINANCE_DEMO_API_SECRET || process.env.BINANCE_API_SECRET,
+    demoPrivateKeyPath: process.env.BINANCE_DEMO_PRIVATE_KEY_PATH || process.env.BINANCE_PRIVATE_KEY_PATH || '',
+    liveApiKey: process.env.BINANCE_LIVE_API_KEY || '',
+    liveApiSecret: process.env.BINANCE_LIVE_API_SECRET || '',
+    livePrivateKeyPath: process.env.BINANCE_LIVE_PRIVATE_KEY_PATH || '',
     apiKey: process.env.BINANCE_API_KEY,
     apiSecret: process.env.BINANCE_API_SECRET,
-    testnet: process.env.BINANCE_TESTNET === 'true',
-    restUrl: process.env.BINANCE_TESTNET === 'true'
-      ? 'https://testnet.binancefuture.com'
-      : 'https://fapi.binance.com',
-    wsUrl: process.env.BINANCE_TESTNET === 'true'
-      ? 'wss://stream.binancefuture.com'
+    privateKeyPath: process.env.BINANCE_PRIVATE_KEY_PATH || process.env.BINANCE_DEMO_PRIVATE_KEY_PATH || '',
+    signatureType: (process.env.BINANCE_SIGNATURE_TYPE || '').toLowerCase(),
+    demo: process.env.BINANCE_DEMO === 'true',
+    testnet: process.env.BINANCE_TESTNET === 'true' || process.env.BINANCE_DEMO === 'true',
+    restUrl: process.env.BINANCE_REST_URL
+      || (process.env.BINANCE_TESTNET === 'true' || process.env.BINANCE_DEMO === 'true'
+        ? 'https://demo-fapi.binance.com'
+        : 'https://fapi.binance.com'),
+    wsUrl: process.env.BINANCE_TESTNET === 'true' || process.env.BINANCE_DEMO === 'true'
+      ? 'wss://fstream.binancefuture.com'
       : 'wss://fstream.binance.com',
   },
 
   telegram: {
     token: process.env.TELEGRAM_BOT_TOKEN,
     chatId: process.env.TELEGRAM_CHAT_ID,
+    pollingEnabled: process.env.TELEGRAM_POLLING_ENABLED === 'true',
+    delivery: process.env.TELEGRAM_DELIVERY || 'n8n',
+    defaultLeverage: parseInt(process.env.TELEGRAM_DEFAULT_LEVERAGE || '50', 10),
+    defaultMarginPct: parseFloat(process.env.TELEGRAM_DEFAULT_MARGIN_PCT || '0.01'),
+    defaultPositionUsdt: parseFloat(process.env.TELEGRAM_DEFAULT_POSITION_USDT || '50'),
+  },
+
+  externalSignals: {
+    ingestionKey: process.env.EXTERNAL_SIGNAL_INGESTION_KEY || '',
+    minValidationScore: parseInt(process.env.EXTERNAL_SIGNAL_MIN_VALIDATION_SCORE || '60', 10),
+    maxSignalAgeMinutes: parseInt(process.env.EXTERNAL_SIGNAL_MAX_AGE_MINUTES || '15', 10),
+    testMode: process.env.TG_TEST_MODE === 'true',
   },
 
   ollama: {
@@ -45,12 +70,15 @@ export const config = {
     gatewayUrl: process.env.AI_GATEWAY_URL || PUBLIC_AI,
     publicUrl: PUBLIC_AI,
     apiKey: process.env.AI_API_KEY || '',
+    visionModel: process.env.AI_VISION_MODEL || 'llava:7b',
   },
 
   n8n: {
     signalWebhook: process.env.N8N_SIGNAL_WEBHOOK_URL || 'https://n8n.deftluke.online/webhook/signal-notify',
     executeWebhook: process.env.N8N_EXECUTE_WEBHOOK_URL || 'https://n8n.deftluke.online/webhook/trade-execute',
     aiWebhook: process.env.N8N_AI_WEBHOOK_URL || 'https://n8n.deftluke.online/webhook/ai-assistant',
+    eventWebhook: process.env.N8N_EVENT_WEBHOOK_URL || 'https://n8n.deftluke.online/webhook/tradegpt-event',
+    walletScannerWebhook: process.env.N8N_WALLET_SCANNER_WEBHOOK_URL || '',
     baseUrl: process.env.N8N_BASE_URL || 'https://n8n.deftluke.online',
     apiKey: process.env.N8N_API_KEY || '',
   },
@@ -62,6 +90,44 @@ export const config = {
 
   coingecko: {
     apiKey: process.env.COINGECKO_API_KEY || '',
+  },
+
+  dune: {
+    apiKey: process.env.DUNE_API_KEY || '',
+    solWalletsQueryId: process.env.DUNE_SOL_WALLETS_QUERY_ID || '',
+    solTradesQueryId: process.env.DUNE_SOL_TRADES_QUERY_ID || '',
+    solTradesRecentQueryId: process.env.DUNE_SOL_TRADES_RECENT_QUERY_ID || '3641835',
+    solTokensQueryId: process.env.DUNE_SOL_TOKENS_QUERY_ID || '7714204',
+    tronWalletsQueryId: process.env.DUNE_TRON_WALLETS_QUERY_ID || '4003316',
+    tronTradesRecentQueryId: process.env.DUNE_TRON_TRADES_RECENT_QUERY_ID || '4009866',
+    tronTradesQueryId: process.env.DUNE_TRON_TRADES_QUERY_ID || '4003641',
+    baseDailyStatsQueryId: process.env.DUNE_BASE_DAILY_STATS_QUERY_ID || '5797617',
+  },
+
+  walletScanner: {
+    enabled: process.env.WALLET_SCANNER_ENABLED === 'true',
+    scanIntervalMs: parseInt(process.env.WALLET_SCANNER_INTERVAL_MS || '900000', 10),
+    dailyRefreshHour: parseInt(process.env.WALLET_SCANNER_DAILY_HOUR || '6', 10),
+    dataDir: process.env.WALLET_SCANNER_DATA_DIR || '',
+    rules: {
+      minWinRate: parseFloat(process.env.WALLET_MIN_WIN_RATE || '0.55'),
+      minRoi90d: parseFloat(process.env.WALLET_MIN_ROI_90D || '50'),
+      minProfitFactor: parseFloat(process.env.WALLET_MIN_PROFIT_FACTOR || '1.5'),
+      minTrades: parseInt(process.env.WALLET_MIN_TRADES || '20', 10),
+      maxWallets: parseInt(process.env.WALLET_MAX_COUNT || '1000', 10),
+      targetWallets: parseInt(process.env.WALLET_TARGET_COUNT || '750', 10),
+    },
+    consensus: {
+      minWallets: parseInt(process.env.WALLET_CONSENSUS_MIN || '5', 10),
+      minAvgScore: parseInt(process.env.WALLET_CONSENSUS_MIN_SCORE || '80', 10),
+      minWalletScore: parseInt(process.env.WALLET_CONSENSUS_WALLET_SCORE || '70', 10),
+      windowHours: parseInt(process.env.WALLET_CONSENSUS_WINDOW_H || '2', 10),
+    },
+    liquidity: {
+      minLiquidityUsd: parseInt(process.env.WALLET_MIN_LIQUIDITY_USD || '200000', 10),
+      minVolume24hUsd: parseInt(process.env.WALLET_MIN_VOLUME_24H || '200000', 10),
+      minFdvUsd: parseInt(process.env.WALLET_MIN_FDV_USD || '500000', 10),
+    },
   },
 
   strategy: {

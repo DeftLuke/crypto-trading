@@ -58,6 +58,9 @@ cd backend && npm run dev
 
 # Terminal 2
 cd frontend && npm run dev
+
+# Terminal 3 (optional — Phase 4 institutional analytics)
+cd analytics-dashboard && npm install && cp .env.example .env.local && npm run dev
 ```
 
 ### 4. Production (Kali 24/7 — recommended, no VPS)
@@ -95,7 +98,9 @@ Set variables from `n8n/workflows/production.env.json` in n8n UI.
 
 ```
 ├── backend/           Express API + strategy engine + Telegram bot
-├── frontend/          React dashboard (Vite)
+├── frontend/          React dashboard (Vite) — live trading UI
+├── analytics-dashboard/  Phase 4 — Next.js institutional analytics terminal
+├── research-platform/    Phase 1–3 — FastAPI data warehouse + backtest engine
 ├── deploy/            Production Docker stack (VPS 24/7)
 ├── ai-agent/          Ollama gateway
 ├── n8n/workflows/     Importable automation JSON
@@ -121,6 +126,11 @@ High-confidence signals include **BUY NOW** / **SKIP** buttons.
 ## Docs
 
 - [PLANNING.md](docs/PLANNING.md) — full system design
+- [analytics-dashboard/docs/PHASE4-ARCHITECTURE.md](analytics-dashboard/docs/PHASE4-ARCHITECTURE.md) — Phase 4 institutional terminal
+- [research-platform/docs/PHASE3-BACKTEST-ENGINE.md](research-platform/docs/PHASE3-BACKTEST-ENGINE.md) — backtest engine
+- [research-platform/docs/PHASE5-MEMORY-LAYER.md](research-platform/docs/PHASE5-MEMORY-LAYER.md) — Qdrant memory layer
+- [research-platform/docs/PHASE6-AI-RESEARCH-AGENT.md](research-platform/docs/PHASE6-AI-RESEARCH-AGENT.md) — AI research agent
+- [research-platform/docs/PHASE7-PAPER-TRADING.md](research-platform/docs/PHASE7-PAPER-TRADING.md) — paper trading engine
 - [DOMAINS.md](docs/DOMAINS.md) — production URL reference
 - [AI-SETUP.md](docs/AI-SETUP.md) — Ollama + AI gateway
 - [KALI-SETUP.md](docs/KALI-SETUP.md) — server setup

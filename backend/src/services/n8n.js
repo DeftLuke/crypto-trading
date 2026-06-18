@@ -32,6 +32,18 @@ export async function callN8nWebhook(url, body) {
   }
 }
 
+export async function emitN8nEvent(eventType, payload = {}) {
+  return callN8nWebhook(config.n8n.eventWebhook, {
+    event_type: eventType,
+    chat_id: payload.chatId || config.telegram.chatId,
+    source: payload.source || 'tradegpt-backend',
+    severity: payload.severity || 'info',
+    message: payload.message || '',
+    payload,
+    ts: new Date().toISOString(),
+  });
+}
+
 /** Verify n8n Public API using N8N_API_KEY. */
 export async function checkN8nHealth() {
   if (!config.n8n.apiKey) {

@@ -15,7 +15,7 @@ export default function PairStatsPanel() {
     try {
       const [pairData, bal] = await Promise.all([fetchPairStats(), fetchBalance()]);
       setStats(Array.isArray(pairData) ? pairData : []);
-      setBalance(bal);
+      setBalance(bal?.error ? null : bal);
     } catch {
       setStats([]);
     }
@@ -30,7 +30,7 @@ export default function PairStatsPanel() {
     <>
       <div className="panel balance-card">
         <div className="balance-amount">
-          {balance ? `${parseFloat(balance.available || 0).toFixed(2)}` : '—'}
+          {balance?.available != null ? `${parseFloat(balance.available).toFixed(2)}` : '—'}
         </div>
         <div className="balance-label">USDT Available</div>
       </div>

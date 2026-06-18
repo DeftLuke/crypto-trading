@@ -1,0 +1,198 @@
+{
+  "name": "TradeGPT Unified Telegram (Production)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "tradegpt-event",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "webhook-tradegpt-event",
+      "name": "TradeGPT Event Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [180, 220],
+      "webhookId": "tradegpt-event"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $json.body || $json;\nconst payload = body.payload || {};\nconst signal = payload.signal || payload;\nconst trade = payload.trade || {};\nconst eventType = body.event_type || 'platform.event';\nconst chatId = body.chat_id || payload.chatId || null;\n\nfunction clean(v) { return String(v ?? '').replace(/<[^>]*>/g, '').trim(); }\n\nif (eventType === 'signal.created' || payload.silent) {\n  return [{ json: { skipTelegram: true, eventType } }];\n}\n\nlet text;\nif (eventType === 'trade.activated' || eventType === 'trade.opened') {\n  text = payload.message || body.message || `Trade opened: ${clean(signal.symbol || trade.symbol)}`;\n} else if (eventType === 'trade.closed') {\n  const pnl = trade.pnl ?? payload.pnl ?? 0;\n  const emoji = pnl >= 0 ? '🟢' : '🔴';\n  text = `${emoji} <b>Trade Closed</b>\\n\\n${clean(trade.symbol)} ${clean(trade.direction)}\\n${clean(payload.message || body.message)}\\nPnL: <b>${pnl >= 0 ? '+' : ''}${Number(pnl).toFixed(2)} USDT</b>`;\n} else if (eventType === 'trade.update') {\n  text = `📈 <b>Trade Update</b>\\n\\n${clean(trade.symbol)}\\n${clean(payload.message || body.message)}\\nPnL: ${trade.pnl == null ? 'Open' : trade.pnl + ' USDT'}`;\n} else if (eventType === 'wallet.consensus') {\n  const s = payload.signal || {};\n  text = `🐋 <b>Smart Wallet Consensus</b>\\n\\nToken: ${clean(s.symbol)}\\nWallets: ${clean(s.wallet_count)}\\nConfidence: ${clean(s.confidence)}/100`;\n} else {\n  text = `🔔 <b>${clean(eventType)}</b>\\n\\n${clean(payload.message || body.message || '')}`;\n}\n\nreturn [{ json: { text, eventType, chatId, skipTelegram: false } }];"
+      },
+      "id": "format-event-message",
+      "name": "Format Event Message",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [420, 220]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "={{ $json.text }}",
+        "additionalFields": {
+          "parse_mode": "HTML",
+          "disable_web_page_preview": true
+        }
+      },
+      "id": "telegram-event-send",
+      "name": "Telegram Send Event",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [660, 220],
+      "credentials": { "telegramApi": { "id": "telegram-bot", "name": "Telegram Bot" } }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [{ "id": "skip-tg", "leftValue": "={{ $json.skipTelegram }}", "rightValue": true, "operator": { "type": "boolean", "operation": "equals" } }],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "skip-silent-event",
+      "name": "Skip Silent Event?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [540, 220]
+    },
+    {
+      "parameters": {
+        "updates": ["message", "callback_query"],
+        "additionalFields": {}
+      },
+      "id": "telegram-trigger",
+      "name": "Telegram Command Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [180, 520],
+      "credentials": { "telegramApi": { "id": "telegram-bot", "name": "Telegram Bot" } }
+    },
+    {
+      "parameters": {
+        "jsCode": "const update = $json;\nconst message = update.message || update.callback_query?.message || {};\nconst chatId = message.chat?.id || update.callback_query?.from?.id;\nconst rawText = update.message?.text || update.callback_query?.data || '';\nconst text = String(rawText).trim();\nconst parts = text.split(/\\s+/);\nconst cmd = parts[0]?.toLowerCase() || '';\n\nlet method = 'POST';\nlet path = '/api/telegram/callback';\nlet body = {};\nlet label = 'Trade';\nlet skipHttp = false;\n\nconst cb = update.callback_query;\nif (cb?.data && /^(execute|default|manual|size|skip):/.test(cb.data)) {\n  body = { callback_data: cb.data, chat_id: chatId };\n  return [{ json: { chatId, method, path, body, label, skipHttp: false } }];\n}\n\nif (!cb && /^[\\d.]+(\\s*(usdt|usd)?)?$/i.test(text)) {\n  body = { action: 'text_size', chat_id: chatId, text };\n  return [{ json: { chatId, method, path, body, label: 'Manual size', skipHttp: false } }];\n}\n\npath = '/api/ai/query';\nbody = { question: text, chatId };\nlabel = 'AI answer';\n\nif (cmd === '/stats') { method = 'GET'; path = '/api/scanner/status'; body = undefined; label = 'Scanner'; }\nelse if (cmd === '/demo') { path = '/api/control/demo-signal'; body = { symbol: (parts[1]||'BTCUSDT').toUpperCase(), force: true }; label = 'Demo signal'; }\nelse if (cmd === '/stop') { path = '/api/scanner/stop'; body = { source: 'telegram' }; label = 'Scanner stopped'; }\nelse if (cmd === '/start') {\n  return [{ json: { chatId, skipHttp: true, label: 'Help', reply: '🤖 Tap signal buttons: SHORT/LONG → Default or Manual size.\\n/stats /demo /stop' } }];\n}\n\nreturn [{ json: { chatId, method, path, body, label, skipHttp } }];"
+      },
+      "id": "parse-command",
+      "name": "Parse Telegram Command",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [420, 520]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "skip-http",
+              "leftValue": "={{ $json.skipHttp }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-help",
+      "name": "Help Only?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [640, 520]
+    },
+    {
+      "parameters": {
+        "method": "={{ $json.method }}",
+        "url": "={{ ($env.BACKEND_URL || 'https://api.deftluke.online') + $json.path }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.body || {}) }}",
+        "options": { "timeout": 60000 }
+      },
+      "id": "backend-command",
+      "name": "Call TradeGPT Backend",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [880, 620]
+    },
+    {
+      "parameters": {
+        "jsCode": "const cmd = $('Parse Telegram Command').item.json;\nconst data = $json;\nif (data.answer) {\n  return [{ json: { chatId: cmd.chatId, text: data.answer, skipReply: false } }];\n}\nif (data.ok && data.message) {\n  return [{ json: { chatId: cmd.chatId, text: data.message, skipReply: false } }];\n}\nif (data.ok && !data.message) {\n  return [{ json: { chatId: cmd.chatId, skipReply: true } }];\n}\nconst failed = data.executed === false || data.error || data.reason;\nlet detail = data.message || data.error || data.reason || JSON.stringify(data, null, 2);\nif (detail.length > 3200) detail = detail.slice(0, 3200);\nconst icon = failed ? '❌' : '✅';\nreturn [{ json: { chatId: cmd.chatId, text: failed ? `${icon} ${detail}` : detail, skipReply: false } }];"
+      },
+      "id": "format-command-response",
+      "name": "Format Command Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1120, 620]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "={{ $json.reply || $json.text }}",
+        "additionalFields": {
+          "parse_mode": "HTML",
+          "disable_web_page_preview": true
+        }
+      },
+      "id": "telegram-command-send",
+      "name": "Telegram Send Command Response",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [1360, 520],
+      "credentials": { "telegramApi": { "id": "telegram-bot", "name": "Telegram Bot" } }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [{ "id": "skip-reply", "leftValue": "={{ $json.skipReply }}", "rightValue": true, "operator": { "type": "boolean", "operation": "equals" } }],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "skip-cmd-reply",
+      "name": "Skip Cmd Reply?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1240, 620]
+    }
+  ],
+  "connections": {
+    "TradeGPT Event Webhook": {
+      "main": [[{ "node": "Format Event Message", "type": "main", "index": 0 }]]
+    },
+    "Format Event Message": {
+      "main": [[{ "node": "Skip Silent Event?", "type": "main", "index": 0 }]]
+    },
+    "Skip Silent Event?": {
+      "main": [
+        [],
+        [{ "node": "Telegram Send Event", "type": "main", "index": 0 }]]
+    },
+    "Telegram Command Trigger": {
+      "main": []
+    },
+    "Parse Telegram Command": {
+      "main": [[{ "node": "Help Only?", "type": "main", "index": 0 }]]
+    },
+    "Help Only?": {
+      "main": [
+        [{ "node": "Telegram Send Command Response", "type": "main", "index": 0 }],
+        [{ "node": "Call TradeGPT Backend", "type": "main", "index": 0 }]
+      ]
+    },
+    "Call TradeGPT Backend": {
+      "main": [[{ "node": "Format Command Response", "type": "main", "index": 0 }]]
+    },
+    "Format Command Response": {
+      "main": [[{ "node": "Skip Cmd Reply?", "type": "main", "index": 0 }]]
+    },
+    "Skip Cmd Reply?": {
+      "main": [
+        [],
+        [{ "node": "Telegram Send Command Response", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "tags": [{ "name": "crypto-trading" }, { "name": "telegram" }, { "name": "production" }]
+}

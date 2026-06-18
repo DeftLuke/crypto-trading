@@ -8,8 +8,8 @@ import { calculateConfidence, calculateLevels, formatSignalMessage } from '../..
 import { validateMandatoryRSI, buildPatternKey, getScanConfig, RSI_RULES } from './rules.js';
 import { runBacktest } from './backtester.js';
 
-export const name = 'SMC Multi-Timeframe';
-export const description = 'Smart Money Concepts with mandatory RSI gates. BUY when RSI < 30, SHORT when RSI > 70. Full MTF alignment required.';
+export const name = 'Smart Money Algo Pro (SMC MTF)';
+export const description = 'Port of pinscript Smart Money Algo Pro E5 — MTF SMC with RSI gates, order blocks, and entry/SL/TP setups.';
 export const timeframes = ['1h', '30m', '15m', '5m', '3m'];
 
 export async function analyze(symbol) {

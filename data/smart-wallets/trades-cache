@@ -1,0 +1,4030 @@
+{
+  "updated_at": "2026-06-13T07:51:22.542Z",
+  "count": 503,
+  "trades": [
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "CiHvJStRXXrirDFWQBRErfXARpPsKK34rNv1XKAhtKEH",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8783,
+      "timestamp": "2024-04-09T09:02:22.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "G7LbvWMs98GEfkk9cvgohzcSxYWeWxvqR6rqFo6CDdue",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8763,
+      "timestamp": "2024-04-09T08:54:08.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "C9wwEdzmL5zpQWShPAiZKxx4a85hydPomyeB2j3aWr4i",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8767,
+      "timestamp": "2024-04-09T08:47:56.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "B1pZNcwTDFV9VpnXaNFyAo5BurDVqVtKwWUfwNMSdXNS",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8767.5,
+      "timestamp": "2024-04-09T08:35:52.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "GWMQsfVDgEBLJbJ5QnW2k9KCbKpzCSxwG6xKfmgUgL3P",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8753.5,
+      "timestamp": "2024-04-09T08:29:57.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BCWwtFsfhjNyYboggjrGZYRo492Vouv5ahMPGdKR7Y5f",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8746,
+      "timestamp": "2024-04-09T08:24:40.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6HQngWSMim9dTQzk4p3YSW8jgmX3LLKTdzn6yYgUVTp5",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8718,
+      "timestamp": "2024-04-09T08:17:30.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "JDYJz2hNv6ZsEUbpCnayq8Uy9Ht3H7MeSr7WThiu8UuZ",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8735,
+      "timestamp": "2024-04-09T08:11:17.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6fffKTm3d18fuMMojNQTwXdgfkQdp1me2heMvLuzaJu4",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8786,
+      "timestamp": "2024-04-09T08:02:41.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6AH9VsXshKTMTXXpZuaw8Eh45K4s5t3i8VWfLMPXB37M",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8916.5,
+      "timestamp": "2024-04-09T06:02:47.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "MyHorSHpygCKaPuuQV6KZwAS9vGvqk3vPVpu9fVsXLX",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8910.5,
+      "timestamp": "2024-04-09T05:53:18.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "E84uVEtv6gZXpQRq4YWhK7mg3GgaVQM1n9MqiQXjgzNJ",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8891,
+      "timestamp": "2024-04-09T05:48:01.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "7c1LbmuGuthQmoubxoc2wSrg1UX2457zbWfpTJBD5R8J",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8914.5,
+      "timestamp": "2024-04-09T05:42:55.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "AE7NhSiQR8CHAxkNP7vcmL7aPrwdYjeNcj5EF2E5pimR",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8925,
+      "timestamp": "2024-04-09T05:39:24.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "F6WiLNUxsZUXVXoJHWvigVfJcehgJs84UwfTZvC1GHUU",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8932.5,
+      "timestamp": "2024-04-09T05:34:15.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BUaEZTLyLjopX1xz2BpFiohmLuZEY71JCxV6LN7uBNyo",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8916.5,
+      "timestamp": "2024-04-09T03:43:00.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "E6jus68FPApLCBCeR8637Nratdt8vnNuDNea9xqoTbFk",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8928.5,
+      "timestamp": "2024-04-09T03:39:51.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "4PCCZ1S4xnxyAzYNJAFgtqHbcWxVQEz8BxqskBpbgf1n",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8928.5,
+      "timestamp": "2024-04-09T03:36:16.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "E2vDwhxFL2r39Z6KiyvNZi8yxPj7ZyPJwme37MboS74Z",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8944.5,
+      "timestamp": "2024-04-09T03:33:21.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "DTmmgL5fdY4WNwiF8oWmedVz6y5jTcifqwPYaNsSffuy",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8974,
+      "timestamp": "2024-04-09T03:16:35.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "DtqCBNAHiDr6CSrCjq2oE4yzMZAEXaZcqZ5FUzkhqb4G",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8972,
+      "timestamp": "2024-04-09T03:09:00.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "H9Dx7zn5xt9RBhmnC8pb8nwwai8bWNLT4t6mAYbDuMjo",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8977,
+      "timestamp": "2024-04-09T03:00:53.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "4HPGhhsPz1ahQbhgfTJPv6yEsm4SbWu67kA2p4s2uFqq",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8982,
+      "timestamp": "2024-04-09T02:55:52.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "7yjCe8Gdqi7J857x5KQC8vWjCYXykbu8LR5iKv5tBK3W",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9007.5,
+      "timestamp": "2024-04-09T00:36:01.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9jpGgqFcKKin8p2ATp1FN8c17LvCM6wtSUSLuChNpZsd",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9038.5,
+      "timestamp": "2024-04-09T00:24:04.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9eCaSZ1qTTjBcxaCzTX1UvmhWQW2RaiAJFUtmoZ9JBYA",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9034,
+      "timestamp": "2024-04-09T00:15:13.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "2GaSHhVBCXZWksyigc7tGnrkWpmZNk8JAac7GgpxUiT5",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9022,
+      "timestamp": "2024-04-09T00:08:14.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "GG8sD7kdSK8qCZ787zNgnruB76RSn7cHuZs1iVRMe4N",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9043.5,
+      "timestamp": "2024-04-09T00:01:31.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9ezcJXU69pMnbmV1A1N6vbPGa9DJr773imortE5uc2xV",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9039.5,
+      "timestamp": "2024-04-08T23:58:54.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8LU4WwXhyTZzd1qvQfB1R7rBtfXauktaPahoMYJx4Hvo",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9042,
+      "timestamp": "2024-04-08T23:46:33.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8e3ckKz1buVh3g3CeYvedXewdHygLaR6376BhyxbdjhU",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9059.5,
+      "timestamp": "2024-04-08T23:34:18.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "5LXGJiaQygoZAJP9CAxBcsp5REc2FXfj2wfVGikjjBGv",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9063,
+      "timestamp": "2024-04-08T23:27:10.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "AiJYM3iccWoi38MXXmhnEwK8j1E4vEcoqRmNkANQHF12",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9041,
+      "timestamp": "2024-04-08T23:22:32.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "J3E2ipVczHoT9sBVBQvEzG6W2UcmdpbWCpNQAmb6eNYK",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9021.5,
+      "timestamp": "2024-04-08T23:10:38.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9SPZCDKz7vcRqaUSXULqxZEZ8nV758sN7MhbC97i9wqM",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9050,
+      "timestamp": "2024-04-08T23:06:31.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "H6PH2B5RXUkjBqaSn7NX9YoYXzrRGkmRfNUGv2zNnSkB",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9047.5,
+      "timestamp": "2024-04-08T21:43:18.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "2QuyZ3STED28zWZrSFiQCYv1QZZhueNwkBQGLf4q1jJR",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9038.5,
+      "timestamp": "2024-04-08T21:34:55.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BpPaLkGzgVeVg3sBMgwLYnT2ZHYxoYaDae9TZYAUnF7Q",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9021.5,
+      "timestamp": "2024-04-08T21:27:48.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8yhdL7jReMLAutY5r47z6q9f6pmCCPupU69DZ7VBEvFi",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9036,
+      "timestamp": "2024-04-08T21:15:59.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "27eKYBt9qKQUVADmqWhuz1G6fKBVmJhVsrSPfLZPyPwU",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9010,
+      "timestamp": "2024-04-08T20:55:32.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "2L9E82g6WGUUrNE6B6vY6piU2AtDJkKbBR9ygWzpF39V",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8984,
+      "timestamp": "2024-04-08T20:29:05.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "kH92C43A2cDPU7oWUmEup2ZPxGKcR3NMt8ySkMXo9YC",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8986,
+      "timestamp": "2024-04-08T20:24:51.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "5FjuTK7tYFFQdFLRxQBVvXujw5G5ee3ZupTq7BvuVpJX",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8986,
+      "timestamp": "2024-04-08T20:22:43.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "298cih74REFJHnpSCzgoW8WtLhe1LhBoE3voKPqwreVJ",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8986,
+      "timestamp": "2024-04-08T20:20:17.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9GLSi8noneX5BWJ6zWXf7TQnr9Ep6ejJMy4jf4zd7bki",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8988.5,
+      "timestamp": "2024-04-08T20:16:07.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BdBpokmZ4MKVS3KHPuR9m1StZE8wpSopC8fPBp6k2Tjr",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8972.5,
+      "timestamp": "2024-04-08T20:07:11.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "EHaj1HTtismzZVbn77t1hHJmJrQznmb184X1Cv2qc7gu",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8975,
+      "timestamp": "2024-04-08T19:55:23.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "4JBMgfSk6xyPX59RJriuccQ2nvLUPFZUnrwKPWgc8Jao",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8963,
+      "timestamp": "2024-04-08T19:47:36.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9QxCxcasJVnWhN2G9gXTXcz6pX12487aWVXuf3MMgYf",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8957.5,
+      "timestamp": "2024-04-08T19:41:31.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "ETgc13Wh3YRL1KfWBfk3YzMFeiuzdXXMkDEUocJXJmi4",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8953,
+      "timestamp": "2024-04-08T19:35:10.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "EWUoFdsaAUJgCwpdXxUoKGYw3Egj2a3feP2EahSwktj",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8965.5,
+      "timestamp": "2024-04-08T19:27:33.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "C3QzFngr87mD2gWBCcmMer9PkJ2Pcn1Yf8hhBaw4cBjR",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9027.5,
+      "timestamp": "2024-04-08T19:18:22.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8VBaftFYXnExXk8jHev3und95FL6Jkh7inHmG6Duk8VS",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9017.5,
+      "timestamp": "2024-04-08T19:14:53.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "FmxvmgsE82vhWd7ePUgLjCoRiWJMKsbYxt91B9iHvEk6",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9009,
+      "timestamp": "2024-04-08T19:09:28.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8wfbYRgtjfDv8jHqnehrTBLbZX3GF6p6n53RawuXuVJS",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9013.5,
+      "timestamp": "2024-04-08T19:01:28.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "H2w2LcmgL9hdndLvczHhgCfrHB9MjttAWRTpvmYiUzVK",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9025,
+      "timestamp": "2024-04-08T18:55:16.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "HAzcbUcEjmvLrSLCpdV1eBuJeHHiYDpcVjiM1sUku2M3",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9054,
+      "timestamp": "2024-04-08T18:44:58.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "7jySY61QYPEzXG5z7twfTTTLABVoEyWc6wyJUmSUCMmg",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9067,
+      "timestamp": "2024-04-08T18:38:51.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "DyaRp5x1TXwfAGMpmdeACZ7CeLnFCnL59Tu8JgkFpuLc",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9065,
+      "timestamp": "2024-04-08T18:33:35.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "5mTyKp13rxJ1kSdqui2rpayZw6n46nUagJVkqheD7Bdz",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9065,
+      "timestamp": "2024-04-08T18:31:44.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BrTNUVVq7euRmLJAQTB5FQ7ZQxrraUWDKtVd1BCsinq",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9098.5,
+      "timestamp": "2024-04-08T08:26:36.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "GpcAAQycDj3rrMDBfRLBnFF7YHZwrWgmzswky5rnjqr4",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9086.5,
+      "timestamp": "2024-04-08T08:20:03.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9nzGeZxtJX2g48ks75khrQdk6FFRwDQqYJ7R4GjiSWQM",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8995.5,
+      "timestamp": "2024-04-08T08:12:38.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "59wvJTDLd4mFi1SJfeEnW4VRCuj8tWJ3e5L2mJ4JzGFJ",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9010.5,
+      "timestamp": "2024-04-08T08:06:58.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "A2fZz6EAdGq6Kba2uoz7NGU6u9bLv45hPg38rf9UTTmg",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9018,
+      "timestamp": "2024-04-08T08:04:09.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6bVYvKh15yTCwEzo8btQGXXQ6zC42QQ3EeEuLBhz4CHH",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9044.5,
+      "timestamp": "2024-04-08T07:57:57.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8njqYcqbxwrs9CniTmPbSfwP2UTqLSPHLUwcpGXynFLx",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9004.5,
+      "timestamp": "2024-04-08T07:51:02.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "DPZSFVfmrLPKVkXipFa1KsP8KjxSop8ybHbGADrx9vhc",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8901,
+      "timestamp": "2024-04-08T07:29:43.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6UxY13ojCXQi9whmEPW81xk6dHahzGgHiPmujoooxRE5",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8901,
+      "timestamp": "2024-04-08T07:26:10.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "5VQAjtqnxehQFNoRHmZnwtAqShBKX6H1cv4GKHr6TCoy",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8844,
+      "timestamp": "2024-04-08T07:14:30.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "4RGsY2c328Gj8o2QJeErmQMac3hhEfaiGH3kZan4THVM",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8867,
+      "timestamp": "2024-04-08T07:08:49.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "E5EejT9KyjnM5tSXFS79ENCx7fRTDfgiXUy135dE6gc5",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8867,
+      "timestamp": "2024-04-08T07:05:52.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "EwDUzLpL7CxfRfekFrRY11rZ7H8qs66fA2oazg1mTRdn",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8853,
+      "timestamp": "2024-04-08T07:01:26.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "DLo3TG8wxEya8gcMj5tZp4p3YzsnGTDTTqSxbuVtpof3",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8844,
+      "timestamp": "2024-04-08T06:56:37.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "EKZgJB1UxRc2VaC6rVVMS6sMc9qssNuyiJ6oLhtcqAkj",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8844.5,
+      "timestamp": "2024-04-08T06:54:48.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "81tAKRe18ve5YwKGoFGTZYtrfNRmTRnZZxVAL619WJLr",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8849.5,
+      "timestamp": "2024-04-08T06:44:59.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "H9tgkpiyf58WwAjNaUa3m6CzSREwiWtsMe5kse3T5aNq",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8860.5,
+      "timestamp": "2024-04-08T06:02:13.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "FwSsbGC6CR1T3S5KnUU7pEj37S4pdKyXcJdD7C8jpmNw",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8847.5,
+      "timestamp": "2024-04-08T05:54:07.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "GDYEVZhGab3roLGJuRWeH8iHZuExgtuSrsrTAFsgUotW",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8836,
+      "timestamp": "2024-04-08T05:43:58.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "88NXWEXUjtrupT6vhRWF1xhxGDcMbfcp38tfsHUU1Y1N",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8855.5,
+      "timestamp": "2024-04-08T05:24:08.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BvGMqKSGEtXEsePDkMaBAXyGjZcx9kVUPbHrpf6brona",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8859.5,
+      "timestamp": "2024-04-08T05:19:30.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "J6SBj6G5YyUqidXmn5KkjKuxnpRziP6TBzjG2z8vsMbc",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 8833,
+      "timestamp": "2024-04-08T05:12:40.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "ohZHizuPKA18e5CXahsfY2FmJzGsytJWzGmyikJT8nd",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 3527.6,
+      "timestamp": "2024-04-08T05:03:49.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "B1YwJWT3q2D3HVcW8b7VX97fTHq7fYHsMtRfEzPp2Lzr",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 3527.7999999999997,
+      "timestamp": "2024-04-08T04:58:37.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "5iGBSGC9Qoh7X2CTw1Z1bStbGsGGNRUfdj6sqPbREGGw",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 3525,
+      "timestamp": "2024-04-08T04:42:37.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3GS6VmbJx8PejP8PazcVN3L9pSTw2LAnod97oRkq3D7x",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 3528,
+      "timestamp": "2024-04-08T04:37:58.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "4YVyjRMnHeANPHbAyPZDkwDQ9qnfPJgcK5h9E2zVMund",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 3532.2000000000003,
+      "timestamp": "2024-04-08T04:32:55.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9eVvWUbp8A2Z1qNnnzBTWq3samKdJxo6uZjKt8Fc5GaJ",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 3529.8,
+      "timestamp": "2024-04-08T04:16:06.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3fkkW5frJoit2PkWtiFNkE22PK74fYxgA6iSb9NyH3u6",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5298,
+      "timestamp": "2024-04-08T04:05:31.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "ApeF66G9rzRVXcd8auSeHoLkqkmnLEdxm3ZPUaJT1b3z",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5304,
+      "timestamp": "2024-04-08T03:53:00.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "HKMbuVRux6qgkVuPhCNJqkC8ZF4q6sySEiKdiLALeReM",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5313,
+      "timestamp": "2024-04-08T03:48:23.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "GwVPd7j68pprnJ6QrCJ2jhT1PUQ25A3gX3VWtKYBzQHZ",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5303.4,
+      "timestamp": "2024-04-08T03:40:43.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6LXaSUbw9a86V95K8wrPfe4sAcfcWid5WFF11ucUm3vY",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5292,
+      "timestamp": "2024-04-08T03:31:49.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "75AkShVzjDDPoCcpr5AaazjBWy7UE7KgEv5bfZw8dKWH",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5288.4,
+      "timestamp": "2024-04-08T03:26:15.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "ECuSy7hxp1CUEHu82FAd3vXgoMiMcfa4TQToBqF2Y2gh",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5280.9,
+      "timestamp": "2024-04-08T03:19:32.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "G2pVXwQijr1DmySv6uMQADEUqCCaixj16ae4P1oPaoao",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5282.400000000001,
+      "timestamp": "2024-04-08T03:11:32.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "FfFWxhnX4eUsN3vQ8p52UBKBBEFvbR9n68mMbuFkE2Sv",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5370,
+      "timestamp": "2024-04-08T00:16:49.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "21bHFChkWN53HjsevqLRST8vGxwakvz94dW8kaP2dk7u",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5365.5,
+      "timestamp": "2024-04-08T00:14:18.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8CYLgFAc3j2DQKxXf7V6LcqwPNAWEYCUf5pCXidS5AL3",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5397.599999999999,
+      "timestamp": "2024-04-07T23:59:52.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BgxDxw3bBDkT74NKEd3KibqM8kMyDp7CtmHHW1QFimZr",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5398.8,
+      "timestamp": "2024-04-07T23:54:02.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Bnco7qWGJQoz2mtYPtcr9Sn2rarYVxq19j7VVB6vFEVs",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5396.1,
+      "timestamp": "2024-04-07T23:28:05.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "7VmbX6fTbayMKbnQX4JZRbNt3wbNNhcffx2KpVZF9daN",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5385.9,
+      "timestamp": "2024-04-07T23:19:19.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "FdvdH9sN9GC9p7WDiCrFL3S1WWq6UsJzoMJ4CNNFhs2S",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5365.8,
+      "timestamp": "2024-04-07T23:04:28.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BFvyZTHmmNYAUhx1ccNMTfPQsrPuHwfvbx8uBZFR5i3S",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5370.9,
+      "timestamp": "2024-04-07T22:55:59.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "J266s1JX3o8ZNud93FHA33Lw87Mtqp66uhgrhrbzhhSu",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5355.299999999999,
+      "timestamp": "2024-04-07T22:52:23.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "XYCYpwSCEaoYf9exeRmBoPD9cg21jUqWw34w1mogDbf",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5379.599999999999,
+      "timestamp": "2024-04-07T20:57:28.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "E47VLWgamp2Q2KnWGAB8oEoF1kSCgWtkfWsXYPH533FE",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5378.4,
+      "timestamp": "2024-04-07T20:40:40.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "GJxptvHiVmzz9yWrNRFk7boSfDAJeyXxvZFTFyeo8FB",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5372.400000000001,
+      "timestamp": "2024-04-07T20:26:32.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "ACwHf72Pav7XFiWY3aeJ5AjbS9SQZLawJ1ZoyqJTiZw8",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5368.5,
+      "timestamp": "2024-04-07T20:18:48.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Grp7Vn6Mt7tjnW3P2wKLBafwsPWnHhie67ZsVUstyqgu",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5376.3,
+      "timestamp": "2024-04-07T19:49:36.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BwBghU8rnq1C7QanRMuSABYUkHXmsV1JfszULpcxeXWA",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5381.1,
+      "timestamp": "2024-04-07T19:43:59.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3CePZB8ttepQdcQmjey8YEbCV5GExkZJPEs3AyQj4tzq",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5381.1,
+      "timestamp": "2024-04-07T19:30:56.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "DU1GfxnvM5Cn41PUju9YcvibqydGAiCagd9yUsaskzRR",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5355.9,
+      "timestamp": "2024-04-07T19:20:01.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Lrbn9EHQcnWBNrtnBQdNjdjXysM1Za6vzEJmcDBeTnV",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5361.3,
+      "timestamp": "2024-04-07T19:07:22.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "rX7HoLYKbnLHryPiEUobW3KSWGVhphADxAY5Ajm9BvX",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5368.8,
+      "timestamp": "2024-04-07T18:59:43.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "E3Ar8qL9aB6bAANbYS2WXs1K9LCUcGLNAdTLUjMLrx1e",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5344.2,
+      "timestamp": "2024-04-07T18:44:47.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "5Mda3FM8a1ziXU521Bz4ddRSeDMjapQpWGHmizgnzJe1",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5380.5,
+      "timestamp": "2024-04-07T18:23:16.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BpTUNaZHApKYkm3tujUMot5h8J9ScdxrcaxCWCFx7NDt",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5409,
+      "timestamp": "2024-04-07T17:47:34.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "7apB1JAdB8uCnPSwpx8BXiKQPxswKVSox5kCtnX4P9ZN",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5424.900000000001,
+      "timestamp": "2024-04-07T17:31:15.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "FSupdE4steBnihphME5GboP2iCtLeA41Mtt8YSwT9AEu",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5429.1,
+      "timestamp": "2024-04-07T17:26:26.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "AWAE4utpJpCqFeNxcUfu5vJQyw3Rp8APQ3vksx2bUSBT",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5438.7,
+      "timestamp": "2024-04-07T17:23:23.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "68RHQtXrPsDVPbRHEtwr4aUaSsyjH8f9oM41GZPHiagp",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5426.4,
+      "timestamp": "2024-04-07T17:16:29.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "EUuFT7tE5rPcymXNnzbEasSvhEg2cyh8cm4cSggH7CLH",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5408.1,
+      "timestamp": "2024-04-07T09:07:36.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "21n7S7DrAAaCL8xxCym7dv6vKMwMwHxNanBSt1ZsKfNe",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5418,
+      "timestamp": "2024-04-07T08:57:04.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3Cc7YdAEXXWYT1RjU6qWg2WBNP8VVzQg2GJnvQNxppkX",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5418.9,
+      "timestamp": "2024-04-07T08:50:14.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Fv9Uko1X3uSC8JCmtKvcx8QBadB4UirKoywem924A8EJ",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5416.2,
+      "timestamp": "2024-04-07T08:41:55.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "5kmQD2szVRutX3utS4C5nJTdT1pcUnmPFHiuXrhF4bcK",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5406.6,
+      "timestamp": "2024-04-07T08:34:42.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "jSMrMppAvXmKYoHsRmAnSfmN1ozWpx3GG6EMkBNrGc8",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5406.6,
+      "timestamp": "2024-04-07T08:27:24.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "5MpPfLk2D3SSsnVXbmg3XwEunt2KZAXJvHfxLZf9GhM3",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5417.099999999999,
+      "timestamp": "2024-04-07T08:21:42.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "21Fzjdd9wZyFyf5VRqX8Nyud6aT88ZjaKMAY6qhV2gDt",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5426.1,
+      "timestamp": "2024-04-07T08:16:09.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8BVFRN7QSjgMfRHqRoJE9ZRn5VztM9rctM9nw3ZGq4tH",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5398.5,
+      "timestamp": "2024-04-07T08:03:07.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "DAzKEuysS2tD8TGEC7gc7c3NXyaNDCDkoekfpCYeKqjY",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5401.2,
+      "timestamp": "2024-04-07T07:57:33.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "2zZ6KJGUTrd6NZC8P4TE2PsxDvg471GiWU6FjZprf3yy",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5416.2,
+      "timestamp": "2024-04-07T06:27:09.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "EnipEpt59ZSZf3JkcuR2qfCv8UvjbRQdyohrzuMfVm8J",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5425.5,
+      "timestamp": "2024-04-07T06:21:41.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8gi3RbvCec6SkEUEs62mnWpW8KNjWBKew22TEsD3KtjH",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5439.599999999999,
+      "timestamp": "2024-04-07T06:16:14.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3h355FbCZRYL3wQDfLLyubyXmnDXsBJ14f5EnZ3HUXHP",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5432.099999999999,
+      "timestamp": "2024-04-07T06:08:31.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "FQsLn5kKAYNk4Mivit9Jhb79r8vPg5Jt2CRWFec9d8Xe",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 905.15,
+      "timestamp": "2024-04-07T05:59:13.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8jcFiwjQ4fh2TUGEzUJCyUerjScnkXwT4FfsU4bMxXFZ",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 905.6,
+      "timestamp": "2024-04-07T05:50:15.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "CFrKxbMFqephgZWfyLzjQthwGs11qj3QEK5BYPs54fTN",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 7242,
+      "timestamp": "2024-04-07T05:09:09.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "CiGmfC6a3c6uqxZf9TDTWkMi5jiLY4PfCJffJsYPfSdL",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 7242,
+      "timestamp": "2024-04-07T05:06:12.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9wuHNT9oTUCGDzVU52ZV7ueAuUTYDLRDrX1gdPRE5bEQ",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5422.200000000001,
+      "timestamp": "2024-04-07T04:54:15.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6WRYCKBrctzaeGWYZ7vXM6wz5NM7TF4eN3acPwMcQzkQ",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5415.9,
+      "timestamp": "2024-04-07T04:45:53.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Ccd9eiVVqpBVJRSPZBRsQAT6iNpMAbWmyn1izgTLvTSv",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5418.6,
+      "timestamp": "2024-04-07T04:42:16.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9kk1XTR6NBAjHZiZ3kF1j8tJSdz83vHNZpaG4mg7MgLD",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5434.5,
+      "timestamp": "2024-04-07T03:39:37.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "5GbRsVdiEUM6Q5hvgFgBaG7gF6S6NqE8VrQW8s51axiG",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5442.3,
+      "timestamp": "2024-04-07T03:32:00.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9LW683A1KBkHEhvTcPeBpdtubsmuWo6yiKRJuqGDVtSk",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5453.7,
+      "timestamp": "2024-04-07T03:26:28.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "23N7uMkQtgtNvBeATuqaWYgte4kLEBLZRvGGjx5vzhvk",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5406,
+      "timestamp": "2024-04-07T01:34:54.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "FYyKgSjd5gr6cSHdEZYLpVbgV7PNFRE4FDQ2rbvg9SdL",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5394,
+      "timestamp": "2024-04-07T01:26:56.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6CFddaTku4gPSLEjDrnJtz9icwQMC6rjJbScyDwzhRes",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5376.6,
+      "timestamp": "2024-04-07T01:24:44.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "A7RDEvVtwdi43BbKstFyC5QRVkiwDbUYjpR1rNgbPkTe",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5376.6,
+      "timestamp": "2024-04-07T01:23:13.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "25Arv1qs1LpregxwNEyKZ549FEoRhi1QHgxujw9WAZnu",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5375.400000000001,
+      "timestamp": "2024-04-07T01:18:00.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3xq1VWvfT13zu31YZYWFaukkjN1TP7cBYNJb5VZt6hVH",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5363.1,
+      "timestamp": "2024-04-07T01:10:59.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "4oEmBYAc98pZru2KcpAqYCKPfqSytCJGDicwfr64678E",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5344.5,
+      "timestamp": "2024-04-07T01:01:21.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "DB7qBghxAympYGkdgnB6aMKe3sFaio9AGwvRjot66o9p",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5345.099999999999,
+      "timestamp": "2024-04-07T00:59:40.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "CQcx6wx8Lq52kDg1XjgFfq1B5aHvrghq4B5mUmcq7whk",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5341.8,
+      "timestamp": "2024-04-07T00:51:08.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8RMKGB4q7cgHsUkETdFbzF7Kj6SZbxsvDy5tBKGLXQc6",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5351.7,
+      "timestamp": "2024-04-07T00:43:08.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "4TGsAod4HYkvSTByHvQ8cYMbo25qWMCvEEd4XqnQKVSB",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5374.8,
+      "timestamp": "2024-04-06T23:50:13.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Aw97y6qZTFp8hoZsh6N9VkFEuECpnkHuNhmULmUqLZKT",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5380.5,
+      "timestamp": "2024-04-06T23:37:52.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3Mxg8TgUsAQvHYKaoMyu3EFePe8B9ZRTHAWp2mrdzeTf",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5388.6,
+      "timestamp": "2024-04-06T23:30:44.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "AqX1AfVfAyvxwVLFQPEej3LUCS3d21xvRvuApaxYm64t",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5378.1,
+      "timestamp": "2024-04-06T23:27:48.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "vDiAU16PcwHP7SWZDAjvtdjthPNXyinKvpqQSFDbYko",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5381.4,
+      "timestamp": "2024-04-06T23:17:50.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "HkGLyPkSusNyiHDswF3pe6EZXx2oUvQdMcqeGXBzVJrL",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5370.299999999999,
+      "timestamp": "2024-04-06T23:08:17.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "pDzfkZ6nKwDRSyBLKHAfeLgfSBNrvb1yrdKcJaAi2Pe",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5329.8,
+      "timestamp": "2024-04-06T19:37:28.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "FjU2PNgpr4EAJbi6pLb4SQSAqw1WFLs1QGhmmmZWgX2A",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5330.099999999999,
+      "timestamp": "2024-04-06T19:27:15.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "HvgGcQARaH8kLLJTXkNrUM79PTeitjJnYvsnuf2gpcE3",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5328.9,
+      "timestamp": "2024-04-06T19:17:48.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BtcWqfDGgNsUmrzKW8LpguLm3AUE5JKwpDrrzbhQArKD",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5325,
+      "timestamp": "2024-04-06T08:45:53.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "FBZFWGSyY294hN7Byfhx3iX2bNHg9DoRMQn54y3dZqLU",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5321.4,
+      "timestamp": "2024-04-06T08:30:50.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BvAwa1hi5LGs8rq4P4xAC6K6jEjLVCvQRhXKqEDswFZC",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5315.7,
+      "timestamp": "2024-04-06T08:28:21.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6K7AnyiM63Y9nmhgj47m5EtDQ287GY3ttvngEiRKCAL3",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5321.7,
+      "timestamp": "2024-04-06T08:08:20.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6PHeGPGFFgzTvhgxDeeRa8RDHtQVW8SXUEMDZS3tUPLN",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5328,
+      "timestamp": "2024-04-06T08:02:01.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "CpsFPZT8To6GX3UhLn5bvzmmy5qocMuHRjBJiDjhV39r",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5337.3,
+      "timestamp": "2024-04-06T07:56:27.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8V5Wdig9n39SCPdo9VL9rUPE5Dzi9J5Yq9YcxAgWwkMM",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5333.1,
+      "timestamp": "2024-04-06T07:51:02.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "31mtumiYUMjRuv7jusFMohS1o1Knkm9gECQsPHZuVwMu",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5333.1,
+      "timestamp": "2024-04-06T07:49:25.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "DEt5VJ9roXdR1YGQxMcy211FeUkKF2QjakXXHrb4YjXh",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5328,
+      "timestamp": "2024-04-06T07:22:49.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3niHzF1kP5HE1R69R51buy9vcDJwbZD7WWhd13dcwy1y",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5326.8,
+      "timestamp": "2024-04-06T07:13:00.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BbxhQJjvU2oDnPU8838xsVB3RxXCkH3goGJZFz1jooYu",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5333.4,
+      "timestamp": "2024-04-06T07:05:52.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "A12wue5yx6znHpTybqMxVdTz1rKRWYKnwQG8Q4YsJtcx",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5325,
+      "timestamp": "2024-04-06T06:39:57.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "HfDf7wVhYYQa9hvdiHQVKafUQezV3SrdF7b3BrMYMjKz",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5323.5,
+      "timestamp": "2024-04-06T06:32:00.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Fh68cJ4ZSbqXhNjhwxnZLVMSSGJwtDR1K6fg5f1MtGxW",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5323.5,
+      "timestamp": "2024-04-06T06:30:03.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9vYmCAGhGrLvcAt8o5j8cbXfqy7TFg4YiE1P5WBQNavX",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5326.2,
+      "timestamp": "2024-04-06T06:27:51.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BJVXLk5pBrZA9FnHayPqHEVbkSPz3ZmqBDAzjRVUhzGv",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5330.7,
+      "timestamp": "2024-04-06T06:19:43.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "AhgqUEXkY2H5LAzrrP4FVmVq7NwaWLbVTqKd6LMnEu4p",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5321.1,
+      "timestamp": "2024-04-06T06:10:13.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "GEEYTp1srGpXvckb6BAFShSX5TcJNXGZmxVmHtuvFJLc",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5327.7,
+      "timestamp": "2024-04-06T05:57:03.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "AukzFZTZycHmpHnTegfZ666rfVtNxyRLsdiGmRvgdR9d",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5329.2,
+      "timestamp": "2024-04-06T05:50:08.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "D6Qb3GJWqy4qUBdMHSfi3N8nNnRs9vsiWUpSSeZe1u3Z",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5277.3,
+      "timestamp": "2024-04-06T04:56:58.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9dxF5ArEMwaPQJcfnX2QD4QXR29SwPVyLimTdNjKxfwr",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5267.7,
+      "timestamp": "2024-04-06T04:49:07.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Bh2JYLwNiC58XjgUJ86GLHNLMBA7cK59pjF2qreUZtzX",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5272.5,
+      "timestamp": "2024-04-06T04:43:03.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "44gkdZC7SDpa9Nf6X3oNzK6SzRF2W1YD861Apxb1fCLt",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5278.5,
+      "timestamp": "2024-04-06T04:18:33.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "F2fLND5pNQ2U16jxZdeR83T4JBBec9E4cE4LVZC1ndj1",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5271.6,
+      "timestamp": "2024-04-06T04:13:50.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9AYhQ9BiyEeWnj4pXhJWfxaucgCBqWsWTvZFJ4wiQFSc",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5273.7,
+      "timestamp": "2024-04-06T04:05:39.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6tKix8vDZypQ7oeD9E4SbqWDXA8itkipn3pGTALAWH9R",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5281.5,
+      "timestamp": "2024-04-06T04:04:11.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "DMXWJo9Vb3yKapZTfabVhA5AJx9ou4MDNCUwGxQtvkJd",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5271.9,
+      "timestamp": "2024-04-06T03:49:39.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "DniB2rAmfJDQdbAYN7hpCCswewUXAR8RQ5r4D4nNXShN",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5281.2,
+      "timestamp": "2024-04-06T03:40:45.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "GUB27zUeZmuCDUpKuUpdubuv3bY5Dfm14cVPLGWScwtC",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5280,
+      "timestamp": "2024-04-06T03:33:31.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6jPuTcKdK6sRiY88r48X5bkjQCBsGPCdAhGVitoERmP2",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5286.6,
+      "timestamp": "2024-04-06T03:26:52.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Em9esNmKymur62FwmdJVeWpgKaeszLv3p1JD5YUGZYJj",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5247.599999999999,
+      "timestamp": "2024-04-06T03:20:10.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "5E6ewH8GgEnhZ4fWUorxRHQNveqfbVcNVPtrTaHqpMWH",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5229.3,
+      "timestamp": "2024-04-06T02:47:21.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "GQXcGjU5WKr9AUmyDMaqsRHMaiiq2bxreFmQvJVWVv6Y",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5223.9,
+      "timestamp": "2024-04-06T02:42:38.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "FHBUJNu97mbYm9JZECKEccUWe57UurhtcCUGSaxSbDsr",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5221.8,
+      "timestamp": "2024-04-06T02:33:35.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "DeB6uR6uvD9DZEqduCs3WcDHWUsEJoKMydVApwgxj7kH",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5227.799999999999,
+      "timestamp": "2024-04-06T02:16:04.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6A8Ef8PxUwYnegETFXPhXwMMHNBsnPWLKKSG5X81MAeb",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5249.4,
+      "timestamp": "2024-04-06T02:07:46.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "4NKBjiBF9B9JsFLtTtiKnE8HLeKpik2BNJTfWkpzpMAa",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5248.2,
+      "timestamp": "2024-04-06T02:04:41.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "AU5fcBu5m7TFvzKdHzVZmGuFMd1pVXj5e2CUKkSCVqKd",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5264.1,
+      "timestamp": "2024-04-06T01:56:02.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "2NU3d2ri7VfXBdxmkxk4A1za82BpxdhuPd8oNC8dKXdT",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5270.099999999999,
+      "timestamp": "2024-04-06T00:31:01.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "HrndBF8cHCekaRVTNTYCRi1x8L8Azh2rdoZZHpxg9P7w",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5248.2,
+      "timestamp": "2024-04-06T00:21:08.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6dztt8R7voMmwPj3ND9mLVc7Db5KVY8x9Z7Ty16ftbhe",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5255.099999999999,
+      "timestamp": "2024-04-05T23:57:41.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "7rmfoSVHiz7FpXwX4FtLSsQHGsCwEJTEVdcqj5MYd9mD",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5253.6,
+      "timestamp": "2024-04-05T23:46:09.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "7uXVd4PtViTb3pLZZAvY7M2Tyhn1YRgmvrufECSdgPep",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5255.7,
+      "timestamp": "2024-04-05T23:34:05.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "bbUmPsSSNP7P6NVKppXKPgXmxeeEveLZiLHunMcJjz3",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5255.7,
+      "timestamp": "2024-04-05T23:32:16.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "E3SfhemJoE8gTsZebuJhgY43kszBZRA9XqNyu24AXU9e",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5255.099999999999,
+      "timestamp": "2024-04-05T23:24:55.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "G9mZ3JLw1VypH9WAMjjaNxpRPyAgDLo3YpX44m4ukNnB",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5259,
+      "timestamp": "2024-04-05T23:18:44.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "FrpC8JN82egXmq5pFs8DvEMdBYQ3NZYt5KodAouXZzeC",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5259,
+      "timestamp": "2024-04-05T23:15:52.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "FmjWdGdARKskSTHJwsfU1VkHHkQdQGSRnbXxf3ggqB6X",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5256,
+      "timestamp": "2024-04-05T23:14:11.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "EHk3TCiD2LR3UWFiN3RytmjsAaKfi2RTJrZgjJFEuKfR",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5249.700000000001,
+      "timestamp": "2024-04-05T23:07:18.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3eAYS7UfCBEfFGNCMcy7SPoGCERMFu8ad7zFqGs81W8Q",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5240.7,
+      "timestamp": "2024-04-05T23:04:20.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "GidkiJk9JBrLFrL3i41eWZ8RkESRiyo5Ndzxa1mV1VPg",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5256.9,
+      "timestamp": "2024-04-05T22:41:24.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "AdkfK866bKTT4WoQeiVFnmNcoyJP3RdFFiEPStL9B5QN",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5250.9,
+      "timestamp": "2024-04-05T22:36:00.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8p3ejWvEVDaYnkqTApUtfzgMW2foXjggdJcrpdQfKQw3",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5253,
+      "timestamp": "2024-04-05T22:33:58.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "CnJraWjbGVfkvuGmjJSoBhi2ryCxRJQskpjd67bDahTg",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5251.8,
+      "timestamp": "2024-04-05T22:27:49.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9fGXdP1WGQ1Ev4MNwKKySiGoJaPDvsAv89UogGw6ZtPd",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5258.4,
+      "timestamp": "2024-04-05T22:18:08.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Cn1pzz5gysHCDzD6A3QpFQcBGZPkvymH44Gd1Xev2AHt",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5279.4,
+      "timestamp": "2024-04-05T21:42:03.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "B3DbzwB2xgj5mHvcMrhP6abvudvxjg5LoeTmCZceHE1Z",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5300.400000000001,
+      "timestamp": "2024-04-05T21:32:20.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "EbauXraU8xKZaWYr4oL3TL9Tzv6BN1kkBhTaU8vimrmX",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5288.7,
+      "timestamp": "2024-04-05T21:15:59.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "CxtQqV3ufs5G6Mvr4tirdbWPS4N6maUDzvjZ8dEce7n7",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5281.5,
+      "timestamp": "2024-04-05T21:01:21.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "TumMNGceFQkTkKB8PM7WR3hZ7naypmXgD9d5hqY99s8",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5279.4,
+      "timestamp": "2024-04-05T20:57:41.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "AC8N6pvxG2fZAadNqiWZvvuB8WqeYrDXd6QGVKxwX4qa",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5286.9,
+      "timestamp": "2024-04-05T20:48:31.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8Affs5LK4UkD6pT6bVhnfHEu3NA572XuVQA67m5Vq9qg",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5286.3,
+      "timestamp": "2024-04-05T20:23:55.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BF8hPQLvbX39CQs1me8UT6oQEDJwpSSFKX7Dv9BSRz6K",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5272.5,
+      "timestamp": "2024-04-05T19:18:24.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "CXQpTpRWQk2g5i8JHXNFmTGthtsDXcVDPLasgoBmTdJi",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5257.799999999999,
+      "timestamp": "2024-04-05T19:07:15.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6Uii3ofME9RStqHDqsVBeQ8gkebFCBHAcm9KUJ2t6LXb",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5231.7,
+      "timestamp": "2024-04-05T18:55:05.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BufZdPW5Xi2LMJD6jNbxJbrUeBH8FmH6hedVQssm686E",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5217,
+      "timestamp": "2024-04-05T18:48:14.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Hzh4XAxqJaZBfC8qfw9PBpgpxZp1faKXNphohFQ9kfXf",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5154.599999999999,
+      "timestamp": "2024-04-05T10:21:54.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "CDjBjc1VZKYbR54prEvyEJTNnF38jTNW9ay1eWuezmg4",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5170.2,
+      "timestamp": "2024-04-05T10:11:45.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "GtkdBXA9t2SULq1QJ71UwBRAj7rHRbByVH3YAhSBJA4J",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5172.900000000001,
+      "timestamp": "2024-04-05T09:46:32.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "GSEUzy8MCurAokUrNuwSj4SrZFpJjx8QjzAHs3EkCcD8",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5163.9,
+      "timestamp": "2024-04-05T09:31:02.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "C2Gg4qCzpWiCE8MUJRdovQ77KFdyGN8hmSDFuZ4TX7KX",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5151.3,
+      "timestamp": "2024-04-05T09:27:05.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Dbgy7MhA9BEpU1bRuNVc4GVK1xknorUnVaAcaXRvCpum",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5160,
+      "timestamp": "2024-04-05T09:14:37.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "B2U98ezQkafbN1i2mST52i6CFTx1wDB9RoLTNWMy3gWj",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5190.9,
+      "timestamp": "2024-04-05T09:04:14.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BYenTUifEsrXEKFvtQ4dq1LEZYoEdyVKnPaLiSxZXu1R",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5190.299999999999,
+      "timestamp": "2024-04-05T08:57:52.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3hUppW7pqqTxfPUDPYaJYissavG7ULx78q1uXnEwDaEd",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5208.9,
+      "timestamp": "2024-04-05T08:54:55.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "F3hJD1PvTTrCPd6H5TjPowK6q83SDdFH5kFj3WQpFP1u",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5228.4,
+      "timestamp": "2024-04-05T08:44:23.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8V5mjq1rCp77Uh2aR6waRpLyYLgJkVBMbRuwhYFJrsNn",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5299.5,
+      "timestamp": "2024-04-05T06:32:43.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "F2r9JZawZEPwjPYiqpnjEo3ULMU8WDYs1yuZu2gx2UNq",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5288.4,
+      "timestamp": "2024-04-05T06:29:44.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "2kTe2vPjZgq1W6dTsFt4XxAdP3XpwuZd2ZiFe7jSXzzB",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5288.4,
+      "timestamp": "2024-04-05T06:27:55.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "HyeMrLi8ryYoD7XDTmgWNghJF5GYATrq4YMKbMMC1g7q",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5274.900000000001,
+      "timestamp": "2024-04-05T06:22:52.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Dxnzn4C4VMuANV3q2gyDRbm1kKWtwRbo8fGRPvtcsWUg",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5274.900000000001,
+      "timestamp": "2024-04-05T06:21:12.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9pfn3ob3SfdPcGGQd4dsNL2Zc1wjDx6W3ZM16otaq2kH",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5286.3,
+      "timestamp": "2024-04-05T06:19:51.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "EmNoN2kxvtpqnr1yJ5BSC37wdKjCYwt56bVYMRwnr2Eh",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5272.5,
+      "timestamp": "2024-04-05T06:00:40.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "ASbkQvWrMamWJKRhLc5Bu724jZDCpWoQZDWzfgGTCSBX",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5349.599999999999,
+      "timestamp": "2024-04-05T04:30:49.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "CZwdcbi4yvwTezCsg1PhX2kfKJrbB4Pjk5XoRDH1cnpN",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5365.5,
+      "timestamp": "2024-04-05T04:25:32.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "7bDfMEa2GnLJuTauEMoidA5R9VBZTyAFy4ghLZkHCeNL",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5407.200000000001,
+      "timestamp": "2024-04-05T04:21:08.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "FYEDRY1sioF1ZXDFn76g3azMsWPhuZCNiLaiVgiyzP3b",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5383.5,
+      "timestamp": "2024-04-05T04:00:04.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "AdNZeRBLDqXmJSZSuJpkk5mvsRC4tmPeHnCEzU5YtsnR",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5383.5,
+      "timestamp": "2024-04-05T03:49:41.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "2E8zJM1eRMAndbWt5J8vPgL3guCnWJ5KBPVJq91AcVF1",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5391.3,
+      "timestamp": "2024-04-05T03:40:11.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "EEFKdsJ6mTE6ECk8cB4FJCa7vwHZvBUKpKTKFcyiFmZL",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5515.2,
+      "timestamp": "2024-04-05T01:19:01.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "CAzUUNFeuBfYKaukAQVaVQ64P5GsjjaaWp8PuofmuZk8",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5536.2,
+      "timestamp": "2024-04-05T01:12:27.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8DFdK9Zuk25RNJdjowCqmAe6eoHdCK8eGvjUBm36Lh8X",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5551.2,
+      "timestamp": "2024-04-05T01:04:27.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "FPop7HfxbrHAQzGibS6kz1bJw9EYLATnfbX5zGPuBCHj",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5540.099999999999,
+      "timestamp": "2024-04-05T00:59:00.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "28h6sM4uNpLa9V5g5AxEy2LFzpTy4ctVWeMCnGiGxqEq",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5511,
+      "timestamp": "2024-04-05T00:06:59.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9RfchXSpfFmnAERWKpyAjTSQhYWExfVUBe5dsMNfw51c",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5521.8,
+      "timestamp": "2024-04-05T00:03:42.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9mwGo744HH73GUe9urkEaftWBWDetPx23fzUCFKir5WM",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5521.2,
+      "timestamp": "2024-04-04T23:56:39.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6s9h2EGFzQVj3yt1mZFWKWssatxDrJRvthqsT8NkwVke",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5509.2,
+      "timestamp": "2024-04-04T23:49:18.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "H4hhJ343cuqUjbtjtn1EE3JFnseBNsUseAWBre2wY7tB",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5494.8,
+      "timestamp": "2024-04-04T23:39:54.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "HEydQFufAvTRE62MkTYK5AHYfwim1z4JEgxrA82sKeMY",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5500.5,
+      "timestamp": "2024-04-04T23:25:34.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9LDdebn4gdVDb788rA9FvyMzJs5DbqYpeMfsxqPaRzZW",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5490.299999999999,
+      "timestamp": "2024-04-04T23:14:28.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "GumSpP28MkzMvLDBYGuTRE3uk9BXttJABwc1BzpgdzLS",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5482.799999999999,
+      "timestamp": "2024-04-04T23:05:35.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3tBpHknZQ86WhckXc8MVJwGAmb7XaJCiK5BRnEjd6QT2",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5474.4,
+      "timestamp": "2024-04-04T23:02:34.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "61jt6ijYmPmqBCVuAKHfCbC8gXjhAZCYwu4ED8XusnFt",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5486.7,
+      "timestamp": "2024-04-04T22:50:09.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8nMiNiDA2Ap78sgadet5gKVFs6zhXDuWMbf4ThEzzXi8",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5493.3,
+      "timestamp": "2024-04-04T22:48:20.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Hzz5j8K9a5FHBdqftVQ2Kc15TH4bVebRznabV9WSzpXm",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5490,
+      "timestamp": "2024-04-04T22:38:09.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "CZLXEKnhTXPBbwaVfiAsbiYVYaYooL1yeocYsNMnJgQk",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5493,
+      "timestamp": "2024-04-04T22:31:56.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "FHabp6Ju4KX2GF16RJoiBkw465m5tHZcoEFCeLVUAE5H",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5490,
+      "timestamp": "2024-04-04T22:28:43.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9eNFgJohXK226CojmfcUmjtGApAXtqErawz9pZAGNTXC",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5471.4,
+      "timestamp": "2024-04-04T22:19:59.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "CbKsMDCaAna3UU2cDgcNQUeosi8Eww13CFp6SMxqDdXP",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5473.2,
+      "timestamp": "2024-04-04T22:11:31.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "D5PAva9exUXnb2Y82TB6VXRZjN8BbUVFN2pSmtBZ3YZs",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5465.400000000001,
+      "timestamp": "2024-04-04T22:03:12.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6zFXrZXKUEQnmkogr7apPj8NFFYtFLVx3Z3Je7U6gxrT",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5457.900000000001,
+      "timestamp": "2024-04-04T21:46:18.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "F5fNZCksSs2zXKP5PJeg6HpRXBo43RnuRP1Ru5bDeAks",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5473.5,
+      "timestamp": "2024-04-04T21:44:36.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "4JMPmysKKTedHB2vp5HegKjWuTqdhhrCvKiQFfcXYS4o",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5477.400000000001,
+      "timestamp": "2024-04-04T21:24:10.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Au19JSiGZXVHR6ttPgQymY9oa8jsduEp3MTWJjxe93fP",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5493,
+      "timestamp": "2024-04-04T21:07:02.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "26r5fJGEXRoY3mGU3pyUjGaMCywsV2pqGQJZAo4QT7Tn",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5493,
+      "timestamp": "2024-04-04T21:05:10.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "4HRV6nuLpKRTVQnLf2kjK5rMQe9T8JqzJYB9H9qYqULj",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5478.6,
+      "timestamp": "2024-04-04T21:03:59.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "DCh7ZqAB3uBkqJA1VMhSyifftaqY1K3bMxs7KdHhTB3H",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5461.8,
+      "timestamp": "2024-04-04T20:47:54.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "PsDfy1aYqRzJgwF96EF6V23Z29cpe3bEhj6Gqx1EXBj",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5496.3,
+      "timestamp": "2024-04-04T20:16:59.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "EQo8vXof7JfJcwgSeCfe1D4Ew2Cdwaw2iK6JgrQ1umPH",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5555.099999999999,
+      "timestamp": "2024-04-04T20:07:52.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "4M45JTYXWD3ZGtLEnxRzrNx2qEECxe9TQ6qY4FshknyR",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5595.299999999999,
+      "timestamp": "2024-04-04T19:46:50.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "AJuwQZk3M5Q1AVQtKrJXK1Lc5rgENFgHr4ydrKJSRNxA",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5608.2,
+      "timestamp": "2024-04-04T19:41:06.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "FnCknMosXcGYymWC7mf1aS7wk9yRDoud7pAZMCx66CMz",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5584.5,
+      "timestamp": "2024-04-04T19:22:07.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "5WrCnLJ5u8Jqm5XAyMYkgvr2AjQ6QNQ15jGtJf1tM4Xa",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5599.8,
+      "timestamp": "2024-04-04T19:10:52.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "DJk5ETVdKu2KJEKt6ZKDiKwC2sJCbUfsrrhZoMv2mN58",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5592.900000000001,
+      "timestamp": "2024-04-04T19:05:15.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9S3d2bTAbsatptyDfSJLVAKtEPu2Q1emFHcyPjJK11Xb",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5593.2,
+      "timestamp": "2024-04-04T18:58:02.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "HB7bxgnB3BfjEkyQqwk1t2g1hK5G6BmBbGdon5paTJn5",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5615.7,
+      "timestamp": "2024-04-04T18:48:04.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8mrdctSmvTugVKoQUNziFaHqPSeLH5kNED8f8C2gzuCA",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5615.7,
+      "timestamp": "2024-04-04T18:45:37.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6woxy3G9MG14Z59LfWmB8knyRTTFEmNvurm63sVi1mPW",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5700.6,
+      "timestamp": "2024-04-04T18:06:33.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "DCQAwnSmutribJN51Xa5kYps3L5eKshXTZaqRJozdV5A",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5626.5,
+      "timestamp": "2024-04-04T17:38:18.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BwbGsnZsYp5xkRo94g1zcD2gf6fote5nSJX8AKSEW9HS",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5622,
+      "timestamp": "2024-04-04T17:31:11.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Bm3pJ69VesUDfPRQnzoRcCXt6gaU1jF4eCHVMYBY9AaW",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5616.6,
+      "timestamp": "2024-04-04T17:22:08.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "GfGFpKoVZgMU2Vs3vFjTv1isfYC5sBLPXHHnMksMbZt9",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5571,
+      "timestamp": "2024-04-04T09:03:42.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "5vKNMN3ZG25ksAUDb3S5QUGmz5EBzgCENA8bSzBFxh7G",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5575.5,
+      "timestamp": "2024-04-04T08:55:49.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "rTXt4JrudvCQMhnK6JcVPHm9DromgANfAjghXvrQHJu",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5557.200000000001,
+      "timestamp": "2024-04-04T07:18:46.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "A7nngzYYPWq7Ysp1tCfCPqMDjXkkvQHkxzMPixnfmkwf",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5526.6,
+      "timestamp": "2024-04-04T07:12:33.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3MQWMCFMHNCwmU9JHaTCJu4jqVAj9qyACsUWGgWLJJYP",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5521.5,
+      "timestamp": "2024-04-04T06:59:41.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "HraX9fQXYjB22uq1uZHWbEYi6A8jxS4BnmuJsB2Sz7Ax",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5530.5,
+      "timestamp": "2024-04-04T06:53:10.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "5Ed915xqWKbuA7vCf8hyxbxtRDuL5bjeDFYqKte8N9R8",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5520.9,
+      "timestamp": "2024-04-04T06:42:23.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "F77MA7e4DUkLEnN7QEdbwVLM5U6quqaBueyMRezPwJHw",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5514,
+      "timestamp": "2024-04-04T06:32:03.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9uL9DciLF9H9qp6MngsxfTGf9qhv4UwEUaHHBa7vRPRX",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5514,
+      "timestamp": "2024-04-04T06:30:13.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "314AHaZS12BArbyfjGyaxLBKmoWXAJpzWHhmuLga8utt",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5490,
+      "timestamp": "2024-04-04T05:53:01.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "7Ng7Cs3ZGthiaQVwBpr2ckkWw8Evuuc7oh2iw3AwSwLn",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5490.299999999999,
+      "timestamp": "2024-04-04T05:46:30.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "2xHxK1uWMhm1L4o1nf3rNKcnQuxbejJCjHquia2cedPX",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5475,
+      "timestamp": "2024-04-04T05:41:36.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "FEx8McbFqAbANbREAjSy3Jf6NWbQNmwULFdBA8PixgwN",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5470.8,
+      "timestamp": "2024-04-04T05:32:35.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9hsmKMkDcyxjtgb3YDE6aiTmZemoNMyb2ZLLeZ6XVSYh",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5475.6,
+      "timestamp": "2024-04-04T05:27:48.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Em7XGUe893V2RBn3TN85p88q7B4eqyxDt5Q8r3pdeQLS",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5472.599999999999,
+      "timestamp": "2024-04-04T05:23:03.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "J1T6TDqGCoNqvWUo8XZuurE8oUV4y3KHFyacEwfcEdkd",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5456.1,
+      "timestamp": "2024-04-04T04:47:46.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "C6uq6YHHTHB47ovhsLfgFfQ8juEjExBJPyDrdu6AaX5D",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5456.1,
+      "timestamp": "2024-04-04T04:45:41.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3sy11hpPUtEXAw2NhLoNVeqJqRZkMPFxjqvWkpfzRbKZ",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5430,
+      "timestamp": "2024-04-04T04:31:24.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "ALiRoTdFcim6yqBixfpuQynmX68GpXn9mmAzKEqg7Mh5",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5442,
+      "timestamp": "2024-04-04T04:23:04.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Bv7Aq5vpmc6Zwe64DCPfJWE4uyZFEqjptAb6kpXYNGNS",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5441.4,
+      "timestamp": "2024-04-04T04:16:43.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Fz2aqRveBktxvBy5v82Mcm7awbETULJyCyt2WCF6193n",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5580.299999999999,
+      "timestamp": "2024-04-04T01:38:32.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "EC2gR3ZfPCHEnSgHvfp93bzCu6AGpAx68QDVnW1x3VxF",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5592.900000000001,
+      "timestamp": "2024-04-04T01:29:58.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8YUisuiqj6nRiTJm3tBBnastJedxy1B2kGK4xkrXGFGv",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5592.900000000001,
+      "timestamp": "2024-04-04T01:28:16.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "J1EpHnhVxeLPVpGGPeVdJzY14AL8QCTtoXB76AD1Tbpk",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5597.7,
+      "timestamp": "2024-04-04T01:24:07.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Fk1WsvL424X6fnbZknc3Y8DzFsdJtnNBQh19NsTZbF5S",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5584.2,
+      "timestamp": "2024-04-04T00:25:17.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6nxe3ZZEVA3F1px5UVau3hp7caxKPFmPFzNFqaXL6wVa",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5582.7,
+      "timestamp": "2024-04-04T00:21:41.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "5Q3fHPpHACCysLvASMhHD6esRCDVh3SNaCQJUx3Hs5Wn",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5574.900000000001,
+      "timestamp": "2024-04-04T00:13:59.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "7dy2nf6oCTfLG8FFRaSg7dLe8oekTwib5otHSSS97E9M",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5583.6,
+      "timestamp": "2024-04-03T23:37:53.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3c5z8m5gDrtGoej8tcjfyN4jR78hi5y4xeKBBBKrG9zq",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5580.9,
+      "timestamp": "2024-04-03T23:05:37.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8pof4NhqcYuZ76veYZZNCuSwpRkfe9cQHk4iBKyFwfhC",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5555.7,
+      "timestamp": "2024-04-03T22:44:16.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Eu1zSXU1EuPJghQNEgJp5p6Cz2jL7wquG8p6SR8DY31b",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5568.3,
+      "timestamp": "2024-04-03T22:27:37.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "5L2UJJNa8syv6VY7Czpa7aWPydgEeRibs4ZjyTniCaSb",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5563.5,
+      "timestamp": "2024-04-03T22:07:43.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "7BVLMJvEGJqxoEDGEfEaDVyTUBoDdTcpPeeF7NrkcZFi",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5544.599999999999,
+      "timestamp": "2024-04-03T21:59:45.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "36kU8N7yK5FzNZppGH3tWAgyHXgP2mjWAZd6pdCZEwEa",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5521.2,
+      "timestamp": "2024-04-03T21:48:05.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8QdQggU5vYR7atmWRQvfKgjycrTCgSu4Q4vhiVFekBHY",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5529.3,
+      "timestamp": "2024-04-03T21:36:09.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "EKVACVCTynmWmvqULCJKzHfuNjaZF6UrAtWRs8UCEAyV",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5485.2,
+      "timestamp": "2024-04-03T21:23:58.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "5X6gn1wieZTFZz1d1jVyYuPRrcAbuBVjhvf44aCnkSQ7",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5485.2,
+      "timestamp": "2024-04-03T21:20:01.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "5uFJFh3gZFTievJTBbnAPEV6hfzfqMLPo4jT1TMtfmax",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5559.900000000001,
+      "timestamp": "2024-04-03T20:27:56.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BkJMjRxyDrRC7NPHi848v9zK5vkb8ngVrTRktEfuDEaz",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5579.4,
+      "timestamp": "2024-04-03T20:01:14.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "5nLHYdRpntHh73JeUZceHxAQWtzKbFpJxa1b7nHjCfG7",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5558.1,
+      "timestamp": "2024-04-03T19:58:14.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "EFsds81amND75c9RFRiiwduntxEDNJun8c9sgm9cjk4C",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5557.200000000001,
+      "timestamp": "2024-04-03T19:48:16.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "HtPoqKVWo2QNHSKEc266MGjLPdsk694svszgpBoBa1bi",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5568,
+      "timestamp": "2024-04-03T19:38:10.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9YefdzVSCe6kywaDvka3tHjKThwzHc4nfB2VvLLu8szB",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5576.7,
+      "timestamp": "2024-04-03T19:23:13.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "G8afJfA4H97vxEgmgWqFE7akZ3kC6ECShaNzwaoJrsxg",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5595.299999999999,
+      "timestamp": "2024-04-03T19:03:53.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "DSKpUF7msbuAChnbQurt1tbgBs53V9X4wLVPw3dBQHC1",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5561.4,
+      "timestamp": "2024-04-03T18:33:57.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "EVfG9EoKSjtjHzKma6U6KjUZ2p8eci6tqo8zado64z9h",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5616,
+      "timestamp": "2024-04-03T18:20:31.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8GfJsUdnsq7DKuf35eHktSrZ8UMcj58VWd8uzPSWMmpv",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5708.4,
+      "timestamp": "2024-04-03T07:45:13.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BRgsvYGUF8EvjVXh3W7TbaB1iJhiWZvmdsQZqfBMdcpL",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5695.5,
+      "timestamp": "2024-04-03T07:39:17.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Ac24XPW7vEMAGexxDfuFTcUUj4i7964kRsCS6wfQeHH9",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5711.7,
+      "timestamp": "2024-04-03T07:34:02.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "EpTivNmne79Bgd8cDipw1xXFNLJhA3n97Xk6LUYwMSrj",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5715.9,
+      "timestamp": "2024-04-03T07:28:22.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "2FTquC6PbrxeyGFjb1Raq24gmisaZxJsasgY58Aw4nYg",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5715,
+      "timestamp": "2024-04-03T07:15:08.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "CKHtfoEGo67tvumd8W5xMeNLzKEMUQaALUfHMva3X1pi",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5709.599999999999,
+      "timestamp": "2024-04-03T07:09:55.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8gxmUn2JPpGNT3WSoCcJGVkpoemWBPWMJmvNXFkA1AWz",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5735.400000000001,
+      "timestamp": "2024-04-03T06:59:12.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3haV9yEZhBe7C5e3U4hBKfprNnF2RVAFTrft17BXzuAx",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5730.9,
+      "timestamp": "2024-04-03T06:51:31.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Gmzc7wjKkfRxj1XiFpFzrRwrKfDhZSGZa79DpK49JKzU",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5727.599999999999,
+      "timestamp": "2024-04-03T06:46:03.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "4LhCQWeJSh9VoWh7V9jecWreSTvVQJqrDgrCVMSt3MGe",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5739.3,
+      "timestamp": "2024-04-03T06:36:53.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "He7JqHuzeQH6wi1EYL2ynkRvE29rzXrt78XdyDApT8MG",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5742.900000000001,
+      "timestamp": "2024-04-03T06:25:15.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "JCKcNMV4NXLcJV1iFN9LZZG2P7bVcNq1pT1xDjzCtpRY",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5701.2,
+      "timestamp": "2024-04-03T06:18:08.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8wpimtzHgYfcAdDk4er6WoTW5hiuA5KLa2n8hjNBwYgb",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5641.8,
+      "timestamp": "2024-04-03T05:50:52.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "AYYtPLcrjVN31F564du9ky7m6ck5kn6oDK3cmQkxNPS9",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5652,
+      "timestamp": "2024-04-03T05:38:11.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "7GPv3zeho3WjNwsuZ6cvPAw6472zFrim4rgER1derQWx",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5658.6,
+      "timestamp": "2024-04-03T05:25:54.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "vQzZFraCuknSy45Y6SXy6Y9PxAZrdLvUxHq8zwg6SrL",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5636.4,
+      "timestamp": "2024-04-03T05:12:11.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "De1472LYEYQbYWgphgTcduWAh1GhADbuQcY5ybJjusDw",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5645.7,
+      "timestamp": "2024-04-03T05:03:22.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "r7DFoPdEAKR6ThiZcGUZ78dfNSqVSaT9h1cfp9ce5Xk",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5660.7,
+      "timestamp": "2024-04-03T04:50:30.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "seztvE6Qht9uXwCtbrHVceZk2V9rZxEVLP6z1Gu5gvD",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5664.3,
+      "timestamp": "2024-04-03T03:59:46.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "2SHcyetLcyitbPmMAfRnj3svXBZrJ251CLUDaRvou3ph",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5542.5,
+      "timestamp": "2024-04-03T01:57:46.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9pr5BRSr6DvH5RuSvaffPzpCG2Rx2hYtYcfrBMoBj4HL",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5509.2,
+      "timestamp": "2024-04-03T01:49:36.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "73pgJuv7khrtxN4d5ptbqrbrkpTDcJ5HEUXPk3iUd7z2",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5500.2,
+      "timestamp": "2024-04-02T23:19:02.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "DydjxP38aVPLTJXMfgYHZdZe57DSa8keWKM1cWbPEeNh",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5511.6,
+      "timestamp": "2024-04-02T23:10:13.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3G3n75G1MLj4w1tjnDY8ggSupxLJyG82sDCGsfnpCJzS",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5529.900000000001,
+      "timestamp": "2024-04-02T23:01:25.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3g8bwsvic4H9P1uFmATb6vmwx57UkHvnJM4dwC2MVJxk",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5532.900000000001,
+      "timestamp": "2024-04-02T22:51:31.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "FFtezXaXNQ7WY2dsPnckKcuGRq9MDG6uJyK51iAc1xD6",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5520.299999999999,
+      "timestamp": "2024-04-02T22:38:27.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9ZGvMWe1J5DNwRpEdetTApA4ZBm33jhwmPPVbWPTGyPW",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5504.1,
+      "timestamp": "2024-04-02T22:32:44.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "FRKETUqarPbJVFGt2oBSYU6bkMGUKXmWcnj2aoBJbqVm",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5518.2,
+      "timestamp": "2024-04-02T22:27:36.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Ec76hgC8vrEQmL69iv7GgTWXfNU1TjtUZtfWL8nSn2Xa",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5535.9,
+      "timestamp": "2024-04-02T22:18:51.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3aRtt3hTvuQg8ocyVbKsKK4gk5JUNKZznrYo5V1j2iNG",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5535.9,
+      "timestamp": "2024-04-02T22:16:17.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BGaeqymHQMKhNpWrFTjfMACPCsxhfRJX9yf5ks5hiyDG",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5554.8,
+      "timestamp": "2024-04-02T22:13:23.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "7QA7ws2yYjN7roG4EHQre9VmwexEvFbVJkpzGtpC8YY9",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5554.8,
+      "timestamp": "2024-04-02T22:10:51.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Fg16JNsGxMEUJCzGXd8TKdpWo3J9sLVxM82kdGPGWbWp",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5527.200000000001,
+      "timestamp": "2024-04-02T22:05:19.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Eupq7j8UsnvW3TDvxKvetKLALutPuDC74oEvhXt81Gi6",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5521.5,
+      "timestamp": "2024-04-02T22:03:01.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "HpCHcc2arFoXuWL2WYru9YvwntE8VhPP1q9ecVMQSjcC",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5588.7,
+      "timestamp": "2024-04-02T20:34:33.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "5wWa7Mpp2squcEpuNDAfxefVhrVTjTekKyV7XdCuwe7X",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5588.7,
+      "timestamp": "2024-04-02T20:32:10.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Ftj3HZDasxBS3zdv8MpvdtXhrcuhKQJc8LestjPohWN7",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5581.2,
+      "timestamp": "2024-04-02T20:21:31.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "E3w3DV5L91mo4tXVtVvUtiNEsYNrhaqhwbtfHrzojXpW",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5587.5,
+      "timestamp": "2024-04-02T20:00:56.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3GmC3pF4LtGyKwYdiiCZDHJ7amDfCm8ur8F8yp5YJLKB",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5586.9,
+      "timestamp": "2024-04-02T19:34:24.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "CHui9eq1jBedHpCzDkg4tHprEHsvfeGUrK7PQst8eUT2",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5556.9,
+      "timestamp": "2024-04-02T19:24:50.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "DwABB1KCfdkiJX3MRnVMwMHhPyKgxVJhvKkYateBtDEs",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5556.9,
+      "timestamp": "2024-04-02T19:02:20.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "tZFgxE36GAe3TiemqMoBBk99rmTWmSnCpGBktX8nmwN",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5545.5,
+      "timestamp": "2024-04-02T18:51:30.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "1212Be4M7HPbvmMeLWhAPXKu7N84ZzuTLWVRddpiVBdK",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5499.599999999999,
+      "timestamp": "2024-04-02T18:30:25.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9i8XH5GM9dXqv4QWTrjinyiCKVPdFkASzkR9Vz1izfaW",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5430,
+      "timestamp": "2024-04-02T17:33:18.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "69uHjCmyJjKTwuTDPoD6V2faVEzKLzo3jBithR6YaLPa",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5445,
+      "timestamp": "2024-04-02T17:18:33.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9FGMdRdFonLeyj2pA8mev1pej7ZNvVwVigjqK3EtVbRT",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5426.1,
+      "timestamp": "2024-04-02T16:55:57.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "FsRyFB9LPpTumrFtdpSjKZhiP5q25Y7xepmH2oypAqA5",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5393.1,
+      "timestamp": "2024-04-02T16:41:00.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Gzm2t2uGUMAdvNUqWrsPdDkbhGMnEN2N3vWQnkR2zbBD",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5526.6,
+      "timestamp": "2024-04-02T07:41:42.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "7kPZ4oG4SsQBYUNfgKUi82wrmAE6eUafsXnPp9pD4JxU",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5541.6,
+      "timestamp": "2024-04-02T07:34:41.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "7Jry39JdX54XqbpmRxWwK7D7UHeH7ZidZjzJLJZEjfZW",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5552.7,
+      "timestamp": "2024-04-02T07:28:42.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9hLMaQAL2KmRjfme5W3wjYMigZCB7hTRtbShXxeAGhLX",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5550,
+      "timestamp": "2024-04-02T07:24:56.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "65PwLhu21i6xRvPXAvpNDBH35cWKGZrocT4aRcnyk3hH",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5554.8,
+      "timestamp": "2024-04-02T07:13:04.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9fW5peUxPhj6uAM3XdAXiksEycNpyXTZPsdvRaYuTzsE",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5581.5,
+      "timestamp": "2024-04-02T06:59:28.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "tUL2NMuX28vtBHeg4KP4Qztoc1f33JMjpC2evDXyV4d",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5576.1,
+      "timestamp": "2024-04-02T06:48:06.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "5F8KeXNGhsFnAH5xfDjgPNawB5nxeDB5GU1JRkVMwUYv",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5556.9,
+      "timestamp": "2024-04-02T06:32:33.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8JSaMT5iSPBPKHPoxaCzzGsUtDgKdzqmXvJV1nBtdaiv",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5546.1,
+      "timestamp": "2024-04-02T06:18:27.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3ZH3fJudq1DsHdi7rpm5uw5SpJkxWdD94xkTs7bqGwcD",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5533.8,
+      "timestamp": "2024-04-02T06:07:57.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "DAH22yHGqpFQQFRiiWb4Goyx6QRaarsKv6krwLNRSuer",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5541.9,
+      "timestamp": "2024-04-02T06:03:58.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "JBw1xcPHSvzAmakRXkg571YAU7sLskHvjMWGhyYQSBuS",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5503.5,
+      "timestamp": "2024-04-02T05:48:59.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "CjuxvxWGnxYA4mGuHFmU2nMvK4cGKXMGNF9vjxRovciD",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5475.9,
+      "timestamp": "2024-04-02T05:39:44.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BXyamCNeauz9mDhwubXw1FL3CPGsTRwyfeVM1aiesPKf",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5477.099999999999,
+      "timestamp": "2024-04-02T05:34:40.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "4VEGynwrnHPtcANdQ5MiU1VW1maQG1v3cwWUXSjeN94t",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5545.2,
+      "timestamp": "2024-04-02T02:43:15.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "J8Pwjaicao6gxB7Ad2ci4C7c3hEFuVYmbuv4YjzAk1c8",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5695.2,
+      "timestamp": "2024-04-02T02:28:22.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "AQzk4zk5bR4LLAmzJhESWb56JuwTvi6ruEyjYnCxCTEz",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5697.3,
+      "timestamp": "2024-04-02T02:17:12.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "GvhRJx4a1ggrq11X5o5hFqvievACcFThomLTg1Dt8mz2",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5695.8,
+      "timestamp": "2024-04-02T02:09:31.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Fv5rTcGPkEZB3awAmzA5crdceEGUhmjtHTUwEnCWn1o2",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5712,
+      "timestamp": "2024-04-02T02:03:01.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "H6QCie1Z8BNsbAd646p1zqrqLY5dvMi6h79L6bwuZ5WZ",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 4765.75,
+      "timestamp": "2024-04-02T01:51:40.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "CBpuCsmazo2d1XM55VJkgewazatT3ZQeHS8jH3DoUEaN",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 4732,
+      "timestamp": "2024-04-02T00:46:14.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "DRpYChbBWakf8WkmmojuGNoiGZF9pYk6VeeFzQ2FYdrR",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 7634.8,
+      "timestamp": "2024-04-02T00:30:53.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "FHR7wfhs62kCheHZmM53V5NvYUTm844TRd6zDSSrNS7g",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 7671.2,
+      "timestamp": "2024-04-02T00:19:43.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "98TUKiqSQXo8P7mQt8m4XcFyavEDW2FbWYfroGtKhom",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9602,
+      "timestamp": "2024-04-02T00:05:56.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6ahVXX47xDSFryaRJda1dR1SFijXGLXugKFJQ86ijRY2",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9666,
+      "timestamp": "2024-04-01T23:49:43.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "ADSsHaML2UrXMihC81k67fRNU9CzL8ANtqPYqRGS3S6f",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 9657.5,
+      "timestamp": "2024-04-01T23:42:13.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "7mb4rie5qxu42pbN8QFZVsFhsvSZnHQSarVGvKmBjYon",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5797.799999999999,
+      "timestamp": "2024-04-01T23:27:16.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "74C6ju3w3jHDsKsC5sj4MvaBjp8pazu2ZLcCGLaQSwq9",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5798.7,
+      "timestamp": "2024-04-01T23:13:07.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "7WDo2Fz1ebijYdUKM3Ax2L3NsWeJ7jjeXZpA2xWV8H3e",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5789.700000000001,
+      "timestamp": "2024-04-01T22:49:14.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "28WwWBsSbEhC9sPYEnBNKpYJM3Grxq44fXWqBcmPJTxY",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5789.700000000001,
+      "timestamp": "2024-04-01T22:45:49.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "4oHnPi9xZNgd6aQkhUuuAZYubAsDfvY61J5aTxtKNN1L",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5782.799999999999,
+      "timestamp": "2024-04-01T22:37:12.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8JQu6k3F6aQr2U7AMTfFUGuVaPUXHhBvFgaKB1WBkxei",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5781.9,
+      "timestamp": "2024-04-01T22:33:43.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "DVr5Y7RDWLasUJmuZjArwcwatxhZyQBxxkViRhEjcZmb",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5776.8,
+      "timestamp": "2024-04-01T22:25:50.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "GpjUDLU2gv4V75FXF6YyJduej1PyT4dqHdV9SjWf5zTy",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5807.099999999999,
+      "timestamp": "2024-04-01T21:48:00.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3jdk2gwzrnDmSXLUD4zZXwyPxJCngWZk2AE1NYEPyJcP",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5812.5,
+      "timestamp": "2024-04-01T21:39:11.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8u1FRTh6QEYkTwo3U5fX1LkczjSP56JR8UjNLAcBufg7",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5815.8,
+      "timestamp": "2024-04-01T21:31:45.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Hs99kNdyobzL6p3rYitKqq7rDjUWk8roVz4dQE8vDG7e",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5805,
+      "timestamp": "2024-04-01T21:25:42.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "A61cmGXpJbUnygQhzfDFCLj3F6V8jj2NkLybgdtuQrxX",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5806.5,
+      "timestamp": "2024-04-01T21:18:44.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "H7ZEtgpiPBb8Yju4pgwX4jK5TWPacmQ1m2VSTm4fGq4S",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5802,
+      "timestamp": "2024-04-01T21:13:03.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "D4FziqD28XmugMaG9fb4kQ9qSzzzsCDUKWNJsjd6pYJc",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5771.7,
+      "timestamp": "2024-04-01T19:41:44.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6iqKFwHnmq9mm341uy4qmUPCVdzVauxpJ2Xdx7PZLVQS",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5765.400000000001,
+      "timestamp": "2024-04-01T19:30:16.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "4jadjW9T5xKvCDADxvtkDbTTJNupatSMrfQ4kFZFqhdH",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5710.5,
+      "timestamp": "2024-04-01T19:11:51.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "93jSaULE81cmaMmp2ivE2zMN1LaWcZCvg2unG4KKv6Gw",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5692.200000000001,
+      "timestamp": "2024-04-01T19:02:18.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "GD72BUNkDaCC8ktX6Epqo6wY4pGnVmzcNwqQkDYQhaiC",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5663.4,
+      "timestamp": "2024-04-01T18:49:21.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8ndzJZiSvX6R1M97s4KTTpdQHUN5UGyrQ7VuSvGkwf9t",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5679,
+      "timestamp": "2024-04-01T18:29:35.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9K6SZWHf7bpEwyztbEtAk1izdwSrWiQu3mpWWrawpApy",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5653.2,
+      "timestamp": "2024-04-01T18:19:37.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "ckeT7WP6rFkXUTgcYX95PYQiJiUQgNFoksyp15825qd",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5684.1,
+      "timestamp": "2024-04-01T17:59:37.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3rgPKHaLBr3WPTBXv4ZFhDtWR2FjwDhuPpDQs5ZA1b9S",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5666.4,
+      "timestamp": "2024-04-01T17:49:56.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "GTP6HgrztJBHfkcLq3cRmcDSo3HScrPLxTefxnAaDqUw",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5677.5,
+      "timestamp": "2024-04-01T17:28:01.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BWXzSKxc7qKq1bLUJC7WcTqmGf44aqiXDueHVNVLLRK8",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5673.6,
+      "timestamp": "2024-04-01T17:19:17.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Af6hGXkgG3dsipjNCbgA7fJwv8tzbEaPWT2betizwhHn",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5673.6,
+      "timestamp": "2024-04-01T17:15:56.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3BwQTcp29T1eFBoJGknmprTJvkG8Q3QeWHqVfVGRpRkc",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5697.3,
+      "timestamp": "2024-04-01T17:06:44.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BpqusyaHbM88ffxTPFEjRWQFBFr5zPNQCpBKvTmdNSgr",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5718.6,
+      "timestamp": "2024-04-01T16:55:44.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6iJLes2y6QQ5oUxohTJkyeLcJ3rCFtW4PbstvbJcreGU",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5710.5,
+      "timestamp": "2024-04-01T16:52:26.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "4FFTk9QsEx8yoXpxSDuAW1r5K3HZUj5CQEZrdRTTuxbg",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5705.099999999999,
+      "timestamp": "2024-04-01T16:45:40.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "AQv5frL9C3h91zWkqgTx7krkpDUDJjY1xjQd5Q6NvZ2X",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5712.3,
+      "timestamp": "2024-04-01T16:38:11.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "7uEz6eh3JMRhFdueaSykHbZGf2uKDFmFcHbbeszyjU3z",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5716.2,
+      "timestamp": "2024-04-01T16:26:40.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "14UQSjApbfer6aAXsgS7X5GEWSpwTEQoMPLvw3GisNf7",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5679.599999999999,
+      "timestamp": "2024-04-01T16:22:39.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6z5kenf1qE4E9z4N6D35qVqoA8aC9nZaUzYm71YzfHhM",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5914.2,
+      "timestamp": "2024-04-01T09:09:33.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "7mLxz7oN7Zketd1KjatQgced2c14iS6E9CbiFru74jBz",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5904.900000000001,
+      "timestamp": "2024-04-01T09:03:02.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "DTiEuodFR5UkoKTL6uXpsLcFcw18LGMFQXHVJ7r5qRKP",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5904.900000000001,
+      "timestamp": "2024-04-01T08:56:47.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3fnqCg8g7Gs6CjuunP5Bmu2n4JZSo3wLuaS2oghFSvPk",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5913.6,
+      "timestamp": "2024-04-01T08:50:02.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8cd33fWCvaQcEnQAuoZCzsJPSrpjjytruKQjY1sRns3M",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5898,
+      "timestamp": "2024-04-01T08:31:54.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "CALyW18JXNh4N8gkhHpYqPLrdMatKoznHbt34f5qiTco",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5909.700000000001,
+      "timestamp": "2024-04-01T08:22:40.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9zeRbo5kPvaSgeRRNbikscgjQbRE9yvaAmGmarQf8J5s",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5903.1,
+      "timestamp": "2024-04-01T08:15:15.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "5M2Yq62xik9HKTwdWaTkQcby8f7Sw1hLDDo9fUQebe6a",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5914.2,
+      "timestamp": "2024-04-01T08:13:31.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "CpC5UopdmqSwUdPACMVJxfTpmd5V1h2TSxfFrPCUabY3",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5940,
+      "timestamp": "2024-04-01T08:07:19.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "1oM4CnbN8A3KrPAHip4eGYje56HYd4rfuyGbXmeapkz",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5961.3,
+      "timestamp": "2024-04-01T07:59:39.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "7VfMjwaisrevcFrG8DCxwuHYpzCouF7XpGk3dWG9ayDr",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5961.3,
+      "timestamp": "2024-04-01T07:57:42.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "GS4wVpiQwJk7eqcK6L2c4uCMrHHYdv8ebfWRbYUv6TKs",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5960.7,
+      "timestamp": "2024-04-01T07:53:04.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "FciUyEVRYa7DJKzDVrDaTB3HofYVQx5QTTA91ph7xSjH",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5954.1,
+      "timestamp": "2024-04-01T07:47:21.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "FqLz94sE39FGEhNGUKR5vskkeUkaAfjTWDN9CkSjjLXM",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5967.900000000001,
+      "timestamp": "2024-04-01T07:38:43.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "CuHEBGzAErPpkYx8AK6tNdRJV1aZrHZfxXfrWpbq2VK4",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5976,
+      "timestamp": "2024-04-01T07:32:57.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "2EpXATJkroamEZWPCTn57f63SYrACSACYpAYDrVw5Ni2",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5980.8,
+      "timestamp": "2024-04-01T07:17:10.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3ZRMGJpUQXpMouKgY519Gu7SAYXLdzLbGmMiREC6mA38",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5955,
+      "timestamp": "2024-04-01T07:08:25.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "EthyycprXjShWy6kisKBqoFFvW1o8uUh6ZnMymCTGbHD",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5953.2,
+      "timestamp": "2024-04-01T06:55:46.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "CaUqESU4a3vK9RVKweZyjk1rtmb3ANWhivbiYJy28QZz",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5940.9,
+      "timestamp": "2024-04-01T06:53:26.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "9EsZbGo1TMrSPF3qfHAyMiXroMpetookjS4uPtUVXRE7",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5936.1,
+      "timestamp": "2024-04-01T06:46:04.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "7JQocozXkWmbcUS8oEXbJSS6KorWjo9ypmT52N4yuhGD",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6014.700000000001,
+      "timestamp": "2024-04-01T05:33:52.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Ckh5KQHkrTjyQ89Yrt8YoT5d9p6xJFgyH4c8Aczm2NG8",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6032.7,
+      "timestamp": "2024-04-01T05:23:00.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "8tJ54ZNaUge5kghUe6ZkbNTaKuWeJE6joJtMQA5sC39L",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6030.299999999999,
+      "timestamp": "2024-04-01T05:18:05.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "LA5vBH5XHNkJd77kXSrzb6rCmxjW2BBekDPLGeMVySY",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6045.299999999999,
+      "timestamp": "2024-04-01T05:07:50.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "5ofHR6pCagbxLE44tKq6F5Au34RyW33QcpdNPTT147Wu",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6081.9,
+      "timestamp": "2024-04-01T04:56:34.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3VPvwUzJAFwi694o2ZP7zQX2KzFpbLqu5pGZmMy1MzY3",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6088.8,
+      "timestamp": "2024-04-01T04:47:38.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "GDyZ3Tn6beRDt4tKSgWQtTTVjGyEFk2NByaCFKcfFTb5",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6081.9,
+      "timestamp": "2024-04-01T04:38:56.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BmgeGCFWRYDm7keb61b48BPtkCXuRHBbfsiSRynQWJxu",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6099.3,
+      "timestamp": "2024-04-01T04:29:47.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "HrZxXdycPxwAKywFyETmtXVAqx9LWBARz4qUPjwTRkWc",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6099.599999999999,
+      "timestamp": "2024-04-01T04:11:52.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "EbUV6Nn9bPW4fsuampAYXjT9ZkLKaETSoqxrj96rGdUW",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6087.900000000001,
+      "timestamp": "2024-04-01T04:04:25.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "H9DrkvxzC2MqWsECAz6Lzw8zmEFWrYhccXXBNH3qhJ9A",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6100.2,
+      "timestamp": "2024-04-01T02:21:04.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3dZvE7UF8wJEAYc9orR23HgsMwAymxE7qf3CgQzN7V47",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6099.3,
+      "timestamp": "2024-04-01T02:11:31.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "EQvQcH5sp324PLvEoNC92NdSZm1en1JishDtHziWpYE5",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6093.9,
+      "timestamp": "2024-04-01T02:01:41.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BdpHyQXKXpobp1F9hj6jMsfn4KXemt7oEfkXd1hQoef5",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6092.099999999999,
+      "timestamp": "2024-04-01T01:52:56.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6wNd4HhWBGriQ3xHmCmQXmDfnYaV6peDbEYDiVTeW5eV",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6099.599999999999,
+      "timestamp": "2024-04-01T01:47:58.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "38U5ahRFYc2bGUkaYSUaoQpSNhCdisukFpSbMSESvnJy",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6130.8,
+      "timestamp": "2024-04-01T01:38:10.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "2Wf2PaovnZNHyJTA233FkEcjwtB4bLFhLZnUG3mMXsZX",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6093.9,
+      "timestamp": "2024-04-01T01:24:56.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "CddBeHXPX2zoEm1y3icRDFZgtiy3G4KThXdrFmCQSTav",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6060.9,
+      "timestamp": "2024-04-01T00:19:30.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "DCvgHMh2BX4TVXkCTrUtgeur1UKRJFaNEBwjXTVfkkPG",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6083.4,
+      "timestamp": "2024-04-01T00:04:45.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Hj2DYrjekiZPLp6VXGEL8idSD5hZG9Hk3Q1tVutUZ9aq",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6088.2,
+      "timestamp": "2024-03-31T23:54:26.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "4GeJazsT9PqbbGkVREJZo2FWRaqTfAaHXYuMpAyAn7AW",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6090.9,
+      "timestamp": "2024-03-31T23:43:44.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Bwxsei5w9mZYPmwPDCNuQ9L2AytCF9PEfJcjMcCY18P2",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6066.9,
+      "timestamp": "2024-03-31T23:33:37.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "7NKc6FCRSAxhXTb7coakKLrkGLLykXj1T2WfCz7uMUiJ",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6066.9,
+      "timestamp": "2024-03-31T23:31:01.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "H7jzhhreWgxLQAu7weBSdsahwaNeSXoAAGbntPuZMKyo",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6013.2,
+      "timestamp": "2024-03-31T22:54:51.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Gj5odoxJ1rZCF4n73kPbnCgK16RBrKgSy2ar35u1n8gr",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6018.6,
+      "timestamp": "2024-03-31T22:45:56.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "6D8UYSivLjZov1XSt9e9NBFnwjwu9gAx2xMAjbSjv3iV",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6034.8,
+      "timestamp": "2024-03-31T22:35:16.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "cdYo2XpbjDUhDU4N4UHPBiGSAsdCGJ6kDiPQ1ReLrz9",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6020.400000000001,
+      "timestamp": "2024-03-31T22:27:21.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "CbJFNsqzSDf4ZEnDodXNYfHNLzWVRR4pqEWggpF6Hgq",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6020.400000000001,
+      "timestamp": "2024-03-31T22:25:00.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "3E4WxE3m6LpQmX33ioK7Uph2hTiqsKUUgMcfcGsZU8bg",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5999.1,
+      "timestamp": "2024-03-31T22:13:07.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "BcuZuZa4jA2N7tnTKiiDFM4MR8gjcm66EfF74CWkjCTM",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5989.8,
+      "timestamp": "2024-03-31T21:59:55.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "GZZahUmLAjkaGvqYQQhzcNPsNtiHySJyjmf6SyQ1SqGg",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5989.8,
+      "timestamp": "2024-03-31T21:57:50.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "Fj6EbqyeVmyEz4JQL8yJsxVfwnX5SXEZW5SZXZneDGc5",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 5976.3,
+      "timestamp": "2024-03-31T21:37:03.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "ELUVptBvQxC3oSAyFByciiHiKuv657ohhB2MmZPMbhf5",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6006.9,
+      "timestamp": "2024-03-31T20:19:06.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "5Zve6BfMFFCMEodQd8QvCyw14ne74ou64FD1jyzV3mKu",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6007.799999999999,
+      "timestamp": "2024-03-31T20:09:17.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "ALpXHGFHE5kHRQkNR6yvv7BDQbeGXLgz5fApi7sSmN2R",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6005.400000000001,
+      "timestamp": "2024-03-31T19:36:16.000Z"
+    },
+    {
+      "trader": "E52Aoen8NNwYYauDT53ecuWPbabK8hsuLEijq5PUmihB",
+      "token_mint": "vyrcVgB8YsDioTXh8boyzUX9ZBsApSbwSEG73YmfTty",
+      "symbol": "",
+      "action": "buy",
+      "amount_usd": 6026.7,
+      "timestamp": "2024-03-31T19:29:29.000Z"
+    }
+  ]
+}

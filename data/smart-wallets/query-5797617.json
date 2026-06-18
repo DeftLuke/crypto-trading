@@ -1,0 +1,6599 @@
+{
+  "label": "baseDailyStats",
+  "ok": true,
+  "query_id": 5797617,
+  "rows": [
+    {
+      "active_wallet": 67364,
+      "day": "2026-06-13 00:00:00.000 UTC",
+      "native_volume_eth": 12597.345849652607,
+      "tx_count": 733030
+    },
+    {
+      "active_wallet": 551593,
+      "day": "2026-06-12 00:00:00.000 UTC",
+      "native_volume_eth": 131866.93098985034,
+      "tx_count": 8313235
+    },
+    {
+      "active_wallet": 1012079,
+      "day": "2026-06-11 00:00:00.000 UTC",
+      "native_volume_eth": 256751.93026003285,
+      "tx_count": 9960325
+    },
+    {
+      "active_wallet": 493043,
+      "day": "2026-06-10 00:00:00.000 UTC",
+      "native_volume_eth": 172567.49881984992,
+      "tx_count": 10835454
+    },
+    {
+      "active_wallet": 407679,
+      "day": "2026-06-09 00:00:00.000 UTC",
+      "native_volume_eth": 155170.8553105721,
+      "tx_count": 8563727
+    },
+    {
+      "active_wallet": 471123,
+      "day": "2026-06-08 00:00:00.000 UTC",
+      "native_volume_eth": 159347.73787778287,
+      "tx_count": 8090914
+    },
+    {
+      "active_wallet": 314912,
+      "day": "2026-06-07 00:00:00.000 UTC",
+      "native_volume_eth": 264283.61538880976,
+      "tx_count": 7342756
+    },
+    {
+      "active_wallet": 391363,
+      "day": "2026-06-06 00:00:00.000 UTC",
+      "native_volume_eth": 178343.11717714395,
+      "tx_count": 8831758
+    },
+    {
+      "active_wallet": 429617,
+      "day": "2026-06-05 00:00:00.000 UTC",
+      "native_volume_eth": 318501.36845691287,
+      "tx_count": 16164723
+    },
+    {
+      "active_wallet": 443590,
+      "day": "2026-06-04 00:00:00.000 UTC",
+      "native_volume_eth": 304680.4650539059,
+      "tx_count": 12649616
+    },
+    {
+      "active_wallet": 427958,
+      "day": "2026-06-03 00:00:00.000 UTC",
+      "native_volume_eth": 264351.1147526982,
+      "tx_count": 13261088
+    },
+    {
+      "active_wallet": 440709,
+      "day": "2026-06-02 00:00:00.000 UTC",
+      "native_volume_eth": 219837.07393015784,
+      "tx_count": 14596179
+    },
+    {
+      "active_wallet": 461732,
+      "day": "2026-06-01 00:00:00.000 UTC",
+      "native_volume_eth": 246834.38896634203,
+      "tx_count": 10267375
+    },
+    {
+      "active_wallet": 374436,
+      "day": "2026-05-31 00:00:00.000 UTC",
+      "native_volume_eth": 122930.93700042575,
+      "tx_count": 6894965
+    },
+    {
+      "active_wallet": 348424,
+      "day": "2026-05-30 00:00:00.000 UTC",
+      "native_volume_eth": 119167.64515700133,
+      "tx_count": 6635037
+    },
+    {
+      "active_wallet": 423623,
+      "day": "2026-05-29 00:00:00.000 UTC",
+      "native_volume_eth": 192465.2686962664,
+      "tx_count": 7826536
+    },
+    {
+      "active_wallet": 429933,
+      "day": "2026-05-28 00:00:00.000 UTC",
+      "native_volume_eth": 203637.5995324991,
+      "tx_count": 10749813
+    },
+    {
+      "active_wallet": 483263,
+      "day": "2026-05-27 00:00:00.000 UTC",
+      "native_volume_eth": 184389.8208388592,
+      "tx_count": 9834686
+    },
+    {
+      "active_wallet": 463608,
+      "day": "2026-05-26 00:00:00.000 UTC",
+      "native_volume_eth": 209485.2724788696,
+      "tx_count": 9019518
+    },
+    {
+      "active_wallet": 453577,
+      "day": "2026-05-25 00:00:00.000 UTC",
+      "native_volume_eth": 198312.72655507654,
+      "tx_count": 8313800
+    },
+    {
+      "active_wallet": 428415,
+      "day": "2026-05-24 00:00:00.000 UTC",
+      "native_volume_eth": 134486.0121842649,
+      "tx_count": 7826640
+    },
+    {
+      "active_wallet": 441884,
+      "day": "2026-05-23 00:00:00.000 UTC",
+      "native_volume_eth": 202232.72897312828,
+      "tx_count": 8654838
+    },
+    {
+      "active_wallet": 465897,
+      "day": "2026-05-22 00:00:00.000 UTC",
+      "native_volume_eth": 169839.0207262643,
+      "tx_count": 9226424
+    },
+    {
+      "active_wallet": 455404,
+      "day": "2026-05-21 00:00:00.000 UTC",
+      "native_volume_eth": 166103.54725038633,
+      "tx_count": 9800044
+    },
+    {
+      "active_wallet": 431645,
+      "day": "2026-05-20 00:00:00.000 UTC",
+      "native_volume_eth": 148310.40873513962,
+      "tx_count": 7989083
+    },
+    {
+      "active_wallet": 403628,
+      "day": "2026-05-19 00:00:00.000 UTC",
+      "native_volume_eth": 157127.20381828744,
+      "tx_count": 8285226
+    },
+    {
+      "active_wallet": 444264,
+      "day": "2026-05-18 00:00:00.000 UTC",
+      "native_volume_eth": 189235.4204889921,
+      "tx_count": 8628269
+    },
+    {
+      "active_wallet": 367765,
+      "day": "2026-05-17 00:00:00.000 UTC",
+      "native_volume_eth": 141936.058961471,
+      "tx_count": 6695789
+    },
+    {
+      "active_wallet": 359840,
+      "day": "2026-05-16 00:00:00.000 UTC",
+      "native_volume_eth": 98132.20884788355,
+      "tx_count": 6210861
+    },
+    {
+      "active_wallet": 371677,
+      "day": "2026-05-15 00:00:00.000 UTC",
+      "native_volume_eth": 129966.29096922511,
+      "tx_count": 6793209
+    },
+    {
+      "active_wallet": 420473,
+      "day": "2026-05-14 00:00:00.000 UTC",
+      "native_volume_eth": 130910.87444653818,
+      "tx_count": 8442088
+    },
+    {
+      "active_wallet": 447002,
+      "day": "2026-05-13 00:00:00.000 UTC",
+      "native_volume_eth": 154870.14153653258,
+      "tx_count": 7096677
+    },
+    {
+      "active_wallet": 407019,
+      "day": "2026-05-12 00:00:00.000 UTC",
+      "native_volume_eth": 106858.28970476263,
+      "tx_count": 6954874
+    },
+    {
+      "active_wallet": 437292,
+      "day": "2026-05-11 00:00:00.000 UTC",
+      "native_volume_eth": 84430.31832432677,
+      "tx_count": 6118651
+    },
+    {
+      "active_wallet": 405118,
+      "day": "2026-05-10 00:00:00.000 UTC",
+      "native_volume_eth": 107748.7103838989,
+      "tx_count": 6382449
+    },
+    {
+      "active_wallet": 432197,
+      "day": "2026-05-09 00:00:00.000 UTC",
+      "native_volume_eth": 63042.84176661447,
+      "tx_count": 6782254
+    },
+    {
+      "active_wallet": 486989,
+      "day": "2026-05-08 00:00:00.000 UTC",
+      "native_volume_eth": 78321.2536588603,
+      "tx_count": 10642336
+    },
+    {
+      "active_wallet": 490200,
+      "day": "2026-05-07 00:00:00.000 UTC",
+      "native_volume_eth": 75548.41828422931,
+      "tx_count": 10153232
+    },
+    {
+      "active_wallet": 496878,
+      "day": "2026-05-06 00:00:00.000 UTC",
+      "native_volume_eth": 99779.22902858318,
+      "tx_count": 9598148
+    },
+    {
+      "active_wallet": 455181,
+      "day": "2026-05-05 00:00:00.000 UTC",
+      "native_volume_eth": 98221.46181093136,
+      "tx_count": 8443092
+    },
+    {
+      "active_wallet": 510752,
+      "day": "2026-05-04 00:00:00.000 UTC",
+      "native_volume_eth": 125511.91633669283,
+      "tx_count": 7970277
+    },
+    {
+      "active_wallet": 405543,
+      "day": "2026-05-03 00:00:00.000 UTC",
+      "native_volume_eth": 57215.27587054029,
+      "tx_count": 5496398
+    },
+    {
+      "active_wallet": 419095,
+      "day": "2026-05-02 00:00:00.000 UTC",
+      "native_volume_eth": 39908.47176080687,
+      "tx_count": 5714248
+    },
+    {
+      "active_wallet": 395233,
+      "day": "2026-05-01 00:00:00.000 UTC",
+      "native_volume_eth": 93195.511297067,
+      "tx_count": 5635204
+    },
+    {
+      "active_wallet": 508049,
+      "day": "2026-04-30 00:00:00.000 UTC",
+      "native_volume_eth": 111959.87915994672,
+      "tx_count": 6644734
+    },
+    {
+      "active_wallet": 384788,
+      "day": "2026-04-29 00:00:00.000 UTC",
+      "native_volume_eth": 150182.71291660808,
+      "tx_count": 6786382
+    },
+    {
+      "active_wallet": 413010,
+      "day": "2026-04-28 00:00:00.000 UTC",
+      "native_volume_eth": 89962.90799722048,
+      "tx_count": 6683922
+    },
+    {
+      "active_wallet": 401873,
+      "day": "2026-04-27 00:00:00.000 UTC",
+      "native_volume_eth": 119594.65513971086,
+      "tx_count": 6758931
+    },
+    {
+      "active_wallet": 408849,
+      "day": "2026-04-26 00:00:00.000 UTC",
+      "native_volume_eth": 66010.32410800984,
+      "tx_count": 5954898
+    },
+    {
+      "active_wallet": 444470,
+      "day": "2026-04-25 00:00:00.000 UTC",
+      "native_volume_eth": 34080.97423595703,
+      "tx_count": 5608706
+    },
+    {
+      "active_wallet": 382943,
+      "day": "2026-04-24 00:00:00.000 UTC",
+      "native_volume_eth": 75924.1958165515,
+      "tx_count": 6345199
+    },
+    {
+      "active_wallet": 441953,
+      "day": "2026-04-23 00:00:00.000 UTC",
+      "native_volume_eth": 96088.47552031897,
+      "tx_count": 7460702
+    },
+    {
+      "active_wallet": 372898,
+      "day": "2026-04-22 00:00:00.000 UTC",
+      "native_volume_eth": 130777.92823934136,
+      "tx_count": 7096330
+    },
+    {
+      "active_wallet": 387758,
+      "day": "2026-04-21 00:00:00.000 UTC",
+      "native_volume_eth": 77999.50396675941,
+      "tx_count": 7095298
+    },
+    {
+      "active_wallet": 345501,
+      "day": "2026-04-20 00:00:00.000 UTC",
+      "native_volume_eth": 98326.01843825217,
+      "tx_count": 6881430
+    },
+    {
+      "active_wallet": 352914,
+      "day": "2026-04-19 00:00:00.000 UTC",
+      "native_volume_eth": 71699.3922640566,
+      "tx_count": 7111027
+    },
+    {
+      "active_wallet": 419427,
+      "day": "2026-04-18 00:00:00.000 UTC",
+      "native_volume_eth": 72810.21301599432,
+      "tx_count": 7131684
+    },
+    {
+      "active_wallet": 447942,
+      "day": "2026-04-17 00:00:00.000 UTC",
+      "native_volume_eth": 120677.48333501637,
+      "tx_count": 7809492
+    },
+    {
+      "active_wallet": 418580,
+      "day": "2026-04-16 00:00:00.000 UTC",
+      "native_volume_eth": 88341.89432562624,
+      "tx_count": 7801971
+    },
+    {
+      "active_wallet": 374637,
+      "day": "2026-04-15 00:00:00.000 UTC",
+      "native_volume_eth": 82526.44072744244,
+      "tx_count": 7132566
+    },
+    {
+      "active_wallet": 382644,
+      "day": "2026-04-14 00:00:00.000 UTC",
+      "native_volume_eth": 123533.82434167819,
+      "tx_count": 8412952
+    },
+    {
+      "active_wallet": 373469,
+      "day": "2026-04-13 00:00:00.000 UTC",
+      "native_volume_eth": 151102.65329567352,
+      "tx_count": 7770799
+    },
+    {
+      "active_wallet": 360345,
+      "day": "2026-04-12 00:00:00.000 UTC",
+      "native_volume_eth": 65204.19246731604,
+      "tx_count": 6652798
+    },
+    {
+      "active_wallet": 499280,
+      "day": "2026-04-11 00:00:00.000 UTC",
+      "native_volume_eth": 65277.183581579455,
+      "tx_count": 6929745
+    },
+    {
+      "active_wallet": 544730,
+      "day": "2026-04-10 00:00:00.000 UTC",
+      "native_volume_eth": 104677.10002956302,
+      "tx_count": 8430118
+    },
+    {
+      "active_wallet": 612123,
+      "day": "2026-04-09 00:00:00.000 UTC",
+      "native_volume_eth": 104959.98662393226,
+      "tx_count": 9253642
+    },
+    {
+      "active_wallet": 531753,
+      "day": "2026-04-08 00:00:00.000 UTC",
+      "native_volume_eth": 146682.8857466016,
+      "tx_count": 7723393
+    },
+    {
+      "active_wallet": 522271,
+      "day": "2026-04-07 00:00:00.000 UTC",
+      "native_volume_eth": 199356.60948931822,
+      "tx_count": 7903216
+    },
+    {
+      "active_wallet": 470960,
+      "day": "2026-04-06 00:00:00.000 UTC",
+      "native_volume_eth": 127175.31541677497,
+      "tx_count": 7174486
+    },
+    {
+      "active_wallet": 449586,
+      "day": "2026-04-05 00:00:00.000 UTC",
+      "native_volume_eth": 79623.99433112756,
+      "tx_count": 6650911
+    },
+    {
+      "active_wallet": 521639,
+      "day": "2026-04-04 00:00:00.000 UTC",
+      "native_volume_eth": 45331.62865277729,
+      "tx_count": 6972187
+    },
+    {
+      "active_wallet": 535315,
+      "day": "2026-04-03 00:00:00.000 UTC",
+      "native_volume_eth": 51619.5598306705,
+      "tx_count": 7326325
+    },
+    {
+      "active_wallet": 488595,
+      "day": "2026-04-02 00:00:00.000 UTC",
+      "native_volume_eth": 154554.38106077717,
+      "tx_count": 8617791
+    },
+    {
+      "active_wallet": 396586,
+      "day": "2026-04-01 00:00:00.000 UTC",
+      "native_volume_eth": 176865.49566953696,
+      "tx_count": 8018654
+    },
+    {
+      "active_wallet": 404035,
+      "day": "2026-03-31 00:00:00.000 UTC",
+      "native_volume_eth": 226434.88929988843,
+      "tx_count": 7849370
+    },
+    {
+      "active_wallet": 420751,
+      "day": "2026-03-30 00:00:00.000 UTC",
+      "native_volume_eth": 192259.79650275144,
+      "tx_count": 7418623
+    },
+    {
+      "active_wallet": 435374,
+      "day": "2026-03-29 00:00:00.000 UTC",
+      "native_volume_eth": 66905.09181912742,
+      "tx_count": 7011192
+    },
+    {
+      "active_wallet": 324211,
+      "day": "2026-03-28 00:00:00.000 UTC",
+      "native_volume_eth": 81983.43058661233,
+      "tx_count": 6461148
+    },
+    {
+      "active_wallet": 455161,
+      "day": "2026-03-27 00:00:00.000 UTC",
+      "native_volume_eth": 133804.73019108112,
+      "tx_count": 11476250
+    },
+    {
+      "active_wallet": 511667,
+      "day": "2026-03-26 00:00:00.000 UTC",
+      "native_volume_eth": 139826.26074216445,
+      "tx_count": 8288408
+    },
+    {
+      "active_wallet": 480310,
+      "day": "2026-03-25 00:00:00.000 UTC",
+      "native_volume_eth": 109904.11308961043,
+      "tx_count": 7151319
+    },
+    {
+      "active_wallet": 424204,
+      "day": "2026-03-24 00:00:00.000 UTC",
+      "native_volume_eth": 105529.33838357315,
+      "tx_count": 7321850
+    },
+    {
+      "active_wallet": 449112,
+      "day": "2026-03-23 00:00:00.000 UTC",
+      "native_volume_eth": 129202.56248337292,
+      "tx_count": 8186073
+    },
+    {
+      "active_wallet": 440528,
+      "day": "2026-03-22 00:00:00.000 UTC",
+      "native_volume_eth": 96362.80891265703,
+      "tx_count": 7701309
+    },
+    {
+      "active_wallet": 370718,
+      "day": "2026-03-21 00:00:00.000 UTC",
+      "native_volume_eth": 47212.21340402364,
+      "tx_count": 6772316
+    },
+    {
+      "active_wallet": 414570,
+      "day": "2026-03-20 00:00:00.000 UTC",
+      "native_volume_eth": 111909.75992320295,
+      "tx_count": 7503866
+    },
+    {
+      "active_wallet": 484812,
+      "day": "2026-03-19 00:00:00.000 UTC",
+      "native_volume_eth": 113707.00788539446,
+      "tx_count": 9335490
+    },
+    {
+      "active_wallet": 518269,
+      "day": "2026-03-18 00:00:00.000 UTC",
+      "native_volume_eth": 116660.75346274709,
+      "tx_count": 8266779
+    },
+    {
+      "active_wallet": 560406,
+      "day": "2026-03-17 00:00:00.000 UTC",
+      "native_volume_eth": 103857.12167026543,
+      "tx_count": 8374981
+    },
+    {
+      "active_wallet": 463494,
+      "day": "2026-03-16 00:00:00.000 UTC",
+      "native_volume_eth": 245548.35614450238,
+      "tx_count": 8646280
+    },
+    {
+      "active_wallet": 389466,
+      "day": "2026-03-15 00:00:00.000 UTC",
+      "native_volume_eth": 113383.65888686386,
+      "tx_count": 7681437
+    },
+    {
+      "active_wallet": 433154,
+      "day": "2026-03-14 00:00:00.000 UTC",
+      "native_volume_eth": 59367.37288616371,
+      "tx_count": 7640119
+    },
+    {
+      "active_wallet": 494271,
+      "day": "2026-03-13 00:00:00.000 UTC",
+      "native_volume_eth": 173771.95408696184,
+      "tx_count": 8918004
+    },
+    {
+      "active_wallet": 476232,
+      "day": "2026-03-12 00:00:00.000 UTC",
+      "native_volume_eth": 135484.6466188512,
+      "tx_count": 8996699
+    },
+    {
+      "active_wallet": 617341,
+      "day": "2026-03-11 00:00:00.000 UTC",
+      "native_volume_eth": 146653.59449658004,
+      "tx_count": 8414381
+    },
+    {
+      "active_wallet": 457696,
+      "day": "2026-03-10 00:00:00.000 UTC",
+      "native_volume_eth": 216917.14596067043,
+      "tx_count": 9537950
+    },
+    {
+      "active_wallet": 441314,
+      "day": "2026-03-09 00:00:00.000 UTC",
+      "native_volume_eth": 157411.83490982268,
+      "tx_count": 8911873
+    },
+    {
+      "active_wallet": 373553,
+      "day": "2026-03-08 00:00:00.000 UTC",
+      "native_volume_eth": 129092.91943190567,
+      "tx_count": 8633483
+    },
+    {
+      "active_wallet": 423167,
+      "day": "2026-03-07 00:00:00.000 UTC",
+      "native_volume_eth": 98194.013732004,
+      "tx_count": 8800639
+    },
+    {
+      "active_wallet": 504292,
+      "day": "2026-03-06 00:00:00.000 UTC",
+      "native_volume_eth": 214536.4218206991,
+      "tx_count": 8714468
+    },
+    {
+      "active_wallet": 589039,
+      "day": "2026-03-05 00:00:00.000 UTC",
+      "native_volume_eth": 268948.67023007164,
+      "tx_count": 9656450
+    },
+    {
+      "active_wallet": 499646,
+      "day": "2026-03-04 00:00:00.000 UTC",
+      "native_volume_eth": 313135.66553151177,
+      "tx_count": 10300821
+    },
+    {
+      "active_wallet": 476370,
+      "day": "2026-03-03 00:00:00.000 UTC",
+      "native_volume_eth": 326952.7672019286,
+      "tx_count": 9621811
+    },
+    {
+      "active_wallet": 419983,
+      "day": "2026-03-02 00:00:00.000 UTC",
+      "native_volume_eth": 359242.68732646137,
+      "tx_count": 9613917
+    },
+    {
+      "active_wallet": 400371,
+      "day": "2026-03-01 00:00:00.000 UTC",
+      "native_volume_eth": 237582.1221257553,
+      "tx_count": 9253121
+    },
+    {
+      "active_wallet": 397788,
+      "day": "2026-02-28 00:00:00.000 UTC",
+      "native_volume_eth": 202127.12157986613,
+      "tx_count": 9969830
+    },
+    {
+      "active_wallet": 411664,
+      "day": "2026-02-27 00:00:00.000 UTC",
+      "native_volume_eth": 262939.6454220597,
+      "tx_count": 9296103
+    },
+    {
+      "active_wallet": 448834,
+      "day": "2026-02-26 00:00:00.000 UTC",
+      "native_volume_eth": 278398.04545507976,
+      "tx_count": 9816826
+    },
+    {
+      "active_wallet": 487769,
+      "day": "2026-02-25 00:00:00.000 UTC",
+      "native_volume_eth": 271458.7824378039,
+      "tx_count": 9780840
+    },
+    {
+      "active_wallet": 407198,
+      "day": "2026-02-24 00:00:00.000 UTC",
+      "native_volume_eth": 177293.1767315131,
+      "tx_count": 11831289
+    },
+    {
+      "active_wallet": 425030,
+      "day": "2026-02-23 00:00:00.000 UTC",
+      "native_volume_eth": 223486.22325590425,
+      "tx_count": 10162310
+    },
+    {
+      "active_wallet": 392421,
+      "day": "2026-02-22 00:00:00.000 UTC",
+      "native_volume_eth": 149728.66050257694,
+      "tx_count": 7459485
+    },
+    {
+      "active_wallet": 436183,
+      "day": "2026-02-21 00:00:00.000 UTC",
+      "native_volume_eth": 174919.01673966122,
+      "tx_count": 9057943
+    },
+    {
+      "active_wallet": 468840,
+      "day": "2026-02-20 00:00:00.000 UTC",
+      "native_volume_eth": 168079.50792665442,
+      "tx_count": 10367179
+    },
+    {
+      "active_wallet": 713138,
+      "day": "2026-02-19 00:00:00.000 UTC",
+      "native_volume_eth": 202689.34339316672,
+      "tx_count": 11030316
+    },
+    {
+      "active_wallet": 921765,
+      "day": "2026-02-18 00:00:00.000 UTC",
+      "native_volume_eth": 152419.8875235004,
+      "tx_count": 11699995
+    },
+    {
+      "active_wallet": 377048,
+      "day": "2026-02-17 00:00:00.000 UTC",
+      "native_volume_eth": 150634.03719719165,
+      "tx_count": 9917578
+    },
+    {
+      "active_wallet": 378031,
+      "day": "2026-02-16 00:00:00.000 UTC",
+      "native_volume_eth": 171714.85369165518,
+      "tx_count": 9396686
+    },
+    {
+      "active_wallet": 340704,
+      "day": "2026-02-15 00:00:00.000 UTC",
+      "native_volume_eth": 200425.68102383442,
+      "tx_count": 9911862
+    },
+    {
+      "active_wallet": 402879,
+      "day": "2026-02-14 00:00:00.000 UTC",
+      "native_volume_eth": 161972.8644499632,
+      "tx_count": 9618578
+    },
+    {
+      "active_wallet": 442593,
+      "day": "2026-02-13 00:00:00.000 UTC",
+      "native_volume_eth": 183640.94589279732,
+      "tx_count": 10072648
+    },
+    {
+      "active_wallet": 458393,
+      "day": "2026-02-12 00:00:00.000 UTC",
+      "native_volume_eth": 156163.89005439403,
+      "tx_count": 10783673
+    },
+    {
+      "active_wallet": 431967,
+      "day": "2026-02-11 00:00:00.000 UTC",
+      "native_volume_eth": 200256.39552284742,
+      "tx_count": 10306962
+    },
+    {
+      "active_wallet": 433265,
+      "day": "2026-02-10 00:00:00.000 UTC",
+      "native_volume_eth": 178658.75265105133,
+      "tx_count": 10165303
+    },
+    {
+      "active_wallet": 419223,
+      "day": "2026-02-09 00:00:00.000 UTC",
+      "native_volume_eth": 274373.79111396923,
+      "tx_count": 9115061
+    },
+    {
+      "active_wallet": 402825,
+      "day": "2026-02-08 00:00:00.000 UTC",
+      "native_volume_eth": 164648.31692124592,
+      "tx_count": 9300315
+    },
+    {
+      "active_wallet": 392922,
+      "day": "2026-02-07 00:00:00.000 UTC",
+      "native_volume_eth": 160902.5348557538,
+      "tx_count": 9803256
+    },
+    {
+      "active_wallet": 492556,
+      "day": "2026-02-06 00:00:00.000 UTC",
+      "native_volume_eth": 246394.8786193631,
+      "tx_count": 12306902
+    },
+    {
+      "active_wallet": 483265,
+      "day": "2026-02-05 00:00:00.000 UTC",
+      "native_volume_eth": 223833.5834907539,
+      "tx_count": 17178763
+    },
+    {
+      "active_wallet": 425394,
+      "day": "2026-02-04 00:00:00.000 UTC",
+      "native_volume_eth": 202540.0442934824,
+      "tx_count": 10762296
+    },
+    {
+      "active_wallet": 417339,
+      "day": "2026-02-03 00:00:00.000 UTC",
+      "native_volume_eth": 219389.68936262306,
+      "tx_count": 10889318
+    },
+    {
+      "active_wallet": 450113,
+      "day": "2026-02-02 00:00:00.000 UTC",
+      "native_volume_eth": 218692.80784111432,
+      "tx_count": 11306528
+    },
+    {
+      "active_wallet": 394510,
+      "day": "2026-02-01 00:00:00.000 UTC",
+      "native_volume_eth": 209052.6742171616,
+      "tx_count": 10273270
+    },
+    {
+      "active_wallet": 430809,
+      "day": "2026-01-31 00:00:00.000 UTC",
+      "native_volume_eth": 271197.90406779456,
+      "tx_count": 11521410
+    },
+    {
+      "active_wallet": 550401,
+      "day": "2026-01-30 00:00:00.000 UTC",
+      "native_volume_eth": 203751.5628291803,
+      "tx_count": 10658263
+    },
+    {
+      "active_wallet": 624828,
+      "day": "2026-01-29 00:00:00.000 UTC",
+      "native_volume_eth": 197166.5687235832,
+      "tx_count": 10638831
+    },
+    {
+      "active_wallet": 510996,
+      "day": "2026-01-28 00:00:00.000 UTC",
+      "native_volume_eth": 306427.3663013393,
+      "tx_count": 8835459
+    },
+    {
+      "active_wallet": 446030,
+      "day": "2026-01-27 00:00:00.000 UTC",
+      "native_volume_eth": 291674.5168613211,
+      "tx_count": 8667706
+    },
+    {
+      "active_wallet": 444586,
+      "day": "2026-01-26 00:00:00.000 UTC",
+      "native_volume_eth": 177001.53038786023,
+      "tx_count": 7487850
+    },
+    {
+      "active_wallet": 394741,
+      "day": "2026-01-25 00:00:00.000 UTC",
+      "native_volume_eth": 102664.80101727952,
+      "tx_count": 9437766
+    },
+    {
+      "active_wallet": 419499,
+      "day": "2026-01-24 00:00:00.000 UTC",
+      "native_volume_eth": 1027404.0935365183,
+      "tx_count": 7367633
+    },
+    {
+      "active_wallet": 449022,
+      "day": "2026-01-23 00:00:00.000 UTC",
+      "native_volume_eth": 1415820.8683427074,
+      "tx_count": 7943894
+    },
+    {
+      "active_wallet": 523354,
+      "day": "2026-01-22 00:00:00.000 UTC",
+      "native_volume_eth": 1077691.7913152787,
+      "tx_count": 8770288
+    },
+    {
+      "active_wallet": 536280,
+      "day": "2026-01-21 00:00:00.000 UTC",
+      "native_volume_eth": 166487.0922522557,
+      "tx_count": 9206311
+    },
+    {
+      "active_wallet": 456597,
+      "day": "2026-01-20 00:00:00.000 UTC",
+      "native_volume_eth": 178755.51848172816,
+      "tx_count": 10271110
+    },
+    {
+      "active_wallet": 404775,
+      "day": "2026-01-19 00:00:00.000 UTC",
+      "native_volume_eth": 154274.17467688775,
+      "tx_count": 7904275
+    },
+    {
+      "active_wallet": 378516,
+      "day": "2026-01-18 00:00:00.000 UTC",
+      "native_volume_eth": 91361.86158883877,
+      "tx_count": 7213230
+    },
+    {
+      "active_wallet": 479727,
+      "day": "2026-01-17 00:00:00.000 UTC",
+      "native_volume_eth": 82459.27068953656,
+      "tx_count": 7775793
+    },
+    {
+      "active_wallet": 437380,
+      "day": "2026-01-16 00:00:00.000 UTC",
+      "native_volume_eth": 174315.3123160039,
+      "tx_count": 7912344
+    },
+    {
+      "active_wallet": 464432,
+      "day": "2026-01-15 00:00:00.000 UTC",
+      "native_volume_eth": 214546.41990563323,
+      "tx_count": 8855975
+    },
+    {
+      "active_wallet": 491097,
+      "day": "2026-01-14 00:00:00.000 UTC",
+      "native_volume_eth": 252494.93181648574,
+      "tx_count": 8352506
+    },
+    {
+      "active_wallet": 521950,
+      "day": "2026-01-13 00:00:00.000 UTC",
+      "native_volume_eth": 311784.64024170843,
+      "tx_count": 8611214
+    },
+    {
+      "active_wallet": 624014,
+      "day": "2026-01-12 00:00:00.000 UTC",
+      "native_volume_eth": 147210.96281883237,
+      "tx_count": 8592154
+    },
+    {
+      "active_wallet": 440058,
+      "day": "2026-01-11 00:00:00.000 UTC",
+      "native_volume_eth": 187176.7143142564,
+      "tx_count": 7989992
+    },
+    {
+      "active_wallet": 534817,
+      "day": "2026-01-10 00:00:00.000 UTC",
+      "native_volume_eth": 366358.92845815857,
+      "tx_count": 8323731
+    },
+    {
+      "active_wallet": 517139,
+      "day": "2026-01-09 00:00:00.000 UTC",
+      "native_volume_eth": 114991.46135020323,
+      "tx_count": 9720901
+    },
+    {
+      "active_wallet": 523990,
+      "day": "2026-01-08 00:00:00.000 UTC",
+      "native_volume_eth": 148811.5513098403,
+      "tx_count": 9857018
+    },
+    {
+      "active_wallet": 716804,
+      "day": "2026-01-07 00:00:00.000 UTC",
+      "native_volume_eth": 112996.83348426633,
+      "tx_count": 9298565
+    },
+    {
+      "active_wallet": 511821,
+      "day": "2026-01-06 00:00:00.000 UTC",
+      "native_volume_eth": 141515.66803915094,
+      "tx_count": 9742115
+    },
+    {
+      "active_wallet": 489843,
+      "day": "2026-01-05 00:00:00.000 UTC",
+      "native_volume_eth": 104793.74571758758,
+      "tx_count": 9565589
+    },
+    {
+      "active_wallet": 529309,
+      "day": "2026-01-04 00:00:00.000 UTC",
+      "native_volume_eth": 71280.88603639907,
+      "tx_count": 8692912
+    },
+    {
+      "active_wallet": 409507,
+      "day": "2026-01-03 00:00:00.000 UTC",
+      "native_volume_eth": 65529.39509509018,
+      "tx_count": 8449699
+    },
+    {
+      "active_wallet": 520888,
+      "day": "2026-01-02 00:00:00.000 UTC",
+      "native_volume_eth": 125856.1340278466,
+      "tx_count": 9437192
+    },
+    {
+      "active_wallet": 589739,
+      "day": "2026-01-01 00:00:00.000 UTC",
+      "native_volume_eth": 52025.293149452154,
+      "tx_count": 9994340
+    },
+    {
+      "active_wallet": 546074,
+      "day": "2025-12-31 00:00:00.000 UTC",
+      "native_volume_eth": 77146.88165902637,
+      "tx_count": 10469707
+    },
+    {
+      "active_wallet": 474648,
+      "day": "2025-12-30 00:00:00.000 UTC",
+      "native_volume_eth": 85271.4067751785,
+      "tx_count": 9989455
+    },
+    {
+      "active_wallet": 454301,
+      "day": "2025-12-29 00:00:00.000 UTC",
+      "native_volume_eth": 133184.47534898287,
+      "tx_count": 10185855
+    },
+    {
+      "active_wallet": 406946,
+      "day": "2025-12-28 00:00:00.000 UTC",
+      "native_volume_eth": 48006.92958738004,
+      "tx_count": 9185669
+    },
+    {
+      "active_wallet": 433545,
+      "day": "2025-12-27 00:00:00.000 UTC",
+      "native_volume_eth": 46379.360606222144,
+      "tx_count": 8603861
+    },
+    {
+      "active_wallet": 466055,
+      "day": "2025-12-26 00:00:00.000 UTC",
+      "native_volume_eth": 69839.38921967382,
+      "tx_count": 9319488
+    },
+    {
+      "active_wallet": 476112,
+      "day": "2025-12-25 00:00:00.000 UTC",
+      "native_volume_eth": 60946.57880505362,
+      "tx_count": 9751869
+    },
+    {
+      "active_wallet": 506889,
+      "day": "2025-12-24 00:00:00.000 UTC",
+      "native_volume_eth": 76726.41096847986,
+      "tx_count": 9723938
+    },
+    {
+      "active_wallet": 462822,
+      "day": "2025-12-23 00:00:00.000 UTC",
+      "native_volume_eth": 84592.20805935551,
+      "tx_count": 10605079
+    },
+    {
+      "active_wallet": 520931,
+      "day": "2025-12-22 00:00:00.000 UTC",
+      "native_volume_eth": 84186.4477926336,
+      "tx_count": 11555828
+    },
+    {
+      "active_wallet": 453163,
+      "day": "2025-12-21 00:00:00.000 UTC",
+      "native_volume_eth": 54125.77008473953,
+      "tx_count": 10652076
+    },
+    {
+      "active_wallet": 411481,
+      "day": "2025-12-20 00:00:00.000 UTC",
+      "native_volume_eth": 55612.36563905221,
+      "tx_count": 10031141
+    },
+    {
+      "active_wallet": 517477,
+      "day": "2025-12-19 00:00:00.000 UTC",
+      "native_volume_eth": 124076.6839172261,
+      "tx_count": 12883450
+    },
+    {
+      "active_wallet": 450124,
+      "day": "2025-12-18 00:00:00.000 UTC",
+      "native_volume_eth": 111447.70319758913,
+      "tx_count": 12728109
+    },
+    {
+      "active_wallet": 683625,
+      "day": "2025-12-17 00:00:00.000 UTC",
+      "native_volume_eth": 112420.26975167576,
+      "tx_count": 13089337
+    },
+    {
+      "active_wallet": 661305,
+      "day": "2025-12-16 00:00:00.000 UTC",
+      "native_volume_eth": 92533.08428166657,
+      "tx_count": 12664421
+    },
+    {
+      "active_wallet": 464423,
+      "day": "2025-12-15 00:00:00.000 UTC",
+      "native_volume_eth": 120961.38268623133,
+      "tx_count": 12402765
+    },
+    {
+      "active_wallet": 431361,
+      "day": "2025-12-14 00:00:00.000 UTC",
+      "native_volume_eth": 65292.88251771967,
+      "tx_count": 11460476
+    },
+    {
+      "active_wallet": 458955,
+      "day": "2025-12-13 00:00:00.000 UTC",
+      "native_volume_eth": 76871.04903214272,
+      "tx_count": 10783225
+    },
+    {
+      "active_wallet": 951224,
+      "day": "2025-12-12 00:00:00.000 UTC",
+      "native_volume_eth": 196932.43071325822,
+      "tx_count": 13010134
+    },
+    {
+      "active_wallet": 684642,
+      "day": "2025-12-11 00:00:00.000 UTC",
+      "native_volume_eth": 119547.24502215843,
+      "tx_count": 12387743
+    },
+    {
+      "active_wallet": 634254,
+      "day": "2025-12-10 00:00:00.000 UTC",
+      "native_volume_eth": 118055.28598077701,
+      "tx_count": 11628973
+    },
+    {
+      "active_wallet": 616229,
+      "day": "2025-12-09 00:00:00.000 UTC",
+      "native_volume_eth": 116749.10456513193,
+      "tx_count": 11311819
+    },
+    {
+      "active_wallet": 550034,
+      "day": "2025-12-08 00:00:00.000 UTC",
+      "native_volume_eth": 100201.81847575783,
+      "tx_count": 12332348
+    },
+    {
+      "active_wallet": 539375,
+      "day": "2025-12-07 00:00:00.000 UTC",
+      "native_volume_eth": 90839.83599034297,
+      "tx_count": 11435272
+    },
+    {
+      "active_wallet": 1036201,
+      "day": "2025-12-06 00:00:00.000 UTC",
+      "native_volume_eth": 64924.31341799537,
+      "tx_count": 12110631
+    },
+    {
+      "active_wallet": 580145,
+      "day": "2025-12-05 00:00:00.000 UTC",
+      "native_volume_eth": 116996.75765296361,
+      "tx_count": 12001401
+    },
+    {
+      "active_wallet": 623325,
+      "day": "2025-12-04 00:00:00.000 UTC",
+      "native_volume_eth": 102159.24840567469,
+      "tx_count": 12528507
+    },
+    {
+      "active_wallet": 668523,
+      "day": "2025-12-03 00:00:00.000 UTC",
+      "native_volume_eth": 142832.3923467497,
+      "tx_count": 12652789
+    },
+    {
+      "active_wallet": 757490,
+      "day": "2025-12-02 00:00:00.000 UTC",
+      "native_volume_eth": 132694.65014487942,
+      "tx_count": 11801578
+    },
+    {
+      "active_wallet": 555501,
+      "day": "2025-12-01 00:00:00.000 UTC",
+      "native_volume_eth": 101760.63166986688,
+      "tx_count": 12660260
+    },
+    {
+      "active_wallet": 551143,
+      "day": "2025-11-30 00:00:00.000 UTC",
+      "native_volume_eth": 79545.80273051944,
+      "tx_count": 12368303
+    },
+    {
+      "active_wallet": 712556,
+      "day": "2025-11-29 00:00:00.000 UTC",
+      "native_volume_eth": 70101.73337704502,
+      "tx_count": 12019446
+    },
+    {
+      "active_wallet": 668805,
+      "day": "2025-11-28 00:00:00.000 UTC",
+      "native_volume_eth": 89510.87155319369,
+      "tx_count": 12647998
+    },
+    {
+      "active_wallet": 701602,
+      "day": "2025-11-27 00:00:00.000 UTC",
+      "native_volume_eth": 132631.53684243167,
+      "tx_count": 14930000
+    },
+    {
+      "active_wallet": 666108,
+      "day": "2025-11-26 00:00:00.000 UTC",
+      "native_volume_eth": 132747.31740572475,
+      "tx_count": 14137116
+    },
+    {
+      "active_wallet": 555266,
+      "day": "2025-11-25 00:00:00.000 UTC",
+      "native_volume_eth": 223849.83793644063,
+      "tx_count": 13668182
+    },
+    {
+      "active_wallet": 565290,
+      "day": "2025-11-24 00:00:00.000 UTC",
+      "native_volume_eth": 121409.64896441136,
+      "tx_count": 13999043
+    },
+    {
+      "active_wallet": 543571,
+      "day": "2025-11-23 00:00:00.000 UTC",
+      "native_volume_eth": 80956.03771142504,
+      "tx_count": 13295604
+    },
+    {
+      "active_wallet": 510311,
+      "day": "2025-11-22 00:00:00.000 UTC",
+      "native_volume_eth": 86608.95600800439,
+      "tx_count": 14221561
+    },
+    {
+      "active_wallet": 556584,
+      "day": "2025-11-21 00:00:00.000 UTC",
+      "native_volume_eth": 154136.12780665237,
+      "tx_count": 15456720
+    },
+    {
+      "active_wallet": 637035,
+      "day": "2025-11-20 00:00:00.000 UTC",
+      "native_volume_eth": 152334.89259678035,
+      "tx_count": 15243341
+    },
+    {
+      "active_wallet": 631894,
+      "day": "2025-11-19 00:00:00.000 UTC",
+      "native_volume_eth": 139342.6923563978,
+      "tx_count": 16795547
+    },
+    {
+      "active_wallet": 520055,
+      "day": "2025-11-18 00:00:00.000 UTC",
+      "native_volume_eth": 172352.25400852025,
+      "tx_count": 16716351
+    },
+    {
+      "active_wallet": 571464,
+      "day": "2025-11-17 00:00:00.000 UTC",
+      "native_volume_eth": 118937.42471498309,
+      "tx_count": 15740234
+    },
+    {
+      "active_wallet": 494634,
+      "day": "2025-11-16 00:00:00.000 UTC",
+      "native_volume_eth": 109029.29539439721,
+      "tx_count": 15341624
+    },
+    {
+      "active_wallet": 571062,
+      "day": "2025-11-15 00:00:00.000 UTC",
+      "native_volume_eth": 96705.75032170763,
+      "tx_count": 13582736
+    },
+    {
+      "active_wallet": 532555,
+      "day": "2025-11-14 00:00:00.000 UTC",
+      "native_volume_eth": 140519.94975984073,
+      "tx_count": 15200017
+    },
+    {
+      "active_wallet": 752958,
+      "day": "2025-11-13 00:00:00.000 UTC",
+      "native_volume_eth": 141369.86498708403,
+      "tx_count": 15584550
+    },
+    {
+      "active_wallet": 754443,
+      "day": "2025-11-12 00:00:00.000 UTC",
+      "native_volume_eth": 127696.29462838256,
+      "tx_count": 14632846
+    },
+    {
+      "active_wallet": 730147,
+      "day": "2025-11-11 00:00:00.000 UTC",
+      "native_volume_eth": 158695.42058540246,
+      "tx_count": 13492983
+    },
+    {
+      "active_wallet": 640856,
+      "day": "2025-11-10 00:00:00.000 UTC",
+      "native_volume_eth": 137490.49745523912,
+      "tx_count": 14163662
+    },
+    {
+      "active_wallet": 508407,
+      "day": "2025-11-09 00:00:00.000 UTC",
+      "native_volume_eth": 105590.5491900743,
+      "tx_count": 13849416
+    },
+    {
+      "active_wallet": 702054,
+      "day": "2025-11-08 00:00:00.000 UTC",
+      "native_volume_eth": 104833.83496700106,
+      "tx_count": 12046965
+    },
+    {
+      "active_wallet": 672909,
+      "day": "2025-11-07 00:00:00.000 UTC",
+      "native_volume_eth": 129176.80978162313,
+      "tx_count": 13082111
+    },
+    {
+      "active_wallet": 721279,
+      "day": "2025-11-06 00:00:00.000 UTC",
+      "native_volume_eth": 141378.93762963312,
+      "tx_count": 11679985
+    },
+    {
+      "active_wallet": 665289,
+      "day": "2025-11-05 00:00:00.000 UTC",
+      "native_volume_eth": 110251.30604397929,
+      "tx_count": 11058187
+    },
+    {
+      "active_wallet": 544400,
+      "day": "2025-11-04 00:00:00.000 UTC",
+      "native_volume_eth": 311155.9065337391,
+      "tx_count": 12724868
+    },
+    {
+      "active_wallet": 518285,
+      "day": "2025-11-03 00:00:00.000 UTC",
+      "native_volume_eth": 251946.99707147537,
+      "tx_count": 12199307
+    },
+    {
+      "active_wallet": 576288,
+      "day": "2025-11-02 00:00:00.000 UTC",
+      "native_volume_eth": 126854.862802565,
+      "tx_count": 11952409
+    },
+    {
+      "active_wallet": 616076,
+      "day": "2025-11-01 00:00:00.000 UTC",
+      "native_volume_eth": 106859.59584294293,
+      "tx_count": 11954556
+    },
+    {
+      "active_wallet": 712116,
+      "day": "2025-10-31 00:00:00.000 UTC",
+      "native_volume_eth": 213564.43689256435,
+      "tx_count": 11232878
+    },
+    {
+      "active_wallet": 787635,
+      "day": "2025-10-30 00:00:00.000 UTC",
+      "native_volume_eth": 206353.47661467057,
+      "tx_count": 11179323
+    },
+    {
+      "active_wallet": 795852,
+      "day": "2025-10-29 00:00:00.000 UTC",
+      "native_volume_eth": 165859.8314378844,
+      "tx_count": 10793089
+    },
+    {
+      "active_wallet": 806057,
+      "day": "2025-10-28 00:00:00.000 UTC",
+      "native_volume_eth": 152383.01173615077,
+      "tx_count": 11196799
+    },
+    {
+      "active_wallet": 935607,
+      "day": "2025-10-27 00:00:00.000 UTC",
+      "native_volume_eth": 181110.2041752047,
+      "tx_count": 10539028
+    },
+    {
+      "active_wallet": 679713,
+      "day": "2025-10-26 00:00:00.000 UTC",
+      "native_volume_eth": 148964.52885857053,
+      "tx_count": 11515742
+    },
+    {
+      "active_wallet": 791666,
+      "day": "2025-10-25 00:00:00.000 UTC",
+      "native_volume_eth": 128077.17100255056,
+      "tx_count": 11495850
+    },
+    {
+      "active_wallet": 891457,
+      "day": "2025-10-24 00:00:00.000 UTC",
+      "native_volume_eth": 136330.04562237757,
+      "tx_count": 12533961
+    },
+    {
+      "active_wallet": 1012056,
+      "day": "2025-10-23 00:00:00.000 UTC",
+      "native_volume_eth": 154222.25797284048,
+      "tx_count": 10747180
+    },
+    {
+      "active_wallet": 951014,
+      "day": "2025-10-22 00:00:00.000 UTC",
+      "native_volume_eth": 159601.53996036242,
+      "tx_count": 10450546
+    },
+    {
+      "active_wallet": 924622,
+      "day": "2025-10-21 00:00:00.000 UTC",
+      "native_volume_eth": 153098.93926395336,
+      "tx_count": 9535001
+    },
+    {
+      "active_wallet": 818659,
+      "day": "2025-10-20 00:00:00.000 UTC",
+      "native_volume_eth": 396819.6976091914,
+      "tx_count": 9918454
+    },
+    {
+      "active_wallet": 853379,
+      "day": "2025-10-19 00:00:00.000 UTC",
+      "native_volume_eth": 122711.50169067338,
+      "tx_count": 9532842
+    },
+    {
+      "active_wallet": 952905,
+      "day": "2025-10-18 00:00:00.000 UTC",
+      "native_volume_eth": 103507.46965777234,
+      "tx_count": 9721745
+    },
+    {
+      "active_wallet": 872256,
+      "day": "2025-10-17 00:00:00.000 UTC",
+      "native_volume_eth": 140642.54011227353,
+      "tx_count": 10414077
+    },
+    {
+      "active_wallet": 969519,
+      "day": "2025-10-16 00:00:00.000 UTC",
+      "native_volume_eth": 133018.59723240763,
+      "tx_count": 10649311
+    },
+    {
+      "active_wallet": 893359,
+      "day": "2025-10-15 00:00:00.000 UTC",
+      "native_volume_eth": 135763.18238263624,
+      "tx_count": 8166959
+    },
+    {
+      "active_wallet": 756576,
+      "day": "2025-10-14 00:00:00.000 UTC",
+      "native_volume_eth": 175251.57845943415,
+      "tx_count": 8232559
+    },
+    {
+      "active_wallet": 695215,
+      "day": "2025-10-13 00:00:00.000 UTC",
+      "native_volume_eth": 144111.75042151503,
+      "tx_count": 7714047
+    },
+    {
+      "active_wallet": 669305,
+      "day": "2025-10-12 00:00:00.000 UTC",
+      "native_volume_eth": 115221.55235655596,
+      "tx_count": 7893833
+    },
+    {
+      "active_wallet": 652589,
+      "day": "2025-10-11 00:00:00.000 UTC",
+      "native_volume_eth": 115663.00802834549,
+      "tx_count": 7959363
+    },
+    {
+      "active_wallet": 684000,
+      "day": "2025-10-10 00:00:00.000 UTC",
+      "native_volume_eth": 142755.85063419718,
+      "tx_count": 8592346
+    },
+    {
+      "active_wallet": 839428,
+      "day": "2025-10-09 00:00:00.000 UTC",
+      "native_volume_eth": 142417.11367224148,
+      "tx_count": 8821801
+    },
+    {
+      "active_wallet": 865622,
+      "day": "2025-10-08 00:00:00.000 UTC",
+      "native_volume_eth": 115539.22610487624,
+      "tx_count": 8860871
+    },
+    {
+      "active_wallet": 875273,
+      "day": "2025-10-07 00:00:00.000 UTC",
+      "native_volume_eth": 213907.13053494148,
+      "tx_count": 9345808
+    },
+    {
+      "active_wallet": 746402,
+      "day": "2025-10-06 00:00:00.000 UTC",
+      "native_volume_eth": 213998.81904539384,
+      "tx_count": 9857860
+    },
+    {
+      "active_wallet": 675875,
+      "day": "2025-10-05 00:00:00.000 UTC",
+      "native_volume_eth": 121890.70260904636,
+      "tx_count": 10676965
+    },
+    {
+      "active_wallet": 928670,
+      "day": "2025-10-04 00:00:00.000 UTC",
+      "native_volume_eth": 99841.59404720824,
+      "tx_count": 9282583
+    },
+    {
+      "active_wallet": 1268530,
+      "day": "2025-10-03 00:00:00.000 UTC",
+      "native_volume_eth": 230856.52620231212,
+      "tx_count": 9834821
+    },
+    {
+      "active_wallet": 1113350,
+      "day": "2025-10-02 00:00:00.000 UTC",
+      "native_volume_eth": 136101.18237275098,
+      "tx_count": 10050909
+    },
+    {
+      "active_wallet": 1019139,
+      "day": "2025-10-01 00:00:00.000 UTC",
+      "native_volume_eth": 128055.7297668278,
+      "tx_count": 10020165
+    },
+    {
+      "active_wallet": 864815,
+      "day": "2025-09-30 00:00:00.000 UTC",
+      "native_volume_eth": 124854.32036952465,
+      "tx_count": 10154879
+    },
+    {
+      "active_wallet": 1058192,
+      "day": "2025-09-29 00:00:00.000 UTC",
+      "native_volume_eth": 143641.38929480646,
+      "tx_count": 10110584
+    },
+    {
+      "active_wallet": 942763,
+      "day": "2025-09-28 00:00:00.000 UTC",
+      "native_volume_eth": 107073.7298910399,
+      "tx_count": 10219277
+    },
+    {
+      "active_wallet": 1017501,
+      "day": "2025-09-27 00:00:00.000 UTC",
+      "native_volume_eth": 96527.04788192987,
+      "tx_count": 9813264
+    },
+    {
+      "active_wallet": 741801,
+      "day": "2025-09-26 00:00:00.000 UTC",
+      "native_volume_eth": 116639.30300469443,
+      "tx_count": 9976797
+    },
+    {
+      "active_wallet": 866921,
+      "day": "2025-09-25 00:00:00.000 UTC",
+      "native_volume_eth": 165907.94952837905,
+      "tx_count": 10749815
+    },
+    {
+      "active_wallet": 810276,
+      "day": "2025-09-24 00:00:00.000 UTC",
+      "native_volume_eth": 159497.6703536869,
+      "tx_count": 10684885
+    },
+    {
+      "active_wallet": 793238,
+      "day": "2025-09-23 00:00:00.000 UTC",
+      "native_volume_eth": 147715.4437770478,
+      "tx_count": 11353268
+    },
+    {
+      "active_wallet": 797623,
+      "day": "2025-09-22 00:00:00.000 UTC",
+      "native_volume_eth": 175591.7971739134,
+      "tx_count": 12439557
+    },
+    {
+      "active_wallet": 836127,
+      "day": "2025-09-21 00:00:00.000 UTC",
+      "native_volume_eth": 113955.67335315276,
+      "tx_count": 13895389
+    },
+    {
+      "active_wallet": 947933,
+      "day": "2025-09-20 00:00:00.000 UTC",
+      "native_volume_eth": 126156.92102395855,
+      "tx_count": 12062129
+    },
+    {
+      "active_wallet": 922122,
+      "day": "2025-09-19 00:00:00.000 UTC",
+      "native_volume_eth": 148662.01933834064,
+      "tx_count": 11492116
+    },
+    {
+      "active_wallet": 1033638,
+      "day": "2025-09-18 00:00:00.000 UTC",
+      "native_volume_eth": 144688.78752402635,
+      "tx_count": 11919235
+    },
+    {
+      "active_wallet": 981858,
+      "day": "2025-09-17 00:00:00.000 UTC",
+      "native_volume_eth": 161065.07753434795,
+      "tx_count": 11045189
+    },
+    {
+      "active_wallet": 973102,
+      "day": "2025-09-16 00:00:00.000 UTC",
+      "native_volume_eth": 134035.1992926756,
+      "tx_count": 10882498
+    },
+    {
+      "active_wallet": 875443,
+      "day": "2025-09-15 00:00:00.000 UTC",
+      "native_volume_eth": 125453.55790539614,
+      "tx_count": 12379812
+    },
+    {
+      "active_wallet": 981761,
+      "day": "2025-09-14 00:00:00.000 UTC",
+      "native_volume_eth": 87550.49525072153,
+      "tx_count": 11529195
+    },
+    {
+      "active_wallet": 1143979,
+      "day": "2025-09-13 00:00:00.000 UTC",
+      "native_volume_eth": 107269.18643449024,
+      "tx_count": 11380572
+    },
+    {
+      "active_wallet": 1025250,
+      "day": "2025-09-12 00:00:00.000 UTC",
+      "native_volume_eth": 125640.10705847586,
+      "tx_count": 10554308
+    },
+    {
+      "active_wallet": 1047439,
+      "day": "2025-09-11 00:00:00.000 UTC",
+      "native_volume_eth": 127684.73285868992,
+      "tx_count": 10574067
+    },
+    {
+      "active_wallet": 1052189,
+      "day": "2025-09-10 00:00:00.000 UTC",
+      "native_volume_eth": 198763.87402211785,
+      "tx_count": 10976497
+    },
+    {
+      "active_wallet": 971371,
+      "day": "2025-09-09 00:00:00.000 UTC",
+      "native_volume_eth": 132677.58212075676,
+      "tx_count": 10613986
+    },
+    {
+      "active_wallet": 1069757,
+      "day": "2025-09-08 00:00:00.000 UTC",
+      "native_volume_eth": 162712.56570565514,
+      "tx_count": 10877716
+    },
+    {
+      "active_wallet": 1013942,
+      "day": "2025-09-07 00:00:00.000 UTC",
+      "native_volume_eth": 111996.17652581372,
+      "tx_count": 10447350
+    },
+    {
+      "active_wallet": 837283,
+      "day": "2025-09-06 00:00:00.000 UTC",
+      "native_volume_eth": 117290.72072898607,
+      "tx_count": 10055482
+    },
+    {
+      "active_wallet": 859767,
+      "day": "2025-09-05 00:00:00.000 UTC",
+      "native_volume_eth": 162002.2434763464,
+      "tx_count": 10639917
+    },
+    {
+      "active_wallet": 903800,
+      "day": "2025-09-04 00:00:00.000 UTC",
+      "native_volume_eth": 151666.33267782597,
+      "tx_count": 10330041
+    },
+    {
+      "active_wallet": 1947454,
+      "day": "2025-09-03 00:00:00.000 UTC",
+      "native_volume_eth": 204923.16408969215,
+      "tx_count": 10358967
+    },
+    {
+      "active_wallet": 1706615,
+      "day": "2025-09-02 00:00:00.000 UTC",
+      "native_volume_eth": 313375.4944701644,
+      "tx_count": 10464988
+    },
+    {
+      "active_wallet": 1132890,
+      "day": "2025-09-01 00:00:00.000 UTC",
+      "native_volume_eth": 178216.0962074584,
+      "tx_count": 10169163
+    },
+    {
+      "active_wallet": 869344,
+      "day": "2025-08-31 00:00:00.000 UTC",
+      "native_volume_eth": 102415.20591131829,
+      "tx_count": 8973270
+    },
+    {
+      "active_wallet": 818525,
+      "day": "2025-08-30 00:00:00.000 UTC",
+      "native_volume_eth": 116891.66485409862,
+      "tx_count": 9085611
+    },
+    {
+      "active_wallet": 800212,
+      "day": "2025-08-29 00:00:00.000 UTC",
+      "native_volume_eth": 152039.01561271303,
+      "tx_count": 9830454
+    },
+    {
+      "active_wallet": 1181448,
+      "day": "2025-08-28 00:00:00.000 UTC",
+      "native_volume_eth": 156211.61512549742,
+      "tx_count": 9999378
+    },
+    {
+      "active_wallet": 1067353,
+      "day": "2025-08-27 00:00:00.000 UTC",
+      "native_volume_eth": 161269.95348622988,
+      "tx_count": 10930105
+    },
+    {
+      "active_wallet": 1066702,
+      "day": "2025-08-26 00:00:00.000 UTC",
+      "native_volume_eth": 202444.7596515272,
+      "tx_count": 8981344
+    },
+    {
+      "active_wallet": 948146,
+      "day": "2025-08-25 00:00:00.000 UTC",
+      "native_volume_eth": 149678.0476134121,
+      "tx_count": 10717720
+    },
+    {
+      "active_wallet": 1293025,
+      "day": "2025-08-24 00:00:00.000 UTC",
+      "native_volume_eth": 131269.50485509567,
+      "tx_count": 8331956
+    },
+    {
+      "active_wallet": 1384533,
+      "day": "2025-08-23 00:00:00.000 UTC",
+      "native_volume_eth": 127242.26052846108,
+      "tx_count": 8224400
+    },
+    {
+      "active_wallet": 1374198,
+      "day": "2025-08-22 00:00:00.000 UTC",
+      "native_volume_eth": 187870.88646498707,
+      "tx_count": 8500786
+    },
+    {
+      "active_wallet": 1310628,
+      "day": "2025-08-21 00:00:00.000 UTC",
+      "native_volume_eth": 215121.3601774267,
+      "tx_count": 8940776
+    },
+    {
+      "active_wallet": 1008280,
+      "day": "2025-08-20 00:00:00.000 UTC",
+      "native_volume_eth": 191839.53614726185,
+      "tx_count": 8361776
+    },
+    {
+      "active_wallet": 1002512,
+      "day": "2025-08-19 00:00:00.000 UTC",
+      "native_volume_eth": 230248.68575460813,
+      "tx_count": 7945583
+    },
+    {
+      "active_wallet": 1107528,
+      "day": "2025-08-18 00:00:00.000 UTC",
+      "native_volume_eth": 174712.5244638325,
+      "tx_count": 7835995
+    },
+    {
+      "active_wallet": 1553569,
+      "day": "2025-08-17 00:00:00.000 UTC",
+      "native_volume_eth": 126471.02689043144,
+      "tx_count": 7654626
+    },
+    {
+      "active_wallet": 1822951,
+      "day": "2025-08-16 00:00:00.000 UTC",
+      "native_volume_eth": 119836.36890919553,
+      "tx_count": 7645626
+    },
+    {
+      "active_wallet": 1212928,
+      "day": "2025-08-15 00:00:00.000 UTC",
+      "native_volume_eth": 145649.7207002592,
+      "tx_count": 7435722
+    },
+    {
+      "active_wallet": 928410,
+      "day": "2025-08-14 00:00:00.000 UTC",
+      "native_volume_eth": 208990.59269454866,
+      "tx_count": 8143477
+    },
+    {
+      "active_wallet": 1073944,
+      "day": "2025-08-13 00:00:00.000 UTC",
+      "native_volume_eth": 193153.9033971627,
+      "tx_count": 7762840
+    },
+    {
+      "active_wallet": 1136267,
+      "day": "2025-08-12 00:00:00.000 UTC",
+      "native_volume_eth": 328507.7644222403,
+      "tx_count": 7368251
+    },
+    {
+      "active_wallet": 1318660,
+      "day": "2025-08-11 00:00:00.000 UTC",
+      "native_volume_eth": 312214.9930737632,
+      "tx_count": 7548720
+    },
+    {
+      "active_wallet": 1538026,
+      "day": "2025-08-10 00:00:00.000 UTC",
+      "native_volume_eth": 149349.30407939095,
+      "tx_count": 7215196
+    },
+    {
+      "active_wallet": 1116358,
+      "day": "2025-08-09 00:00:00.000 UTC",
+      "native_volume_eth": 175496.4539546612,
+      "tx_count": 8122258
+    },
+    {
+      "active_wallet": 1250033,
+      "day": "2025-08-08 00:00:00.000 UTC",
+      "native_volume_eth": 169120.9996903654,
+      "tx_count": 8766305
+    },
+    {
+      "active_wallet": 968594,
+      "day": "2025-08-07 00:00:00.000 UTC",
+      "native_volume_eth": 211599.28480887398,
+      "tx_count": 8029922
+    },
+    {
+      "active_wallet": 1098085,
+      "day": "2025-08-06 00:00:00.000 UTC",
+      "native_volume_eth": 166379.02915225277,
+      "tx_count": 8374404
+    },
+    {
+      "active_wallet": 1114964,
+      "day": "2025-08-05 00:00:00.000 UTC",
+      "native_volume_eth": 152373.19021719432,
+      "tx_count": 7714552
+    },
+    {
+      "active_wallet": 1270217,
+      "day": "2025-08-04 00:00:00.000 UTC",
+      "native_volume_eth": 155263.65541476087,
+      "tx_count": 7809161
+    },
+    {
+      "active_wallet": 1712542,
+      "day": "2025-08-03 00:00:00.000 UTC",
+      "native_volume_eth": 115918.4119081855,
+      "tx_count": 7829377
+    },
+    {
+      "active_wallet": 1644572,
+      "day": "2025-08-02 00:00:00.000 UTC",
+      "native_volume_eth": 137848.69628436986,
+      "tx_count": 9385078
+    },
+    {
+      "active_wallet": 1219983,
+      "day": "2025-08-01 00:00:00.000 UTC",
+      "native_volume_eth": 176419.82791198653,
+      "tx_count": 8947890
+    },
+    {
+      "active_wallet": 1273932,
+      "day": "2025-07-31 00:00:00.000 UTC",
+      "native_volume_eth": 160763.39394492842,
+      "tx_count": 8437469
+    },
+    {
+      "active_wallet": 1517279,
+      "day": "2025-07-30 00:00:00.000 UTC",
+      "native_volume_eth": 161252.47417135086,
+      "tx_count": 7654030
+    },
+    {
+      "active_wallet": 1253375,
+      "day": "2025-07-29 00:00:00.000 UTC",
+      "native_volume_eth": 171902.8811454626,
+      "tx_count": 7929383
+    },
+    {
+      "active_wallet": 925397,
+      "day": "2025-07-28 00:00:00.000 UTC",
+      "native_volume_eth": 162463.64422228327,
+      "tx_count": 7886632
+    },
+    {
+      "active_wallet": 1132040,
+      "day": "2025-07-27 00:00:00.000 UTC",
+      "native_volume_eth": 141591.91235404598,
+      "tx_count": 8219069
+    },
+    {
+      "active_wallet": 1121485,
+      "day": "2025-07-26 00:00:00.000 UTC",
+      "native_volume_eth": 132647.7917662953,
+      "tx_count": 8444019
+    },
+    {
+      "active_wallet": 1214453,
+      "day": "2025-07-25 00:00:00.000 UTC",
+      "native_volume_eth": 192207.57629655587,
+      "tx_count": 8040980
+    },
+    {
+      "active_wallet": 1230988,
+      "day": "2025-07-24 00:00:00.000 UTC",
+      "native_volume_eth": 188061.1137597896,
+      "tx_count": 8179324
+    },
+    {
+      "active_wallet": 1184822,
+      "day": "2025-07-23 00:00:00.000 UTC",
+      "native_volume_eth": 193496.67524613673,
+      "tx_count": 8143074
+    },
+    {
+      "active_wallet": 1131325,
+      "day": "2025-07-22 00:00:00.000 UTC",
+      "native_volume_eth": 205626.3653205689,
+      "tx_count": 8081648
+    },
+    {
+      "active_wallet": 1402707,
+      "day": "2025-07-21 00:00:00.000 UTC",
+      "native_volume_eth": 217988.85734540402,
+      "tx_count": 8142935
+    },
+    {
+      "active_wallet": 1853672,
+      "day": "2025-07-20 00:00:00.000 UTC",
+      "native_volume_eth": 153977.75442520573,
+      "tx_count": 9048019
+    },
+    {
+      "active_wallet": 2494058,
+      "day": "2025-07-19 00:00:00.000 UTC",
+      "native_volume_eth": 148925.55927093528,
+      "tx_count": 9470098
+    },
+    {
+      "active_wallet": 1521257,
+      "day": "2025-07-18 00:00:00.000 UTC",
+      "native_volume_eth": 249228.31741835014,
+      "tx_count": 8779866
+    },
+    {
+      "active_wallet": 2303962,
+      "day": "2025-07-17 00:00:00.000 UTC",
+      "native_volume_eth": 205706.5651421097,
+      "tx_count": 9843107
+    },
+    {
+      "active_wallet": 1245592,
+      "day": "2025-07-16 00:00:00.000 UTC",
+      "native_volume_eth": 263237.8866040727,
+      "tx_count": 8362590
+    },
+    {
+      "active_wallet": 1068052,
+      "day": "2025-07-15 00:00:00.000 UTC",
+      "native_volume_eth": 228123.74414596678,
+      "tx_count": 8022757
+    },
+    {
+      "active_wallet": 1326526,
+      "day": "2025-07-14 00:00:00.000 UTC",
+      "native_volume_eth": 181265.43366789934,
+      "tx_count": 8442497
+    },
+    {
+      "active_wallet": 1747942,
+      "day": "2025-07-13 00:00:00.000 UTC",
+      "native_volume_eth": 138954.91415635147,
+      "tx_count": 8167153
+    },
+    {
+      "active_wallet": 1956006,
+      "day": "2025-07-12 00:00:00.000 UTC",
+      "native_volume_eth": 160655.89395733658,
+      "tx_count": 8397337
+    },
+    {
+      "active_wallet": 1749174,
+      "day": "2025-07-11 00:00:00.000 UTC",
+      "native_volume_eth": 265195.9750035327,
+      "tx_count": 8441287
+    },
+    {
+      "active_wallet": 1449489,
+      "day": "2025-07-10 00:00:00.000 UTC",
+      "native_volume_eth": 188879.02513966014,
+      "tx_count": 8372589
+    },
+    {
+      "active_wallet": 1128565,
+      "day": "2025-07-09 00:00:00.000 UTC",
+      "native_volume_eth": 162573.3843821015,
+      "tx_count": 7538089
+    },
+    {
+      "active_wallet": 1205164,
+      "day": "2025-07-08 00:00:00.000 UTC",
+      "native_volume_eth": 141109.52246518165,
+      "tx_count": 7701081
+    },
+    {
+      "active_wallet": 1205358,
+      "day": "2025-07-07 00:00:00.000 UTC",
+      "native_volume_eth": 186241.0442819254,
+      "tx_count": 7211549
+    },
+    {
+      "active_wallet": 1269667,
+      "day": "2025-07-06 00:00:00.000 UTC",
+      "native_volume_eth": 137531.80239969582,
+      "tx_count": 6760141
+    },
+    {
+      "active_wallet": 1240599,
+      "day": "2025-07-05 00:00:00.000 UTC",
+      "native_volume_eth": 112930.42636307691,
+      "tx_count": 7787643
+    },
+    {
+      "active_wallet": 1634242,
+      "day": "2025-07-04 00:00:00.000 UTC",
+      "native_volume_eth": 140966.81677912566,
+      "tx_count": 7738898
+    },
+    {
+      "active_wallet": 1259468,
+      "day": "2025-07-03 00:00:00.000 UTC",
+      "native_volume_eth": 166707.4745020423,
+      "tx_count": 7609990
+    },
+    {
+      "active_wallet": 1268734,
+      "day": "2025-07-02 00:00:00.000 UTC",
+      "native_volume_eth": 338953.2036189225,
+      "tx_count": 7981578
+    },
+    {
+      "active_wallet": 2261271,
+      "day": "2025-07-01 00:00:00.000 UTC",
+      "native_volume_eth": 146059.18019812377,
+      "tx_count": 9879133
+    },
+    {
+      "active_wallet": 1487186,
+      "day": "2025-06-30 00:00:00.000 UTC",
+      "native_volume_eth": 143873.38371070797,
+      "tx_count": 8788344
+    },
+    {
+      "active_wallet": 1157366,
+      "day": "2025-06-29 00:00:00.000 UTC",
+      "native_volume_eth": 104025.77765864028,
+      "tx_count": 7458498
+    },
+    {
+      "active_wallet": 929725,
+      "day": "2025-06-28 00:00:00.000 UTC",
+      "native_volume_eth": 95853.68839898797,
+      "tx_count": 6994882
+    },
+    {
+      "active_wallet": 1057596,
+      "day": "2025-06-27 00:00:00.000 UTC",
+      "native_volume_eth": 120667.5403353065,
+      "tx_count": 7300545
+    },
+    {
+      "active_wallet": 1064078,
+      "day": "2025-06-26 00:00:00.000 UTC",
+      "native_volume_eth": 149420.07988266993,
+      "tx_count": 7299535
+    },
+    {
+      "active_wallet": 1225690,
+      "day": "2025-06-25 00:00:00.000 UTC",
+      "native_volume_eth": 127776.71129916927,
+      "tx_count": 8151246
+    },
+    {
+      "active_wallet": 979785,
+      "day": "2025-06-24 00:00:00.000 UTC",
+      "native_volume_eth": 151476.75347636986,
+      "tx_count": 7254314
+    },
+    {
+      "active_wallet": 1369043,
+      "day": "2025-06-23 00:00:00.000 UTC",
+      "native_volume_eth": 229132.75112767032,
+      "tx_count": 7811850
+    },
+    {
+      "active_wallet": 972942,
+      "day": "2025-06-22 00:00:00.000 UTC",
+      "native_volume_eth": 144281.94513476745,
+      "tx_count": 8037349
+    },
+    {
+      "active_wallet": 3575631,
+      "day": "2025-06-21 00:00:00.000 UTC",
+      "native_volume_eth": 124756.62055691538,
+      "tx_count": 10745054
+    },
+    {
+      "active_wallet": 3584481,
+      "day": "2025-06-20 00:00:00.000 UTC",
+      "native_volume_eth": 296799.96142937656,
+      "tx_count": 10391195
+    },
+    {
+      "active_wallet": 1900626,
+      "day": "2025-06-19 00:00:00.000 UTC",
+      "native_volume_eth": 248653.00294606778,
+      "tx_count": 8398421
+    },
+    {
+      "active_wallet": 2402302,
+      "day": "2025-06-18 00:00:00.000 UTC",
+      "native_volume_eth": 282133.12387751846,
+      "tx_count": 10683762
+    },
+    {
+      "active_wallet": 1522003,
+      "day": "2025-06-17 00:00:00.000 UTC",
+      "native_volume_eth": 436042.5137364926,
+      "tx_count": 9444491
+    },
+    {
+      "active_wallet": 2839362,
+      "day": "2025-06-16 00:00:00.000 UTC",
+      "native_volume_eth": 265440.4608410196,
+      "tx_count": 10434133
+    },
+    {
+      "active_wallet": 1099774,
+      "day": "2025-06-15 00:00:00.000 UTC",
+      "native_volume_eth": 109984.896836208,
+      "tx_count": 7395250
+    },
+    {
+      "active_wallet": 1965158,
+      "day": "2025-06-14 00:00:00.000 UTC",
+      "native_volume_eth": 128611.23833167912,
+      "tx_count": 9304693
+    },
+    {
+      "active_wallet": 1131067,
+      "day": "2025-06-13 00:00:00.000 UTC",
+      "native_volume_eth": 332214.4441956809,
+      "tx_count": 9997011
+    },
+    {
+      "active_wallet": 1367074,
+      "day": "2025-06-12 00:00:00.000 UTC",
+      "native_volume_eth": 500978.64284994715,
+      "tx_count": 10838622
+    },
+    {
+      "active_wallet": 1485281,
+      "day": "2025-06-11 00:00:00.000 UTC",
+      "native_volume_eth": 304811.07857719704,
+      "tx_count": 9481112
+    },
+    {
+      "active_wallet": 1300504,
+      "day": "2025-06-10 00:00:00.000 UTC",
+      "native_volume_eth": 333840.44335660944,
+      "tx_count": 9505364
+    },
+    {
+      "active_wallet": 1523073,
+      "day": "2025-06-09 00:00:00.000 UTC",
+      "native_volume_eth": 284226.0310514579,
+      "tx_count": 10060308
+    },
+    {
+      "active_wallet": 1334399,
+      "day": "2025-06-08 00:00:00.000 UTC",
+      "native_volume_eth": 114294.04398690026,
+      "tx_count": 8880907
+    },
+    {
+      "active_wallet": 1419039,
+      "day": "2025-06-07 00:00:00.000 UTC",
+      "native_volume_eth": 114918.24367814779,
+      "tx_count": 8399985
+    },
+    {
+      "active_wallet": 2828315,
+      "day": "2025-06-06 00:00:00.000 UTC",
+      "native_volume_eth": 260261.2681808274,
+      "tx_count": 10196295
+    },
+    {
+      "active_wallet": 1810067,
+      "day": "2025-06-05 00:00:00.000 UTC",
+      "native_volume_eth": 559404.8378696893,
+      "tx_count": 10796246
+    },
+    {
+      "active_wallet": 1548697,
+      "day": "2025-06-04 00:00:00.000 UTC",
+      "native_volume_eth": 276100.0945901275,
+      "tx_count": 9075243
+    },
+    {
+      "active_wallet": 3141100,
+      "day": "2025-06-03 00:00:00.000 UTC",
+      "native_volume_eth": 195323.44150959412,
+      "tx_count": 10922510
+    },
+    {
+      "active_wallet": 1630635,
+      "day": "2025-06-02 00:00:00.000 UTC",
+      "native_volume_eth": 267966.4007962248,
+      "tx_count": 8130309
+    },
+    {
+      "active_wallet": 1516051,
+      "day": "2025-06-01 00:00:00.000 UTC",
+      "native_volume_eth": 295061.28277717315,
+      "tx_count": 7877495
+    },
+    {
+      "active_wallet": 1375052,
+      "day": "2025-05-31 00:00:00.000 UTC",
+      "native_volume_eth": 123828.29963911787,
+      "tx_count": 8193205
+    },
+    {
+      "active_wallet": 2739588,
+      "day": "2025-05-30 00:00:00.000 UTC",
+      "native_volume_eth": 423652.1022718059,
+      "tx_count": 10830185
+    },
+    {
+      "active_wallet": 2220040,
+      "day": "2025-05-29 00:00:00.000 UTC",
+      "native_volume_eth": 166888.8159521848,
+      "tx_count": 12163223
+    },
+    {
+      "active_wallet": 1640565,
+      "day": "2025-05-28 00:00:00.000 UTC",
+      "native_volume_eth": 142261.69179872744,
+      "tx_count": 9821319
+    },
+    {
+      "active_wallet": 1920091,
+      "day": "2025-05-27 00:00:00.000 UTC",
+      "native_volume_eth": 170533.54956810953,
+      "tx_count": 8922301
+    },
+    {
+      "active_wallet": 1681502,
+      "day": "2025-05-26 00:00:00.000 UTC",
+      "native_volume_eth": 193010.9320947081,
+      "tx_count": 9733781
+    },
+    {
+      "active_wallet": 1540369,
+      "day": "2025-05-25 00:00:00.000 UTC",
+      "native_volume_eth": 446514.83819163044,
+      "tx_count": 7922215
+    },
+    {
+      "active_wallet": 1617419,
+      "day": "2025-05-24 00:00:00.000 UTC",
+      "native_volume_eth": 139819.10070535692,
+      "tx_count": 7524303
+    },
+    {
+      "active_wallet": 1596453,
+      "day": "2025-05-23 00:00:00.000 UTC",
+      "native_volume_eth": 628416.7307147685,
+      "tx_count": 9456059
+    },
+    {
+      "active_wallet": 1355304,
+      "day": "2025-05-22 00:00:00.000 UTC",
+      "native_volume_eth": 219376.44182828543,
+      "tx_count": 9839433
+    },
+    {
+      "active_wallet": 1747210,
+      "day": "2025-05-21 00:00:00.000 UTC",
+      "native_volume_eth": 184797.63202208356,
+      "tx_count": 11147339
+    },
+    {
+      "active_wallet": 1890479,
+      "day": "2025-05-20 00:00:00.000 UTC",
+      "native_volume_eth": 779648.3087096057,
+      "tx_count": 9408351
+    },
+    {
+      "active_wallet": 1216010,
+      "day": "2025-05-19 00:00:00.000 UTC",
+      "native_volume_eth": 204945.90129740752,
+      "tx_count": 8603033
+    },
+    {
+      "active_wallet": 1229805,
+      "day": "2025-05-18 00:00:00.000 UTC",
+      "native_volume_eth": 186957.42100619158,
+      "tx_count": 8035311
+    },
+    {
+      "active_wallet": 1336674,
+      "day": "2025-05-17 00:00:00.000 UTC",
+      "native_volume_eth": 155197.89047007455,
+      "tx_count": 7525177
+    },
+    {
+      "active_wallet": 1447850,
+      "day": "2025-05-16 00:00:00.000 UTC",
+      "native_volume_eth": 192641.53784600858,
+      "tx_count": 8334159
+    },
+    {
+      "active_wallet": 1459289,
+      "day": "2025-05-15 00:00:00.000 UTC",
+      "native_volume_eth": 205879.74543774338,
+      "tx_count": 8943747
+    },
+    {
+      "active_wallet": 1778860,
+      "day": "2025-05-14 00:00:00.000 UTC",
+      "native_volume_eth": 227792.7643097596,
+      "tx_count": 9246927
+    },
+    {
+      "active_wallet": 1317436,
+      "day": "2025-05-13 00:00:00.000 UTC",
+      "native_volume_eth": 262734.4874924769,
+      "tx_count": 10385303
+    },
+    {
+      "active_wallet": 2020238,
+      "day": "2025-05-12 00:00:00.000 UTC",
+      "native_volume_eth": 285326.4692034495,
+      "tx_count": 11519307
+    },
+    {
+      "active_wallet": 1605950,
+      "day": "2025-05-11 00:00:00.000 UTC",
+      "native_volume_eth": 183475.99317347334,
+      "tx_count": 9981006
+    },
+    {
+      "active_wallet": 1803481,
+      "day": "2025-05-10 00:00:00.000 UTC",
+      "native_volume_eth": 220158.98493015542,
+      "tx_count": 9972416
+    },
+    {
+      "active_wallet": 1299805,
+      "day": "2025-05-09 00:00:00.000 UTC",
+      "native_volume_eth": 304760.82290782535,
+      "tx_count": 9040136
+    },
+    {
+      "active_wallet": 1378935,
+      "day": "2025-05-08 00:00:00.000 UTC",
+      "native_volume_eth": 287506.51195761876,
+      "tx_count": 9572836
+    },
+    {
+      "active_wallet": 996571,
+      "day": "2025-05-07 00:00:00.000 UTC",
+      "native_volume_eth": 241645.99711445294,
+      "tx_count": 6812811
+    },
+    {
+      "active_wallet": 925758,
+      "day": "2025-05-06 00:00:00.000 UTC",
+      "native_volume_eth": 186302.2224073628,
+      "tx_count": 6310233
+    },
+    {
+      "active_wallet": 847199,
+      "day": "2025-05-05 00:00:00.000 UTC",
+      "native_volume_eth": 148100.41139938423,
+      "tx_count": 6195675
+    },
+    {
+      "active_wallet": 1030911,
+      "day": "2025-05-04 00:00:00.000 UTC",
+      "native_volume_eth": 118345.63984486734,
+      "tx_count": 6692502
+    },
+    {
+      "active_wallet": 1659145,
+      "day": "2025-05-03 00:00:00.000 UTC",
+      "native_volume_eth": 133909.93398468205,
+      "tx_count": 7434968
+    },
+    {
+      "active_wallet": 813243,
+      "day": "2025-05-02 00:00:00.000 UTC",
+      "native_volume_eth": 122963.96391193636,
+      "tx_count": 6781449
+    },
+    {
+      "active_wallet": 820726,
+      "day": "2025-05-01 00:00:00.000 UTC",
+      "native_volume_eth": 169716.60792207476,
+      "tx_count": 7202342
+    },
+    {
+      "active_wallet": 1022767,
+      "day": "2025-04-30 00:00:00.000 UTC",
+      "native_volume_eth": 133550.79880323997,
+      "tx_count": 6660787
+    },
+    {
+      "active_wallet": 796380,
+      "day": "2025-04-29 00:00:00.000 UTC",
+      "native_volume_eth": 169398.6034811479,
+      "tx_count": 6372993
+    },
+    {
+      "active_wallet": 630726,
+      "day": "2025-04-28 00:00:00.000 UTC",
+      "native_volume_eth": 156889.90115528752,
+      "tx_count": 6596294
+    },
+    {
+      "active_wallet": 1034519,
+      "day": "2025-04-27 00:00:00.000 UTC",
+      "native_volume_eth": 138974.66223183824,
+      "tx_count": 6724026
+    },
+    {
+      "active_wallet": 1068371,
+      "day": "2025-04-26 00:00:00.000 UTC",
+      "native_volume_eth": 164441.78163327134,
+      "tx_count": 6617036
+    },
+    {
+      "active_wallet": 820388,
+      "day": "2025-04-25 00:00:00.000 UTC",
+      "native_volume_eth": 190597.85486606907,
+      "tx_count": 6576899
+    },
+    {
+      "active_wallet": 999556,
+      "day": "2025-04-24 00:00:00.000 UTC",
+      "native_volume_eth": 155063.38760957113,
+      "tx_count": 6742905
+    },
+    {
+      "active_wallet": 800823,
+      "day": "2025-04-23 00:00:00.000 UTC",
+      "native_volume_eth": 184443.86923582546,
+      "tx_count": 6348031
+    },
+    {
+      "active_wallet": 755194,
+      "day": "2025-04-22 00:00:00.000 UTC",
+      "native_volume_eth": 217205.78303042153,
+      "tx_count": 6408930
+    },
+    {
+      "active_wallet": 649146,
+      "day": "2025-04-21 00:00:00.000 UTC",
+      "native_volume_eth": 162288.40108798372,
+      "tx_count": 6334003
+    },
+    {
+      "active_wallet": 1117719,
+      "day": "2025-04-20 00:00:00.000 UTC",
+      "native_volume_eth": 99917.22937551887,
+      "tx_count": 6458603
+    },
+    {
+      "active_wallet": 768859,
+      "day": "2025-04-19 00:00:00.000 UTC",
+      "native_volume_eth": 129428.97728983294,
+      "tx_count": 5763722
+    },
+    {
+      "active_wallet": 542329,
+      "day": "2025-04-18 00:00:00.000 UTC",
+      "native_volume_eth": 152969.81090056634,
+      "tx_count": 5273345
+    },
+    {
+      "active_wallet": 412712,
+      "day": "2025-04-17 00:00:00.000 UTC",
+      "native_volume_eth": 166944.21887712678,
+      "tx_count": 6160659
+    },
+    {
+      "active_wallet": 643682,
+      "day": "2025-04-16 00:00:00.000 UTC",
+      "native_volume_eth": 157399.89846414764,
+      "tx_count": 6708210
+    },
+    {
+      "active_wallet": 887630,
+      "day": "2025-04-15 00:00:00.000 UTC",
+      "native_volume_eth": 151490.2601621574,
+      "tx_count": 6836150
+    },
+    {
+      "active_wallet": 952777,
+      "day": "2025-04-14 00:00:00.000 UTC",
+      "native_volume_eth": 155451.68291300454,
+      "tx_count": 7520257
+    },
+    {
+      "active_wallet": 1183081,
+      "day": "2025-04-13 00:00:00.000 UTC",
+      "native_volume_eth": 147587.6360825905,
+      "tx_count": 7256731
+    },
+    {
+      "active_wallet": 1307899,
+      "day": "2025-04-12 00:00:00.000 UTC",
+      "native_volume_eth": 139952.35261527344,
+      "tx_count": 7431129
+    },
+    {
+      "active_wallet": 1108645,
+      "day": "2025-04-11 00:00:00.000 UTC",
+      "native_volume_eth": 160717.12940104166,
+      "tx_count": 7073811
+    },
+    {
+      "active_wallet": 1107723,
+      "day": "2025-04-10 00:00:00.000 UTC",
+      "native_volume_eth": 159644.66335051184,
+      "tx_count": 6884087
+    },
+    {
+      "active_wallet": 542327,
+      "day": "2025-04-09 00:00:00.000 UTC",
+      "native_volume_eth": 156147.9642399974,
+      "tx_count": 6302015
+    },
+    {
+      "active_wallet": 807715,
+      "day": "2025-04-08 00:00:00.000 UTC",
+      "native_volume_eth": 144740.91118262394,
+      "tx_count": 6618335
+    },
+    {
+      "active_wallet": 653816,
+      "day": "2025-04-07 00:00:00.000 UTC",
+      "native_volume_eth": 200111.76740886475,
+      "tx_count": 7027779
+    },
+    {
+      "active_wallet": 812677,
+      "day": "2025-04-06 00:00:00.000 UTC",
+      "native_volume_eth": 164519.81684047575,
+      "tx_count": 6873959
+    },
+    {
+      "active_wallet": 678736,
+      "day": "2025-04-05 00:00:00.000 UTC",
+      "native_volume_eth": 122199.33946580022,
+      "tx_count": 5725565
+    },
+    {
+      "active_wallet": 887289,
+      "day": "2025-04-04 00:00:00.000 UTC",
+      "native_volume_eth": 161572.8811071829,
+      "tx_count": 6562336
+    },
+    {
+      "active_wallet": 1142829,
+      "day": "2025-04-03 00:00:00.000 UTC",
+      "native_volume_eth": 158825.2226683435,
+      "tx_count": 7172254
+    },
+    {
+      "active_wallet": 910773,
+      "day": "2025-04-02 00:00:00.000 UTC",
+      "native_volume_eth": 201761.12407679117,
+      "tx_count": 6811272
+    },
+    {
+      "active_wallet": 730968,
+      "day": "2025-04-01 00:00:00.000 UTC",
+      "native_volume_eth": 199107.32584285425,
+      "tx_count": 6289283
+    },
+    {
+      "active_wallet": 948464,
+      "day": "2025-03-31 00:00:00.000 UTC",
+      "native_volume_eth": 181121.91236848646,
+      "tx_count": 7069939
+    },
+    {
+      "active_wallet": 1024452,
+      "day": "2025-03-30 00:00:00.000 UTC",
+      "native_volume_eth": 153619.87552703082,
+      "tx_count": 6533635
+    },
+    {
+      "active_wallet": 797118,
+      "day": "2025-03-29 00:00:00.000 UTC",
+      "native_volume_eth": 152879.43994650085,
+      "tx_count": 6462529
+    },
+    {
+      "active_wallet": 787425,
+      "day": "2025-03-28 00:00:00.000 UTC",
+      "native_volume_eth": 185905.33376379655,
+      "tx_count": 6687151
+    },
+    {
+      "active_wallet": 736053,
+      "day": "2025-03-27 00:00:00.000 UTC",
+      "native_volume_eth": 213142.40288968463,
+      "tx_count": 6680987
+    },
+    {
+      "active_wallet": 644182,
+      "day": "2025-03-26 00:00:00.000 UTC",
+      "native_volume_eth": 171369.19161422562,
+      "tx_count": 6494973
+    },
+    {
+      "active_wallet": 712331,
+      "day": "2025-03-25 00:00:00.000 UTC",
+      "native_volume_eth": 207106.89805648534,
+      "tx_count": 6592142
+    },
+    {
+      "active_wallet": 800144,
+      "day": "2025-03-24 00:00:00.000 UTC",
+      "native_volume_eth": 215354.61806772935,
+      "tx_count": 6832687
+    },
+    {
+      "active_wallet": 1311801,
+      "day": "2025-03-23 00:00:00.000 UTC",
+      "native_volume_eth": 169213.1981980772,
+      "tx_count": 6989021
+    },
+    {
+      "active_wallet": 1136975,
+      "day": "2025-03-22 00:00:00.000 UTC",
+      "native_volume_eth": 140157.93364852198,
+      "tx_count": 7383674
+    },
+    {
+      "active_wallet": 1354345,
+      "day": "2025-03-21 00:00:00.000 UTC",
+      "native_volume_eth": 163574.66876031327,
+      "tx_count": 7956360
+    },
+    {
+      "active_wallet": 1523708,
+      "day": "2025-03-20 00:00:00.000 UTC",
+      "native_volume_eth": 188649.55613853328,
+      "tx_count": 7770728
+    },
+    {
+      "active_wallet": 1127554,
+      "day": "2025-03-19 00:00:00.000 UTC",
+      "native_volume_eth": 244277.5831931192,
+      "tx_count": 7197512
+    },
+    {
+      "active_wallet": 894085,
+      "day": "2025-03-18 00:00:00.000 UTC",
+      "native_volume_eth": 211854.399132513,
+      "tx_count": 6852938
+    },
+    {
+      "active_wallet": 937771,
+      "day": "2025-03-17 00:00:00.000 UTC",
+      "native_volume_eth": 222843.45121254618,
+      "tx_count": 6572578
+    },
+    {
+      "active_wallet": 1564114,
+      "day": "2025-03-16 00:00:00.000 UTC",
+      "native_volume_eth": 192282.0206618121,
+      "tx_count": 7174155
+    },
+    {
+      "active_wallet": 1014016,
+      "day": "2025-03-15 00:00:00.000 UTC",
+      "native_volume_eth": 185105.0213973723,
+      "tx_count": 6743564
+    },
+    {
+      "active_wallet": 1060312,
+      "day": "2025-03-14 00:00:00.000 UTC",
+      "native_volume_eth": 220779.43508346617,
+      "tx_count": 7197801
+    },
+    {
+      "active_wallet": 801894,
+      "day": "2025-03-13 00:00:00.000 UTC",
+      "native_volume_eth": 263823.7186934807,
+      "tx_count": 7286334
+    },
+    {
+      "active_wallet": 787594,
+      "day": "2025-03-12 00:00:00.000 UTC",
+      "native_volume_eth": 249190.49299676396,
+      "tx_count": 7129688
+    },
+    {
+      "active_wallet": 807970,
+      "day": "2025-03-11 00:00:00.000 UTC",
+      "native_volume_eth": 259028.7803264174,
+      "tx_count": 6845255
+    },
+    {
+      "active_wallet": 709154,
+      "day": "2025-03-10 00:00:00.000 UTC",
+      "native_volume_eth": 290640.6783794917,
+      "tx_count": 7045269
+    },
+    {
+      "active_wallet": 1597160,
+      "day": "2025-03-09 00:00:00.000 UTC",
+      "native_volume_eth": 204040.89902056492,
+      "tx_count": 7783569
+    },
+    {
+      "active_wallet": 1370358,
+      "day": "2025-03-08 00:00:00.000 UTC",
+      "native_volume_eth": 285510.3592955345,
+      "tx_count": 7108585
+    },
+    {
+      "active_wallet": 906648,
+      "day": "2025-03-07 00:00:00.000 UTC",
+      "native_volume_eth": 222001.04411098562,
+      "tx_count": 6551876
+    },
+    {
+      "active_wallet": 1321767,
+      "day": "2025-03-06 00:00:00.000 UTC",
+      "native_volume_eth": 198353.4525654718,
+      "tx_count": 7368262
+    },
+    {
+      "active_wallet": 1311876,
+      "day": "2025-03-05 00:00:00.000 UTC",
+      "native_volume_eth": 197734.56451036298,
+      "tx_count": 6902115
+    },
+    {
+      "active_wallet": 1159404,
+      "day": "2025-03-04 00:00:00.000 UTC",
+      "native_volume_eth": 235422.39310583795,
+      "tx_count": 6808862
+    },
+    {
+      "active_wallet": 1722035,
+      "day": "2025-03-03 00:00:00.000 UTC",
+      "native_volume_eth": 206971.20778576485,
+      "tx_count": 7480850
+    },
+    {
+      "active_wallet": 1392157,
+      "day": "2025-03-02 00:00:00.000 UTC",
+      "native_volume_eth": 266174.4138026136,
+      "tx_count": 7277330
+    },
+    {
+      "active_wallet": 1180801,
+      "day": "2025-03-01 00:00:00.000 UTC",
+      "native_volume_eth": 207805.8103269084,
+      "tx_count": 6521462
+    },
+    {
+      "active_wallet": 704317,
+      "day": "2025-02-28 00:00:00.000 UTC",
+      "native_volume_eth": 271317.3793301702,
+      "tx_count": 6645609
+    },
+    {
+      "active_wallet": 718741,
+      "day": "2025-02-27 00:00:00.000 UTC",
+      "native_volume_eth": 224094.11852171994,
+      "tx_count": 5906675
+    },
+    {
+      "active_wallet": 618661,
+      "day": "2025-02-26 00:00:00.000 UTC",
+      "native_volume_eth": 257967.69536288953,
+      "tx_count": 5768572
+    },
+    {
+      "active_wallet": 576329,
+      "day": "2025-02-25 00:00:00.000 UTC",
+      "native_volume_eth": 248122.18156672062,
+      "tx_count": 6118318
+    },
+    {
+      "active_wallet": 858596,
+      "day": "2025-02-24 00:00:00.000 UTC",
+      "native_volume_eth": 263316.82328197965,
+      "tx_count": 6334923
+    },
+    {
+      "active_wallet": 1402751,
+      "day": "2025-02-23 00:00:00.000 UTC",
+      "native_volume_eth": 230747.58148552524,
+      "tx_count": 6268715
+    },
+    {
+      "active_wallet": 1152638,
+      "day": "2025-02-22 00:00:00.000 UTC",
+      "native_volume_eth": 240674.46351963218,
+      "tx_count": 6453658
+    },
+    {
+      "active_wallet": 977500,
+      "day": "2025-02-21 00:00:00.000 UTC",
+      "native_volume_eth": 330791.98309339694,
+      "tx_count": 6953195
+    },
+    {
+      "active_wallet": 1063139,
+      "day": "2025-02-20 00:00:00.000 UTC",
+      "native_volume_eth": 283908.1819306467,
+      "tx_count": 7283889
+    },
+    {
+      "active_wallet": 979105,
+      "day": "2025-02-19 00:00:00.000 UTC",
+      "native_volume_eth": 276670.0723865803,
+      "tx_count": 6398379
+    },
+    {
+      "active_wallet": 776281,
+      "day": "2025-02-18 00:00:00.000 UTC",
+      "native_volume_eth": 269059.5385357213,
+      "tx_count": 6348186
+    },
+    {
+      "active_wallet": 758710,
+      "day": "2025-02-17 00:00:00.000 UTC",
+      "native_volume_eth": 236199.74598981877,
+      "tx_count": 6257930
+    },
+    {
+      "active_wallet": 1345537,
+      "day": "2025-02-16 00:00:00.000 UTC",
+      "native_volume_eth": 195369.07639859727,
+      "tx_count": 6526443
+    },
+    {
+      "active_wallet": 845322,
+      "day": "2025-02-15 00:00:00.000 UTC",
+      "native_volume_eth": 171464.1214957485,
+      "tx_count": 5654248
+    },
+    {
+      "active_wallet": 1360333,
+      "day": "2025-02-14 00:00:00.000 UTC",
+      "native_volume_eth": 211443.6527312826,
+      "tx_count": 6634769
+    },
+    {
+      "active_wallet": 1583158,
+      "day": "2025-02-13 00:00:00.000 UTC",
+      "native_volume_eth": 200064.79869276506,
+      "tx_count": 7174618
+    },
+    {
+      "active_wallet": 1072787,
+      "day": "2025-02-12 00:00:00.000 UTC",
+      "native_volume_eth": 219629.77042824635,
+      "tx_count": 6490853
+    },
+    {
+      "active_wallet": 854412,
+      "day": "2025-02-11 00:00:00.000 UTC",
+      "native_volume_eth": 215291.85481091085,
+      "tx_count": 6118422
+    },
+    {
+      "active_wallet": 981868,
+      "day": "2025-02-10 00:00:00.000 UTC",
+      "native_volume_eth": 230027.5643226396,
+      "tx_count": 6317226
+    },
+    {
+      "active_wallet": 1628035,
+      "day": "2025-02-09 00:00:00.000 UTC",
+      "native_volume_eth": 221417.26877937475,
+      "tx_count": 6695394
+    },
+    {
+      "active_wallet": 1330368,
+      "day": "2025-02-08 00:00:00.000 UTC",
+      "native_volume_eth": 212117.9775251248,
+      "tx_count": 6650270
+    },
+    {
+      "active_wallet": 885257,
+      "day": "2025-02-07 00:00:00.000 UTC",
+      "native_volume_eth": 244282.88387787144,
+      "tx_count": 6486424
+    },
+    {
+      "active_wallet": 873597,
+      "day": "2025-02-06 00:00:00.000 UTC",
+      "native_volume_eth": 239795.47076285683,
+      "tx_count": 6846300
+    },
+    {
+      "active_wallet": 768001,
+      "day": "2025-02-05 00:00:00.000 UTC",
+      "native_volume_eth": 229130.75973769787,
+      "tx_count": 6259915
+    },
+    {
+      "active_wallet": 765704,
+      "day": "2025-02-04 00:00:00.000 UTC",
+      "native_volume_eth": 255565.5661828823,
+      "tx_count": 6540457
+    },
+    {
+      "active_wallet": 729751,
+      "day": "2025-02-03 00:00:00.000 UTC",
+      "native_volume_eth": 328062.5105771688,
+      "tx_count": 6905838
+    },
+    {
+      "active_wallet": 1029282,
+      "day": "2025-02-02 00:00:00.000 UTC",
+      "native_volume_eth": 259264.02297409636,
+      "tx_count": 7035461
+    },
+    {
+      "active_wallet": 1086293,
+      "day": "2025-02-01 00:00:00.000 UTC",
+      "native_volume_eth": 230127.9726280704,
+      "tx_count": 7192586
+    },
+    {
+      "active_wallet": 1424374,
+      "day": "2025-01-31 00:00:00.000 UTC",
+      "native_volume_eth": 271258.4908336971,
+      "tx_count": 8093249
+    },
+    {
+      "active_wallet": 1609790,
+      "day": "2025-01-30 00:00:00.000 UTC",
+      "native_volume_eth": 262481.9483028107,
+      "tx_count": 8002577
+    },
+    {
+      "active_wallet": 1032826,
+      "day": "2025-01-29 00:00:00.000 UTC",
+      "native_volume_eth": 229489.64187942626,
+      "tx_count": 7567842
+    },
+    {
+      "active_wallet": 646181,
+      "day": "2025-01-28 00:00:00.000 UTC",
+      "native_volume_eth": 295281.0711580067,
+      "tx_count": 7239000
+    },
+    {
+      "active_wallet": 754129,
+      "day": "2025-01-27 00:00:00.000 UTC",
+      "native_volume_eth": 319234.3546054933,
+      "tx_count": 7884589
+    },
+    {
+      "active_wallet": 1914305,
+      "day": "2025-01-26 00:00:00.000 UTC",
+      "native_volume_eth": 243855.70742403317,
+      "tx_count": 8216323
+    },
+    {
+      "active_wallet": 1881503,
+      "day": "2025-01-25 00:00:00.000 UTC",
+      "native_volume_eth": 203397.70815906176,
+      "tx_count": 8668583
+    },
+    {
+      "active_wallet": 1022334,
+      "day": "2025-01-24 00:00:00.000 UTC",
+      "native_volume_eth": 379185.370669406,
+      "tx_count": 7529895
+    },
+    {
+      "active_wallet": 957045,
+      "day": "2025-01-23 00:00:00.000 UTC",
+      "native_volume_eth": 241682.1941723711,
+      "tx_count": 7199667
+    },
+    {
+      "active_wallet": 1308654,
+      "day": "2025-01-22 00:00:00.000 UTC",
+      "native_volume_eth": 232710.62274832855,
+      "tx_count": 7441177
+    },
+    {
+      "active_wallet": 1302920,
+      "day": "2025-01-21 00:00:00.000 UTC",
+      "native_volume_eth": 261562.57105191553,
+      "tx_count": 7069972
+    },
+    {
+      "active_wallet": 976260,
+      "day": "2025-01-20 00:00:00.000 UTC",
+      "native_volume_eth": 366075.04845385184,
+      "tx_count": 7022325
+    },
+    {
+      "active_wallet": 997576,
+      "day": "2025-01-19 00:00:00.000 UTC",
+      "native_volume_eth": 441390.04962423246,
+      "tx_count": 7102471
+    },
+    {
+      "active_wallet": 1003636,
+      "day": "2025-01-18 00:00:00.000 UTC",
+      "native_volume_eth": 358937.9120211832,
+      "tx_count": 7459167
+    },
+    {
+      "active_wallet": 1310240,
+      "day": "2025-01-17 00:00:00.000 UTC",
+      "native_volume_eth": 284479.2961992312,
+      "tx_count": 7407187
+    },
+    {
+      "active_wallet": 1130530,
+      "day": "2025-01-16 00:00:00.000 UTC",
+      "native_volume_eth": 285505.9443939543,
+      "tx_count": 7210333
+    },
+    {
+      "active_wallet": 865379,
+      "day": "2025-01-15 00:00:00.000 UTC",
+      "native_volume_eth": 294037.0313335371,
+      "tx_count": 6820814
+    },
+    {
+      "active_wallet": 1267687,
+      "day": "2025-01-14 00:00:00.000 UTC",
+      "native_volume_eth": 263573.6848304794,
+      "tx_count": 6882395
+    },
+    {
+      "active_wallet": 795408,
+      "day": "2025-01-13 00:00:00.000 UTC",
+      "native_volume_eth": 291459.7584865463,
+      "tx_count": 6360269
+    },
+    {
+      "active_wallet": 1353864,
+      "day": "2025-01-12 00:00:00.000 UTC",
+      "native_volume_eth": 205308.69554429926,
+      "tx_count": 7205710
+    },
+    {
+      "active_wallet": 1525729,
+      "day": "2025-01-11 00:00:00.000 UTC",
+      "native_volume_eth": 211715.74913019326,
+      "tx_count": 7354130
+    },
+    {
+      "active_wallet": 1388270,
+      "day": "2025-01-10 00:00:00.000 UTC",
+      "native_volume_eth": 313471.24692170694,
+      "tx_count": 7180710
+    },
+    {
+      "active_wallet": 945744,
+      "day": "2025-01-09 00:00:00.000 UTC",
+      "native_volume_eth": 299152.30819702084,
+      "tx_count": 7045377
+    },
+    {
+      "active_wallet": 774607,
+      "day": "2025-01-08 00:00:00.000 UTC",
+      "native_volume_eth": 332105.4415843623,
+      "tx_count": 7198213
+    },
+    {
+      "active_wallet": 932875,
+      "day": "2025-01-07 00:00:00.000 UTC",
+      "native_volume_eth": 361727.9488574632,
+      "tx_count": 7495868
+    },
+    {
+      "active_wallet": 966389,
+      "day": "2025-01-06 00:00:00.000 UTC",
+      "native_volume_eth": 268917.468889643,
+      "tx_count": 7211391
+    },
+    {
+      "active_wallet": 1274890,
+      "day": "2025-01-05 00:00:00.000 UTC",
+      "native_volume_eth": 232689.6660382424,
+      "tx_count": 7299661
+    },
+    {
+      "active_wallet": 1090344,
+      "day": "2025-01-04 00:00:00.000 UTC",
+      "native_volume_eth": 247756.90648689645,
+      "tx_count": 7704907
+    },
+    {
+      "active_wallet": 853065,
+      "day": "2025-01-03 00:00:00.000 UTC",
+      "native_volume_eth": 281236.7460063724,
+      "tx_count": 7405310
+    },
+    {
+      "active_wallet": 738140,
+      "day": "2025-01-02 00:00:00.000 UTC",
+      "native_volume_eth": 318531.37481105764,
+      "tx_count": 7352806
+    },
+    {
+      "active_wallet": 2932767,
+      "day": "2025-01-01 00:00:00.000 UTC",
+      "native_volume_eth": 227522.07555047187,
+      "tx_count": 8760628
+    },
+    {
+      "active_wallet": 1561027,
+      "day": "2024-12-31 00:00:00.000 UTC",
+      "native_volume_eth": 281432.00892704725,
+      "tx_count": 6750689
+    },
+    {
+      "active_wallet": 807557,
+      "day": "2024-12-30 00:00:00.000 UTC",
+      "native_volume_eth": 282759.69261188636,
+      "tx_count": 5926773
+    },
+    {
+      "active_wallet": 1094915,
+      "day": "2024-12-29 00:00:00.000 UTC",
+      "native_volume_eth": 203368.5981241625,
+      "tx_count": 6538552
+    },
+    {
+      "active_wallet": 914429,
+      "day": "2024-12-28 00:00:00.000 UTC",
+      "native_volume_eth": 243583.69323462987,
+      "tx_count": 6207249
+    },
+    {
+      "active_wallet": 843719,
+      "day": "2024-12-27 00:00:00.000 UTC",
+      "native_volume_eth": 261402.77693962405,
+      "tx_count": 6153866
+    },
+    {
+      "active_wallet": 930160,
+      "day": "2024-12-26 00:00:00.000 UTC",
+      "native_volume_eth": 237323.47092899017,
+      "tx_count": 6228655
+    },
+    {
+      "active_wallet": 1749633,
+      "day": "2024-12-25 00:00:00.000 UTC",
+      "native_volume_eth": 204603.5433930799,
+      "tx_count": 6766005
+    },
+    {
+      "active_wallet": 1303868,
+      "day": "2024-12-24 00:00:00.000 UTC",
+      "native_volume_eth": 240601.27446863102,
+      "tx_count": 6554688
+    },
+    {
+      "active_wallet": 1740309,
+      "day": "2024-12-23 00:00:00.000 UTC",
+      "native_volume_eth": 295308.07708207966,
+      "tx_count": 7098404
+    },
+    {
+      "active_wallet": 2660183,
+      "day": "2024-12-22 00:00:00.000 UTC",
+      "native_volume_eth": 269273.95536815,
+      "tx_count": 7681843
+    },
+    {
+      "active_wallet": 1992053,
+      "day": "2024-12-21 00:00:00.000 UTC",
+      "native_volume_eth": 277914.34340297314,
+      "tx_count": 7122774
+    },
+    {
+      "active_wallet": 1068343,
+      "day": "2024-12-20 00:00:00.000 UTC",
+      "native_volume_eth": 347744.3322469539,
+      "tx_count": 6336447
+    },
+    {
+      "active_wallet": 916456,
+      "day": "2024-12-19 00:00:00.000 UTC",
+      "native_volume_eth": 290255.4244211678,
+      "tx_count": 6080919
+    },
+    {
+      "active_wallet": 1114744,
+      "day": "2024-12-18 00:00:00.000 UTC",
+      "native_volume_eth": 296100.4523355871,
+      "tx_count": 6409342
+    },
+    {
+      "active_wallet": 1225522,
+      "day": "2024-12-17 00:00:00.000 UTC",
+      "native_volume_eth": 283332.94255407224,
+      "tx_count": 7078029
+    },
+    {
+      "active_wallet": 1119844,
+      "day": "2024-12-16 00:00:00.000 UTC",
+      "native_volume_eth": 323183.6686375415,
+      "tx_count": 6721721
+    },
+    {
+      "active_wallet": 1233397,
+      "day": "2024-12-15 00:00:00.000 UTC",
+      "native_volume_eth": 228460.14725253126,
+      "tx_count": 6155347
+    },
+    {
+      "active_wallet": 1103053,
+      "day": "2024-12-14 00:00:00.000 UTC",
+      "native_volume_eth": 216317.95784670883,
+      "tx_count": 6161247
+    },
+    {
+      "active_wallet": 981821,
+      "day": "2024-12-13 00:00:00.000 UTC",
+      "native_volume_eth": 294302.0400562493,
+      "tx_count": 6476662
+    },
+    {
+      "active_wallet": 1394222,
+      "day": "2024-12-12 00:00:00.000 UTC",
+      "native_volume_eth": 329160.46455518994,
+      "tx_count": 6693236
+    },
+    {
+      "active_wallet": 1512073,
+      "day": "2024-12-11 00:00:00.000 UTC",
+      "native_volume_eth": 304358.2483365207,
+      "tx_count": 6487829
+    },
+    {
+      "active_wallet": 1028329,
+      "day": "2024-12-10 00:00:00.000 UTC",
+      "native_volume_eth": 330053.26556193124,
+      "tx_count": 6012186
+    },
+    {
+      "active_wallet": 1216690,
+      "day": "2024-12-09 00:00:00.000 UTC",
+      "native_volume_eth": 331304.7456671799,
+      "tx_count": 6468765
+    },
+    {
+      "active_wallet": 2354782,
+      "day": "2024-12-08 00:00:00.000 UTC",
+      "native_volume_eth": 221157.91227713425,
+      "tx_count": 7590131
+    },
+    {
+      "active_wallet": 1598613,
+      "day": "2024-12-07 00:00:00.000 UTC",
+      "native_volume_eth": 229596.80741572133,
+      "tx_count": 6737665
+    },
+    {
+      "active_wallet": 962152,
+      "day": "2024-12-06 00:00:00.000 UTC",
+      "native_volume_eth": 390438.27600001165,
+      "tx_count": 6197106
+    },
+    {
+      "active_wallet": 890337,
+      "day": "2024-12-05 00:00:00.000 UTC",
+      "native_volume_eth": 338676.51834829117,
+      "tx_count": 6193086
+    },
+    {
+      "active_wallet": 776310,
+      "day": "2024-12-04 00:00:00.000 UTC",
+      "native_volume_eth": 356752.8885131121,
+      "tx_count": 5944691
+    },
+    {
+      "active_wallet": 834157,
+      "day": "2024-12-03 00:00:00.000 UTC",
+      "native_volume_eth": 282553.47662542446,
+      "tx_count": 5835567
+    },
+    {
+      "active_wallet": 874966,
+      "day": "2024-12-02 00:00:00.000 UTC",
+      "native_volume_eth": 307745.30702499143,
+      "tx_count": 6280558
+    },
+    {
+      "active_wallet": 650315,
+      "day": "2024-12-01 00:00:00.000 UTC",
+      "native_volume_eth": 239642.1134591657,
+      "tx_count": 6368990
+    },
+    {
+      "active_wallet": 753969,
+      "day": "2024-11-30 00:00:00.000 UTC",
+      "native_volume_eth": 276375.4095706954,
+      "tx_count": 5381249
+    },
+    {
+      "active_wallet": 1134114,
+      "day": "2024-11-29 00:00:00.000 UTC",
+      "native_volume_eth": 327214.8667417565,
+      "tx_count": 5311044
+    },
+    {
+      "active_wallet": 833418,
+      "day": "2024-11-28 00:00:00.000 UTC",
+      "native_volume_eth": 271926.0130985014,
+      "tx_count": 4794607
+    },
+    {
+      "active_wallet": 1059844,
+      "day": "2024-11-27 00:00:00.000 UTC",
+      "native_volume_eth": 332628.56106382393,
+      "tx_count": 5865184
+    },
+    {
+      "active_wallet": 804541,
+      "day": "2024-11-26 00:00:00.000 UTC",
+      "native_volume_eth": 289893.9896110366,
+      "tx_count": 5323653
+    },
+    {
+      "active_wallet": 912227,
+      "day": "2024-11-25 00:00:00.000 UTC",
+      "native_volume_eth": 348920.1691929409,
+      "tx_count": 5382670
+    },
+    {
+      "active_wallet": 1015189,
+      "day": "2024-11-24 00:00:00.000 UTC",
+      "native_volume_eth": 229843.21850349035,
+      "tx_count": 6104280
+    },
+    {
+      "active_wallet": 1484371,
+      "day": "2024-11-23 00:00:00.000 UTC",
+      "native_volume_eth": 228707.6059496089,
+      "tx_count": 6487304
+    },
+    {
+      "active_wallet": 1545980,
+      "day": "2024-11-22 00:00:00.000 UTC",
+      "native_volume_eth": 250157.57228516575,
+      "tx_count": 6797445
+    },
+    {
+      "active_wallet": 1388302,
+      "day": "2024-11-21 00:00:00.000 UTC",
+      "native_volume_eth": 310897.7375057798,
+      "tx_count": 6794873
+    },
+    {
+      "active_wallet": 940504,
+      "day": "2024-11-20 00:00:00.000 UTC",
+      "native_volume_eth": 231586.79313618256,
+      "tx_count": 7114931
+    },
+    {
+      "active_wallet": 1143352,
+      "day": "2024-11-19 00:00:00.000 UTC",
+      "native_volume_eth": 268941.38453002693,
+      "tx_count": 7303874
+    },
+    {
+      "active_wallet": 1304710,
+      "day": "2024-11-18 00:00:00.000 UTC",
+      "native_volume_eth": 289960.8951505075,
+      "tx_count": 7170018
+    },
+    {
+      "active_wallet": 1301139,
+      "day": "2024-11-17 00:00:00.000 UTC",
+      "native_volume_eth": 327560.78708272666,
+      "tx_count": 6825664
+    },
+    {
+      "active_wallet": 1136485,
+      "day": "2024-11-16 00:00:00.000 UTC",
+      "native_volume_eth": 253288.02082040225,
+      "tx_count": 6311889
+    },
+    {
+      "active_wallet": 1076043,
+      "day": "2024-11-15 00:00:00.000 UTC",
+      "native_volume_eth": 306300.67420315935,
+      "tx_count": 6715024
+    },
+    {
+      "active_wallet": 1170898,
+      "day": "2024-11-14 00:00:00.000 UTC",
+      "native_volume_eth": 297447.408627644,
+      "tx_count": 6285939
+    },
+    {
+      "active_wallet": 1179250,
+      "day": "2024-11-13 00:00:00.000 UTC",
+      "native_volume_eth": 307136.70164163545,
+      "tx_count": 6008517
+    },
+    {
+      "active_wallet": 1173373,
+      "day": "2024-11-12 00:00:00.000 UTC",
+      "native_volume_eth": 336668.2760301018,
+      "tx_count": 6555659
+    },
+    {
+      "active_wallet": 1053582,
+      "day": "2024-11-11 00:00:00.000 UTC",
+      "native_volume_eth": 295397.2045585558,
+      "tx_count": 6220472
+    },
+    {
+      "active_wallet": 1070119,
+      "day": "2024-11-10 00:00:00.000 UTC",
+      "native_volume_eth": 314229.0738408969,
+      "tx_count": 6372836
+    },
+    {
+      "active_wallet": 1153944,
+      "day": "2024-11-09 00:00:00.000 UTC",
+      "native_volume_eth": 271045.0576913987,
+      "tx_count": 6438871
+    },
+    {
+      "active_wallet": 961115,
+      "day": "2024-11-08 00:00:00.000 UTC",
+      "native_volume_eth": 290981.444588633,
+      "tx_count": 5982019
+    },
+    {
+      "active_wallet": 949723,
+      "day": "2024-11-07 00:00:00.000 UTC",
+      "native_volume_eth": 324986.10963586543,
+      "tx_count": 6825649
+    },
+    {
+      "active_wallet": 1066486,
+      "day": "2024-11-06 00:00:00.000 UTC",
+      "native_volume_eth": 340377.4275719766,
+      "tx_count": 6478551
+    },
+    {
+      "active_wallet": 1152851,
+      "day": "2024-11-05 00:00:00.000 UTC",
+      "native_volume_eth": 238612.00468190256,
+      "tx_count": 6643848
+    },
+    {
+      "active_wallet": 817802,
+      "day": "2024-11-04 00:00:00.000 UTC",
+      "native_volume_eth": 265028.7073445734,
+      "tx_count": 5415962
+    },
+    {
+      "active_wallet": 811938,
+      "day": "2024-11-03 00:00:00.000 UTC",
+      "native_volume_eth": 254729.48872836467,
+      "tx_count": 5822595
+    },
+    {
+      "active_wallet": 1280524,
+      "day": "2024-11-02 00:00:00.000 UTC",
+      "native_volume_eth": 207797.41729654238,
+      "tx_count": 6484974
+    },
+    {
+      "active_wallet": 1384800,
+      "day": "2024-11-01 00:00:00.000 UTC",
+      "native_volume_eth": 312889.2646260021,
+      "tx_count": 6661907
+    },
+    {
+      "active_wallet": 1335562,
+      "day": "2024-10-31 00:00:00.000 UTC",
+      "native_volume_eth": 239086.01571469317,
+      "tx_count": 6277918
+    },
+    {
+      "active_wallet": 1211187,
+      "day": "2024-10-30 00:00:00.000 UTC",
+      "native_volume_eth": 391114.7754892868,
+      "tx_count": 6542494
+    },
+    {
+      "active_wallet": 1157359,
+      "day": "2024-10-29 00:00:00.000 UTC",
+      "native_volume_eth": 315372.2650379913,
+      "tx_count": 6458266
+    },
+    {
+      "active_wallet": 1079682,
+      "day": "2024-10-28 00:00:00.000 UTC",
+      "native_volume_eth": 285832.6810663712,
+      "tx_count": 6017877
+    },
+    {
+      "active_wallet": 1075430,
+      "day": "2024-10-27 00:00:00.000 UTC",
+      "native_volume_eth": 245398.93919516454,
+      "tx_count": 5822105
+    },
+    {
+      "active_wallet": 1018525,
+      "day": "2024-10-26 00:00:00.000 UTC",
+      "native_volume_eth": 277398.2840158253,
+      "tx_count": 6356431
+    },
+    {
+      "active_wallet": 1389302,
+      "day": "2024-10-25 00:00:00.000 UTC",
+      "native_volume_eth": 347689.70318580413,
+      "tx_count": 6101209
+    },
+    {
+      "active_wallet": 1119797,
+      "day": "2024-10-24 00:00:00.000 UTC",
+      "native_volume_eth": 276682.53638306016,
+      "tx_count": 5517105
+    },
+    {
+      "active_wallet": 1215912,
+      "day": "2024-10-23 00:00:00.000 UTC",
+      "native_volume_eth": 284398.0285088713,
+      "tx_count": 5678274
+    },
+    {
+      "active_wallet": 1193023,
+      "day": "2024-10-22 00:00:00.000 UTC",
+      "native_volume_eth": 247606.1579307015,
+      "tx_count": 5537760
+    },
+    {
+      "active_wallet": 1678843,
+      "day": "2024-10-21 00:00:00.000 UTC",
+      "native_volume_eth": 246861.2418415455,
+      "tx_count": 5757431
+    },
+    {
+      "active_wallet": 2376693,
+      "day": "2024-10-20 00:00:00.000 UTC",
+      "native_volume_eth": 186946.5032170973,
+      "tx_count": 6123166
+    },
+    {
+      "active_wallet": 1008881,
+      "day": "2024-10-19 00:00:00.000 UTC",
+      "native_volume_eth": 162212.6296394961,
+      "tx_count": 3955512
+    },
+    {
+      "active_wallet": 1329497,
+      "day": "2024-10-18 00:00:00.000 UTC",
+      "native_volume_eth": 230720.24897537788,
+      "tx_count": 4981152
+    },
+    {
+      "active_wallet": 1651051,
+      "day": "2024-10-17 00:00:00.000 UTC",
+      "native_volume_eth": 269368.7464261579,
+      "tx_count": 6032366
+    },
+    {
+      "active_wallet": 1333687,
+      "day": "2024-10-16 00:00:00.000 UTC",
+      "native_volume_eth": 257689.53294812006,
+      "tx_count": 5454919
+    },
+    {
+      "active_wallet": 1187775,
+      "day": "2024-10-15 00:00:00.000 UTC",
+      "native_volume_eth": 251337.68043953017,
+      "tx_count": 5563061
+    },
+    {
+      "active_wallet": 1286930,
+      "day": "2024-10-14 00:00:00.000 UTC",
+      "native_volume_eth": 294043.7680275109,
+      "tx_count": 5828059
+    },
+    {
+      "active_wallet": 1444440,
+      "day": "2024-10-13 00:00:00.000 UTC",
+      "native_volume_eth": 201190.48004013597,
+      "tx_count": 5968485
+    },
+    {
+      "active_wallet": 1415610,
+      "day": "2024-10-12 00:00:00.000 UTC",
+      "native_volume_eth": 193195.07158337248,
+      "tx_count": 5762261
+    },
+    {
+      "active_wallet": 1595157,
+      "day": "2024-10-11 00:00:00.000 UTC",
+      "native_volume_eth": 209891.67156914185,
+      "tx_count": 5715985
+    },
+    {
+      "active_wallet": 1582575,
+      "day": "2024-10-10 00:00:00.000 UTC",
+      "native_volume_eth": 227067.6302883739,
+      "tx_count": 5765767
+    },
+    {
+      "active_wallet": 1328615,
+      "day": "2024-10-09 00:00:00.000 UTC",
+      "native_volume_eth": 234231.3660442768,
+      "tx_count": 5164877
+    },
+    {
+      "active_wallet": 1497857,
+      "day": "2024-10-08 00:00:00.000 UTC",
+      "native_volume_eth": 202889.71356218052,
+      "tx_count": 5466240
+    },
+    {
+      "active_wallet": 1350447,
+      "day": "2024-10-07 00:00:00.000 UTC",
+      "native_volume_eth": 182511.9291792572,
+      "tx_count": 5018954
+    },
+    {
+      "active_wallet": 1175381,
+      "day": "2024-10-06 00:00:00.000 UTC",
+      "native_volume_eth": 116135.4543108382,
+      "tx_count": 4155989
+    },
+    {
+      "active_wallet": 1105369,
+      "day": "2024-10-05 00:00:00.000 UTC",
+      "native_volume_eth": 140063.16254554183,
+      "tx_count": 4315976
+    },
+    {
+      "active_wallet": 1841721,
+      "day": "2024-10-04 00:00:00.000 UTC",
+      "native_volume_eth": 189577.55505490542,
+      "tx_count": 5420817
+    },
+    {
+      "active_wallet": 1699278,
+      "day": "2024-10-03 00:00:00.000 UTC",
+      "native_volume_eth": 237824.3143065059,
+      "tx_count": 5165134
+    },
+    {
+      "active_wallet": 971804,
+      "day": "2024-10-02 00:00:00.000 UTC",
+      "native_volume_eth": 197888.68910260033,
+      "tx_count": 4436421
+    },
+    {
+      "active_wallet": 1533633,
+      "day": "2024-10-01 00:00:00.000 UTC",
+      "native_volume_eth": 196739.0799502855,
+      "tx_count": 4768947
+    },
+    {
+      "active_wallet": 1394757,
+      "day": "2024-09-30 00:00:00.000 UTC",
+      "native_volume_eth": 213869.05827101166,
+      "tx_count": 4810638
+    },
+    {
+      "active_wallet": 1560914,
+      "day": "2024-09-29 00:00:00.000 UTC",
+      "native_volume_eth": 182494.8804209056,
+      "tx_count": 4820607
+    },
+    {
+      "active_wallet": 1512005,
+      "day": "2024-09-28 00:00:00.000 UTC",
+      "native_volume_eth": 158263.5943215254,
+      "tx_count": 4905216
+    },
+    {
+      "active_wallet": 1308765,
+      "day": "2024-09-27 00:00:00.000 UTC",
+      "native_volume_eth": 203801.077053627,
+      "tx_count": 5039388
+    },
+    {
+      "active_wallet": 1090023,
+      "day": "2024-09-26 00:00:00.000 UTC",
+      "native_volume_eth": 220807.88220098987,
+      "tx_count": 4452749
+    },
+    {
+      "active_wallet": 1282170,
+      "day": "2024-09-25 00:00:00.000 UTC",
+      "native_volume_eth": 193312.51322386845,
+      "tx_count": 4591883
+    },
+    {
+      "active_wallet": 1094178,
+      "day": "2024-09-24 00:00:00.000 UTC",
+      "native_volume_eth": 189203.54456095243,
+      "tx_count": 4461167
+    },
+    {
+      "active_wallet": 1158731,
+      "day": "2024-09-23 00:00:00.000 UTC",
+      "native_volume_eth": 216883.88427802356,
+      "tx_count": 4379600
+    },
+    {
+      "active_wallet": 1285565,
+      "day": "2024-09-22 00:00:00.000 UTC",
+      "native_volume_eth": 227051.78940542624,
+      "tx_count": 4115122
+    },
+    {
+      "active_wallet": 1586808,
+      "day": "2024-09-21 00:00:00.000 UTC",
+      "native_volume_eth": 209719.29209011342,
+      "tx_count": 4802014
+    },
+    {
+      "active_wallet": 1587283,
+      "day": "2024-09-20 00:00:00.000 UTC",
+      "native_volume_eth": 206689.76999339467,
+      "tx_count": 5069903
+    },
+    {
+      "active_wallet": 1244046,
+      "day": "2024-09-19 00:00:00.000 UTC",
+      "native_volume_eth": 227965.37899897998,
+      "tx_count": 4424061
+    },
+    {
+      "active_wallet": 1505744,
+      "day": "2024-09-18 00:00:00.000 UTC",
+      "native_volume_eth": 269184.4161574115,
+      "tx_count": 4706341
+    },
+    {
+      "active_wallet": 1328738,
+      "day": "2024-09-17 00:00:00.000 UTC",
+      "native_volume_eth": 207067.22826036374,
+      "tx_count": 4267712
+    },
+    {
+      "active_wallet": 1480966,
+      "day": "2024-09-16 00:00:00.000 UTC",
+      "native_volume_eth": 191055.78221339104,
+      "tx_count": 4615736
+    },
+    {
+      "active_wallet": 1364343,
+      "day": "2024-09-15 00:00:00.000 UTC",
+      "native_volume_eth": 162323.9501140344,
+      "tx_count": 4422870
+    },
+    {
+      "active_wallet": 1510428,
+      "day": "2024-09-14 00:00:00.000 UTC",
+      "native_volume_eth": 149728.94438290855,
+      "tx_count": 4391991
+    },
+    {
+      "active_wallet": 1458101,
+      "day": "2024-09-13 00:00:00.000 UTC",
+      "native_volume_eth": 182176.61633902372,
+      "tx_count": 4599474
+    },
+    {
+      "active_wallet": 1335664,
+      "day": "2024-09-12 00:00:00.000 UTC",
+      "native_volume_eth": 214345.52333750398,
+      "tx_count": 4448662
+    },
+    {
+      "active_wallet": 1341307,
+      "day": "2024-09-11 00:00:00.000 UTC",
+      "native_volume_eth": 220550.21354044278,
+      "tx_count": 4471757
+    },
+    {
+      "active_wallet": 1127933,
+      "day": "2024-09-10 00:00:00.000 UTC",
+      "native_volume_eth": 178977.13859592925,
+      "tx_count": 4245847
+    },
+    {
+      "active_wallet": 1137662,
+      "day": "2024-09-09 00:00:00.000 UTC",
+      "native_volume_eth": 185355.6350287835,
+      "tx_count": 4203762
+    },
+    {
+      "active_wallet": 1010002,
+      "day": "2024-09-08 00:00:00.000 UTC",
+      "native_volume_eth": 159311.29091360807,
+      "tx_count": 3871075
+    },
+    {
+      "active_wallet": 1004202,
+      "day": "2024-09-07 00:00:00.000 UTC",
+      "native_volume_eth": 160867.46657700915,
+      "tx_count": 4100964
+    },
+    {
+      "active_wallet": 961352,
+      "day": "2024-09-06 00:00:00.000 UTC",
+      "native_volume_eth": 199920.2695775304,
+      "tx_count": 4095791
+    },
+    {
+      "active_wallet": 863920,
+      "day": "2024-09-05 00:00:00.000 UTC",
+      "native_volume_eth": 196520.6331083218,
+      "tx_count": 3908088
+    },
+    {
+      "active_wallet": 747332,
+      "day": "2024-09-04 00:00:00.000 UTC",
+      "native_volume_eth": 197300.54496677147,
+      "tx_count": 3740742
+    },
+    {
+      "active_wallet": 954500,
+      "day": "2024-09-03 00:00:00.000 UTC",
+      "native_volume_eth": 176093.45435551394,
+      "tx_count": 3827835
+    },
+    {
+      "active_wallet": 1168591,
+      "day": "2024-09-02 00:00:00.000 UTC",
+      "native_volume_eth": 174150.8789837245,
+      "tx_count": 4098967
+    },
+    {
+      "active_wallet": 852507,
+      "day": "2024-09-01 00:00:00.000 UTC",
+      "native_volume_eth": 168083.45660376217,
+      "tx_count": 3842248
+    },
+    {
+      "active_wallet": 900368,
+      "day": "2024-08-31 00:00:00.000 UTC",
+      "native_volume_eth": 146485.85418435617,
+      "tx_count": 4190703
+    },
+    {
+      "active_wallet": 877708,
+      "day": "2024-08-30 00:00:00.000 UTC",
+      "native_volume_eth": 181962.8454886671,
+      "tx_count": 4240012
+    },
+    {
+      "active_wallet": 810354,
+      "day": "2024-08-29 00:00:00.000 UTC",
+      "native_volume_eth": 174445.59457483815,
+      "tx_count": 4223393
+    },
+    {
+      "active_wallet": 772167,
+      "day": "2024-08-28 00:00:00.000 UTC",
+      "native_volume_eth": 188252.10574733315,
+      "tx_count": 4058403
+    },
+    {
+      "active_wallet": 904985,
+      "day": "2024-08-27 00:00:00.000 UTC",
+      "native_volume_eth": 180842.56003239087,
+      "tx_count": 4194547
+    },
+    {
+      "active_wallet": 879563,
+      "day": "2024-08-26 00:00:00.000 UTC",
+      "native_volume_eth": 178193.0970203127,
+      "tx_count": 4116495
+    },
+    {
+      "active_wallet": 1024217,
+      "day": "2024-08-25 00:00:00.000 UTC",
+      "native_volume_eth": 159326.15511107838,
+      "tx_count": 4194843
+    },
+    {
+      "active_wallet": 1045019,
+      "day": "2024-08-24 00:00:00.000 UTC",
+      "native_volume_eth": 159798.44168511144,
+      "tx_count": 4139647
+    },
+    {
+      "active_wallet": 873558,
+      "day": "2024-08-23 00:00:00.000 UTC",
+      "native_volume_eth": 183712.5838029458,
+      "tx_count": 3856535
+    },
+    {
+      "active_wallet": 930013,
+      "day": "2024-08-22 00:00:00.000 UTC",
+      "native_volume_eth": 180338.66448410714,
+      "tx_count": 3902136
+    },
+    {
+      "active_wallet": 854000,
+      "day": "2024-08-21 00:00:00.000 UTC",
+      "native_volume_eth": 192878.758059978,
+      "tx_count": 3960692
+    },
+    {
+      "active_wallet": 896792,
+      "day": "2024-08-20 00:00:00.000 UTC",
+      "native_volume_eth": 185506.99283567604,
+      "tx_count": 4019680
+    },
+    {
+      "active_wallet": 738445,
+      "day": "2024-08-19 00:00:00.000 UTC",
+      "native_volume_eth": 144399.57105834052,
+      "tx_count": 3892799
+    },
+    {
+      "active_wallet": 753132,
+      "day": "2024-08-18 00:00:00.000 UTC",
+      "native_volume_eth": 132689.9646246318,
+      "tx_count": 3747878
+    },
+    {
+      "active_wallet": 851542,
+      "day": "2024-08-17 00:00:00.000 UTC",
+      "native_volume_eth": 124564.60315821464,
+      "tx_count": 3919984
+    },
+    {
+      "active_wallet": 765226,
+      "day": "2024-08-16 00:00:00.000 UTC",
+      "native_volume_eth": 147339.1341371575,
+      "tx_count": 3825427
+    },
+    {
+      "active_wallet": 749084,
+      "day": "2024-08-15 00:00:00.000 UTC",
+      "native_volume_eth": 139487.95060308537,
+      "tx_count": 3864877
+    },
+    {
+      "active_wallet": 736076,
+      "day": "2024-08-14 00:00:00.000 UTC",
+      "native_volume_eth": 154421.948209997,
+      "tx_count": 3750386
+    },
+    {
+      "active_wallet": 800251,
+      "day": "2024-08-13 00:00:00.000 UTC",
+      "native_volume_eth": 135748.17001923622,
+      "tx_count": 3815602
+    },
+    {
+      "active_wallet": 675980,
+      "day": "2024-08-12 00:00:00.000 UTC",
+      "native_volume_eth": 170893.9322146688,
+      "tx_count": 3628165
+    },
+    {
+      "active_wallet": 733924,
+      "day": "2024-08-11 00:00:00.000 UTC",
+      "native_volume_eth": 136625.6051346114,
+      "tx_count": 3572782
+    },
+    {
+      "active_wallet": 674503,
+      "day": "2024-08-10 00:00:00.000 UTC",
+      "native_volume_eth": 116965.173719199,
+      "tx_count": 3348683
+    },
+    {
+      "active_wallet": 645711,
+      "day": "2024-08-09 00:00:00.000 UTC",
+      "native_volume_eth": 130970.53563621832,
+      "tx_count": 3496794
+    },
+    {
+      "active_wallet": 572082,
+      "day": "2024-08-08 00:00:00.000 UTC",
+      "native_volume_eth": 178383.67523004024,
+      "tx_count": 3421403
+    },
+    {
+      "active_wallet": 510869,
+      "day": "2024-08-07 00:00:00.000 UTC",
+      "native_volume_eth": 131604.41140553963,
+      "tx_count": 3268257
+    },
+    {
+      "active_wallet": 546756,
+      "day": "2024-08-06 00:00:00.000 UTC",
+      "native_volume_eth": 145032.84709014778,
+      "tx_count": 3167846
+    },
+    {
+      "active_wallet": 402208,
+      "day": "2024-08-05 00:00:00.000 UTC",
+      "native_volume_eth": 261380.76425679095,
+      "tx_count": 3119452
+    },
+    {
+      "active_wallet": 577130,
+      "day": "2024-08-04 00:00:00.000 UTC",
+      "native_volume_eth": 121808.39242190764,
+      "tx_count": 3268892
+    },
+    {
+      "active_wallet": 590649,
+      "day": "2024-08-03 00:00:00.000 UTC",
+      "native_volume_eth": 130480.35267191424,
+      "tx_count": 3003987
+    },
+    {
+      "active_wallet": 576643,
+      "day": "2024-08-02 00:00:00.000 UTC",
+      "native_volume_eth": 151732.81520938058,
+      "tx_count": 3125286
+    },
+    {
+      "active_wallet": 650517,
+      "day": "2024-08-01 00:00:00.000 UTC",
+      "native_volume_eth": 179346.21246527755,
+      "tx_count": 3291777
+    },
+    {
+      "active_wallet": 558415,
+      "day": "2024-07-31 00:00:00.000 UTC",
+      "native_volume_eth": 140341.6583548166,
+      "tx_count": 3343673
+    },
+    {
+      "active_wallet": 568762,
+      "day": "2024-07-30 00:00:00.000 UTC",
+      "native_volume_eth": 137283.67866803712,
+      "tx_count": 3441966
+    },
+    {
+      "active_wallet": 642971,
+      "day": "2024-07-29 00:00:00.000 UTC",
+      "native_volume_eth": 159007.30626023267,
+      "tx_count": 3585478
+    },
+    {
+      "active_wallet": 627714,
+      "day": "2024-07-28 00:00:00.000 UTC",
+      "native_volume_eth": 133521.23070831993,
+      "tx_count": 3558173
+    },
+    {
+      "active_wallet": 681213,
+      "day": "2024-07-27 00:00:00.000 UTC",
+      "native_volume_eth": 127008.67388536876,
+      "tx_count": 4161494
+    },
+    {
+      "active_wallet": 587528,
+      "day": "2024-07-26 00:00:00.000 UTC",
+      "native_volume_eth": 136246.41264053146,
+      "tx_count": 3964491
+    },
+    {
+      "active_wallet": 539247,
+      "day": "2024-07-25 00:00:00.000 UTC",
+      "native_volume_eth": 140961.0868566691,
+      "tx_count": 3526745
+    },
+    {
+      "active_wallet": 575816,
+      "day": "2024-07-24 00:00:00.000 UTC",
+      "native_volume_eth": 142514.40051449597,
+      "tx_count": 3160934
+    },
+    {
+      "active_wallet": 694568,
+      "day": "2024-07-23 00:00:00.000 UTC",
+      "native_volume_eth": 160848.32645241075,
+      "tx_count": 3782029
+    },
+    {
+      "active_wallet": 779544,
+      "day": "2024-07-22 00:00:00.000 UTC",
+      "native_volume_eth": 157657.80556130264,
+      "tx_count": 4165590
+    },
+    {
+      "active_wallet": 743246,
+      "day": "2024-07-21 00:00:00.000 UTC",
+      "native_volume_eth": 122785.8607365538,
+      "tx_count": 3921894
+    },
+    {
+      "active_wallet": 801901,
+      "day": "2024-07-20 00:00:00.000 UTC",
+      "native_volume_eth": 116585.22702985906,
+      "tx_count": 4018803
+    },
+    {
+      "active_wallet": 728189,
+      "day": "2024-07-19 00:00:00.000 UTC",
+      "native_volume_eth": 129361.72030152132,
+      "tx_count": 3823544
+    },
+    {
+      "active_wallet": 768082,
+      "day": "2024-07-18 00:00:00.000 UTC",
+      "native_volume_eth": 126253.72678600343,
+      "tx_count": 3925155
+    },
+    {
+      "active_wallet": 723218,
+      "day": "2024-07-17 00:00:00.000 UTC",
+      "native_volume_eth": 133219.91187270093,
+      "tx_count": 3364030
+    },
+    {
+      "active_wallet": 603693,
+      "day": "2024-07-16 00:00:00.000 UTC",
+      "native_volume_eth": 130860.27393683569,
+      "tx_count": 3332117
+    },
+    {
+      "active_wallet": 665679,
+      "day": "2024-07-15 00:00:00.000 UTC",
+      "native_volume_eth": 101764.8013233817,
+      "tx_count": 3354445
+    },
+    {
+      "active_wallet": 541204,
+      "day": "2024-07-14 00:00:00.000 UTC",
+      "native_volume_eth": 99127.71945736969,
+      "tx_count": 3102713
+    },
+    {
+      "active_wallet": 502478,
+      "day": "2024-07-13 00:00:00.000 UTC",
+      "native_volume_eth": 107819.07675745484,
+      "tx_count": 3071032
+    },
+    {
+      "active_wallet": 559499,
+      "day": "2024-07-12 00:00:00.000 UTC",
+      "native_volume_eth": 119039.64832196938,
+      "tx_count": 3096096
+    },
+    {
+      "active_wallet": 606986,
+      "day": "2024-07-11 00:00:00.000 UTC",
+      "native_volume_eth": 135484.59739239415,
+      "tx_count": 3301960
+    },
+    {
+      "active_wallet": 541285,
+      "day": "2024-07-10 00:00:00.000 UTC",
+      "native_volume_eth": 106504.12273428842,
+      "tx_count": 3169646
+    },
+    {
+      "active_wallet": 535008,
+      "day": "2024-07-09 00:00:00.000 UTC",
+      "native_volume_eth": 110044.08959331206,
+      "tx_count": 3239716
+    },
+    {
+      "active_wallet": 510677,
+      "day": "2024-07-08 00:00:00.000 UTC",
+      "native_volume_eth": 99590.04007265848,
+      "tx_count": 3090791
+    },
+    {
+      "active_wallet": 449343,
+      "day": "2024-07-07 00:00:00.000 UTC",
+      "native_volume_eth": 92398.21046433544,
+      "tx_count": 2754302
+    },
+    {
+      "active_wallet": 420556,
+      "day": "2024-07-06 00:00:00.000 UTC",
+      "native_volume_eth": 118523.13355218519,
+      "tx_count": 2758624
+    },
+    {
+      "active_wallet": 476285,
+      "day": "2024-07-05 00:00:00.000 UTC",
+      "native_volume_eth": 124186.13049037388,
+      "tx_count": 2931403
+    },
+    {
+      "active_wallet": 564559,
+      "day": "2024-07-04 00:00:00.000 UTC",
+      "native_volume_eth": 125453.62311155692,
+      "tx_count": 3101764
+    },
+    {
+      "active_wallet": 643557,
+      "day": "2024-07-03 00:00:00.000 UTC",
+      "native_volume_eth": 113762.2492662479,
+      "tx_count": 3263832
+    },
+    {
+      "active_wallet": 602457,
+      "day": "2024-07-02 00:00:00.000 UTC",
+      "native_volume_eth": 104497.48195653973,
+      "tx_count": 3040472
+    },
+    {
+      "active_wallet": 529806,
+      "day": "2024-07-01 00:00:00.000 UTC",
+      "native_volume_eth": 83872.23388924786,
+      "tx_count": 3083491
+    },
+    {
+      "active_wallet": 467528,
+      "day": "2024-06-30 00:00:00.000 UTC",
+      "native_volume_eth": 74680.33898828173,
+      "tx_count": 2909408
+    },
+    {
+      "active_wallet": 606225,
+      "day": "2024-06-29 00:00:00.000 UTC",
+      "native_volume_eth": 69318.25086506852,
+      "tx_count": 3158089
+    },
+    {
+      "active_wallet": 645842,
+      "day": "2024-06-28 00:00:00.000 UTC",
+      "native_volume_eth": 86121.81506672942,
+      "tx_count": 3410570
+    },
+    {
+      "active_wallet": 572438,
+      "day": "2024-06-27 00:00:00.000 UTC",
+      "native_volume_eth": 104821.81573745458,
+      "tx_count": 3175930
+    },
+    {
+      "active_wallet": 498364,
+      "day": "2024-06-26 00:00:00.000 UTC",
+      "native_volume_eth": 90676.96964029253,
+      "tx_count": 3252262
+    },
+    {
+      "active_wallet": 504755,
+      "day": "2024-06-25 00:00:00.000 UTC",
+      "native_volume_eth": 86966.26501527922,
+      "tx_count": 3315398
+    },
+    {
+      "active_wallet": 496692,
+      "day": "2024-06-24 00:00:00.000 UTC",
+      "native_volume_eth": 89926.21858017064,
+      "tx_count": 3122488
+    },
+    {
+      "active_wallet": 495795,
+      "day": "2024-06-23 00:00:00.000 UTC",
+      "native_volume_eth": 75996.03556722254,
+      "tx_count": 2962856
+    },
+    {
+      "active_wallet": 450958,
+      "day": "2024-06-22 00:00:00.000 UTC",
+      "native_volume_eth": 73300.94184945693,
+      "tx_count": 2681765
+    },
+    {
+      "active_wallet": 552239,
+      "day": "2024-06-21 00:00:00.000 UTC",
+      "native_volume_eth": 125832.04631343653,
+      "tx_count": 2944120
+    },
+    {
+      "active_wallet": 587797,
+      "day": "2024-06-20 00:00:00.000 UTC",
+      "native_volume_eth": 109038.67668346163,
+      "tx_count": 3126007
+    },
+    {
+      "active_wallet": 529845,
+      "day": "2024-06-19 00:00:00.000 UTC",
+      "native_volume_eth": 98103.33729195037,
+      "tx_count": 2971556
+    },
+    {
+      "active_wallet": 504088,
+      "day": "2024-06-18 00:00:00.000 UTC",
+      "native_volume_eth": 92852.36303119869,
+      "tx_count": 2791806
+    },
+    {
+      "active_wallet": 470338,
+      "day": "2024-06-17 00:00:00.000 UTC",
+      "native_volume_eth": 92480.89561940533,
+      "tx_count": 2829822
+    },
+    {
+      "active_wallet": 455725,
+      "day": "2024-06-16 00:00:00.000 UTC",
+      "native_volume_eth": 84776.10671138839,
+      "tx_count": 2778801
+    },
+    {
+      "active_wallet": 429400,
+      "day": "2024-06-15 00:00:00.000 UTC",
+      "native_volume_eth": 89651.15967378268,
+      "tx_count": 2767203
+    },
+    {
+      "active_wallet": 441196,
+      "day": "2024-06-14 00:00:00.000 UTC",
+      "native_volume_eth": 113683.59343688184,
+      "tx_count": 2807061
+    },
+    {
+      "active_wallet": 512512,
+      "day": "2024-06-13 00:00:00.000 UTC",
+      "native_volume_eth": 124293.8777255803,
+      "tx_count": 2994233
+    },
+    {
+      "active_wallet": 499553,
+      "day": "2024-06-12 00:00:00.000 UTC",
+      "native_volume_eth": 132016.42433265207,
+      "tx_count": 2907531
+    },
+    {
+      "active_wallet": 405250,
+      "day": "2024-06-11 00:00:00.000 UTC",
+      "native_volume_eth": 122766.73288762844,
+      "tx_count": 2701537
+    },
+    {
+      "active_wallet": 491879,
+      "day": "2024-06-10 00:00:00.000 UTC",
+      "native_volume_eth": 103214.5334388468,
+      "tx_count": 2650793
+    },
+    {
+      "active_wallet": 605748,
+      "day": "2024-06-09 00:00:00.000 UTC",
+      "native_volume_eth": 94010.78962150252,
+      "tx_count": 2551518
+    },
+    {
+      "active_wallet": 372808,
+      "day": "2024-06-08 00:00:00.000 UTC",
+      "native_volume_eth": 92376.45886129433,
+      "tx_count": 2339216
+    },
+    {
+      "active_wallet": 396842,
+      "day": "2024-06-07 00:00:00.000 UTC",
+      "native_volume_eth": 119284.04061714528,
+      "tx_count": 2766227
+    },
+    {
+      "active_wallet": 406169,
+      "day": "2024-06-06 00:00:00.000 UTC",
+      "native_volume_eth": 115334.96559083124,
+      "tx_count": 2727510
+    },
+    {
+      "active_wallet": 422344,
+      "day": "2024-06-05 00:00:00.000 UTC",
+      "native_volume_eth": 106668.85251413574,
+      "tx_count": 2674749
+    },
+    {
+      "active_wallet": 385535,
+      "day": "2024-06-04 00:00:00.000 UTC",
+      "native_volume_eth": 106093.19493871836,
+      "tx_count": 2557002
+    },
+    {
+      "active_wallet": 345548,
+      "day": "2024-06-03 00:00:00.000 UTC",
+      "native_volume_eth": 104250.20055385485,
+      "tx_count": 2301509
+    },
+    {
+      "active_wallet": 306259,
+      "day": "2024-06-02 00:00:00.000 UTC",
+      "native_volume_eth": 89411.78480271895,
+      "tx_count": 2016349
+    },
+    {
+      "active_wallet": 305684,
+      "day": "2024-06-01 00:00:00.000 UTC",
+      "native_volume_eth": 75340.85398374536,
+      "tx_count": 1996282
+    },
+    {
+      "active_wallet": 352857,
+      "day": "2024-05-31 00:00:00.000 UTC",
+      "native_volume_eth": 84318.04116468316,
+      "tx_count": 2101923
+    },
+    {
+      "active_wallet": 376993,
+      "day": "2024-05-30 00:00:00.000 UTC",
+      "native_volume_eth": 95676.70187342502,
+      "tx_count": 2130364
+    },
+    {
+      "active_wallet": 367276,
+      "day": "2024-05-29 00:00:00.000 UTC",
+      "native_volume_eth": 91333.93322957732,
+      "tx_count": 2022244
+    },
+    {
+      "active_wallet": 308644,
+      "day": "2024-05-28 00:00:00.000 UTC",
+      "native_volume_eth": 92402.47237852204,
+      "tx_count": 1796976
+    },
+    {
+      "active_wallet": 281110,
+      "day": "2024-05-27 00:00:00.000 UTC",
+      "native_volume_eth": 88473.25498776187,
+      "tx_count": 1640181
+    },
+    {
+      "active_wallet": 252367,
+      "day": "2024-05-26 00:00:00.000 UTC",
+      "native_volume_eth": 88067.39249200709,
+      "tx_count": 1696345
+    },
+    {
+      "active_wallet": 279181,
+      "day": "2024-05-25 00:00:00.000 UTC",
+      "native_volume_eth": 80349.28547837352,
+      "tx_count": 1594463
+    },
+    {
+      "active_wallet": 351883,
+      "day": "2024-05-24 00:00:00.000 UTC",
+      "native_volume_eth": 93584.17333380417,
+      "tx_count": 1869470
+    },
+    {
+      "active_wallet": 319700,
+      "day": "2024-05-23 00:00:00.000 UTC",
+      "native_volume_eth": 146208.0945270155,
+      "tx_count": 1983993
+    },
+    {
+      "active_wallet": 324015,
+      "day": "2024-05-22 00:00:00.000 UTC",
+      "native_volume_eth": 90616.57934333882,
+      "tx_count": 1906608
+    },
+    {
+      "active_wallet": 286280,
+      "day": "2024-05-21 00:00:00.000 UTC",
+      "native_volume_eth": 126749.40213269905,
+      "tx_count": 1842841
+    },
+    {
+      "active_wallet": 286189,
+      "day": "2024-05-20 00:00:00.000 UTC",
+      "native_volume_eth": 124090.02436383758,
+      "tx_count": 1850628
+    },
+    {
+      "active_wallet": 228042,
+      "day": "2024-05-19 00:00:00.000 UTC",
+      "native_volume_eth": 82698.99947058618,
+      "tx_count": 1640007
+    },
+    {
+      "active_wallet": 299066,
+      "day": "2024-05-18 00:00:00.000 UTC",
+      "native_volume_eth": 89145.33919333282,
+      "tx_count": 1703034
+    },
+    {
+      "active_wallet": 294094,
+      "day": "2024-05-17 00:00:00.000 UTC",
+      "native_volume_eth": 96633.8508626727,
+      "tx_count": 1768934
+    },
+    {
+      "active_wallet": 294035,
+      "day": "2024-05-16 00:00:00.000 UTC",
+      "native_volume_eth": 101511.71878040086,
+      "tx_count": 1809754
+    },
+    {
+      "active_wallet": 299284,
+      "day": "2024-05-15 00:00:00.000 UTC",
+      "native_volume_eth": 108150.24667692155,
+      "tx_count": 1852887
+    },
+    {
+      "active_wallet": 299319,
+      "day": "2024-05-14 00:00:00.000 UTC",
+      "native_volume_eth": 98973.72811102636,
+      "tx_count": 1841821
+    },
+    {
+      "active_wallet": 321729,
+      "day": "2024-05-13 00:00:00.000 UTC",
+      "native_volume_eth": 122498.48235948256,
+      "tx_count": 1835750
+    },
+    {
+      "active_wallet": 319828,
+      "day": "2024-05-12 00:00:00.000 UTC",
+      "native_volume_eth": 82852.2484312211,
+      "tx_count": 1852176
+    },
+    {
+      "active_wallet": 345884,
+      "day": "2024-05-11 00:00:00.000 UTC",
+      "native_volume_eth": 85218.71370770068,
+      "tx_count": 1912950
+    },
+    {
+      "active_wallet": 351987,
+      "day": "2024-05-10 00:00:00.000 UTC",
+      "native_volume_eth": 108502.0656246348,
+      "tx_count": 2004020
+    },
+    {
+      "active_wallet": 346822,
+      "day": "2024-05-09 00:00:00.000 UTC",
+      "native_volume_eth": 111501.10199838749,
+      "tx_count": 2096067
+    },
+    {
+      "active_wallet": 373084,
+      "day": "2024-05-08 00:00:00.000 UTC",
+      "native_volume_eth": 124435.02317985578,
+      "tx_count": 2119769
+    },
+    {
+      "active_wallet": 369768,
+      "day": "2024-05-07 00:00:00.000 UTC",
+      "native_volume_eth": 138719.9783620234,
+      "tx_count": 2188391
+    },
+    {
+      "active_wallet": 372719,
+      "day": "2024-05-06 00:00:00.000 UTC",
+      "native_volume_eth": 152620.80195231977,
+      "tx_count": 2218318
+    },
+    {
+      "active_wallet": 345309,
+      "day": "2024-05-05 00:00:00.000 UTC",
+      "native_volume_eth": 139264.37030872706,
+      "tx_count": 2133399
+    },
+    {
+      "active_wallet": 349697,
+      "day": "2024-05-04 00:00:00.000 UTC",
+      "native_volume_eth": 124094.36575450456,
+      "tx_count": 2189302
+    },
+    {
+      "active_wallet": 382081,
+      "day": "2024-05-03 00:00:00.000 UTC",
+      "native_volume_eth": 153956.51201362215,
+      "tx_count": 2344997
+    },
+    {
+      "active_wallet": 337212,
+      "day": "2024-05-02 00:00:00.000 UTC",
+      "native_volume_eth": 108912.77406093194,
+      "tx_count": 2173798
+    },
+    {
+      "active_wallet": 350759,
+      "day": "2024-05-01 00:00:00.000 UTC",
+      "native_volume_eth": 116351.96821856019,
+      "tx_count": 2193683
+    },
+    {
+      "active_wallet": 368616,
+      "day": "2024-04-30 00:00:00.000 UTC",
+      "native_volume_eth": 133483.6512260901,
+      "tx_count": 2272545
+    },
+    {
+      "active_wallet": 360777,
+      "day": "2024-04-29 00:00:00.000 UTC",
+      "native_volume_eth": 115515.35024353839,
+      "tx_count": 2256308
+    },
+    {
+      "active_wallet": 366179,
+      "day": "2024-04-28 00:00:00.000 UTC",
+      "native_volume_eth": 115986.90666407363,
+      "tx_count": 2188678
+    },
+    {
+      "active_wallet": 347223,
+      "day": "2024-04-27 00:00:00.000 UTC",
+      "native_volume_eth": 121342.01213163315,
+      "tx_count": 2203463
+    },
+    {
+      "active_wallet": 383246,
+      "day": "2024-04-26 00:00:00.000 UTC",
+      "native_volume_eth": 125849.71239222582,
+      "tx_count": 2264738
+    },
+    {
+      "active_wallet": 356938,
+      "day": "2024-04-25 00:00:00.000 UTC",
+      "native_volume_eth": 127396.54265738514,
+      "tx_count": 2186174
+    },
+    {
+      "active_wallet": 349305,
+      "day": "2024-04-24 00:00:00.000 UTC",
+      "native_volume_eth": 123269.83081524156,
+      "tx_count": 2249483
+    },
+    {
+      "active_wallet": 349035,
+      "day": "2024-04-23 00:00:00.000 UTC",
+      "native_volume_eth": 128667.17383462584,
+      "tx_count": 2342342
+    },
+    {
+      "active_wallet": 337894,
+      "day": "2024-04-22 00:00:00.000 UTC",
+      "native_volume_eth": 118204.51059822403,
+      "tx_count": 2301963
+    },
+    {
+      "active_wallet": 330738,
+      "day": "2024-04-21 00:00:00.000 UTC",
+      "native_volume_eth": 116343.9476417907,
+      "tx_count": 2183253
+    },
+    {
+      "active_wallet": 350274,
+      "day": "2024-04-20 00:00:00.000 UTC",
+      "native_volume_eth": 112757.97885056444,
+      "tx_count": 2310905
+    },
+    {
+      "active_wallet": 343640,
+      "day": "2024-04-19 00:00:00.000 UTC",
+      "native_volume_eth": 140208.88800148835,
+      "tx_count": 2289861
+    },
+    {
+      "active_wallet": 369981,
+      "day": "2024-04-18 00:00:00.000 UTC",
+      "native_volume_eth": 126685.39911175218,
+      "tx_count": 2220787
+    },
+    {
+      "active_wallet": 376509,
+      "day": "2024-04-17 00:00:00.000 UTC",
+      "native_volume_eth": 141722.74338775524,
+      "tx_count": 2230368
+    },
+    {
+      "active_wallet": 352016,
+      "day": "2024-04-16 00:00:00.000 UTC",
+      "native_volume_eth": 128357.62543884078,
+      "tx_count": 2293907
+    },
+    {
+      "active_wallet": 320238,
+      "day": "2024-04-15 00:00:00.000 UTC",
+      "native_volume_eth": 135309.90246970588,
+      "tx_count": 2242955
+    },
+    {
+      "active_wallet": 296354,
+      "day": "2024-04-14 00:00:00.000 UTC",
+      "native_volume_eth": 136719.29837734663,
+      "tx_count": 2179235
+    },
+    {
+      "active_wallet": 308972,
+      "day": "2024-04-13 00:00:00.000 UTC",
+      "native_volume_eth": 163985.74470787917,
+      "tx_count": 2224112
+    },
+    {
+      "active_wallet": 347870,
+      "day": "2024-04-12 00:00:00.000 UTC",
+      "native_volume_eth": 193633.04580426158,
+      "tx_count": 2394825
+    },
+    {
+      "active_wallet": 363175,
+      "day": "2024-04-11 00:00:00.000 UTC",
+      "native_volume_eth": 184834.8600402084,
+      "tx_count": 2484373
+    },
+    {
+      "active_wallet": 357369,
+      "day": "2024-04-10 00:00:00.000 UTC",
+      "native_volume_eth": 185697.7082794146,
+      "tx_count": 2454000
+    },
+    {
+      "active_wallet": 342583,
+      "day": "2024-04-09 00:00:00.000 UTC",
+      "native_volume_eth": 182419.12208262217,
+      "tx_count": 2381556
+    },
+    {
+      "active_wallet": 457299,
+      "day": "2024-04-08 00:00:00.000 UTC",
+      "native_volume_eth": 195538.26185113998,
+      "tx_count": 2778191
+    },
+    {
+      "active_wallet": 431549,
+      "day": "2024-04-07 00:00:00.000 UTC",
+      "native_volume_eth": 164056.24354260642,
+      "tx_count": 2710713
+    },
+    {
+      "active_wallet": 367772,
+      "day": "2024-04-06 00:00:00.000 UTC",
+      "native_volume_eth": 168525.54858157763,
+      "tx_count": 2443619
+    },
+    {
+      "active_wallet": 348277,
+      "day": "2024-04-05 00:00:00.000 UTC",
+      "native_volume_eth": 159922.00967508642,
+      "tx_count": 2202974
+    },
+    {
+      "active_wallet": 328634,
+      "day": "2024-04-04 00:00:00.000 UTC",
+      "native_volume_eth": 169834.81186835095,
+      "tx_count": 2126610
+    },
+    {
+      "active_wallet": 329612,
+      "day": "2024-04-03 00:00:00.000 UTC",
+      "native_volume_eth": 197168.26461323103,
+      "tx_count": 2134582
+    },
+    {
+      "active_wallet": 356385,
+      "day": "2024-04-02 00:00:00.000 UTC",
+      "native_volume_eth": 187249.23697859363,
+      "tx_count": 2154446
+    },
+    {
+      "active_wallet": 356233,
+      "day": "2024-04-01 00:00:00.000 UTC",
+      "native_volume_eth": 191722.1161169329,
+      "tx_count": 2030142
+    },
+    {
+      "active_wallet": 388527,
+      "day": "2024-03-31 00:00:00.000 UTC",
+      "native_volume_eth": 229843.2492961448,
+      "tx_count": 2101689
+    },
+    {
+      "active_wallet": 418955,
+      "day": "2024-03-30 00:00:00.000 UTC",
+      "native_volume_eth": 278995.7869129844,
+      "tx_count": 2158282
+    },
+    {
+      "active_wallet": 381806,
+      "day": "2024-03-29 00:00:00.000 UTC",
+      "native_volume_eth": 201587.8821304184,
+      "tx_count": 2005151
+    },
+    {
+      "active_wallet": 322330,
+      "day": "2024-03-28 00:00:00.000 UTC",
+      "native_volume_eth": 159392.6106306049,
+      "tx_count": 1913372
+    },
+    {
+      "active_wallet": 272398,
+      "day": "2024-03-27 00:00:00.000 UTC",
+      "native_volume_eth": 155589.85892824226,
+      "tx_count": 1535064
+    },
+    {
+      "active_wallet": 261877,
+      "day": "2024-03-26 00:00:00.000 UTC",
+      "native_volume_eth": 182176.80197212627,
+      "tx_count": 1441444
+    },
+    {
+      "active_wallet": 217434,
+      "day": "2024-03-25 00:00:00.000 UTC",
+      "native_volume_eth": 133262.9036956968,
+      "tx_count": 1402379
+    },
+    {
+      "active_wallet": 232692,
+      "day": "2024-03-24 00:00:00.000 UTC",
+      "native_volume_eth": 102789.45447769557,
+      "tx_count": 1383119
+    },
+    {
+      "active_wallet": 210819,
+      "day": "2024-03-23 00:00:00.000 UTC",
+      "native_volume_eth": 80939.38822720159,
+      "tx_count": 1233847
+    },
+    {
+      "active_wallet": 222705,
+      "day": "2024-03-22 00:00:00.000 UTC",
+      "native_volume_eth": 121865.12788305694,
+      "tx_count": 1248232
+    },
+    {
+      "active_wallet": 241559,
+      "day": "2024-03-21 00:00:00.000 UTC",
+      "native_volume_eth": 113343.03604748732,
+      "tx_count": 1317532
+    },
+    {
+      "active_wallet": 300899,
+      "day": "2024-03-20 00:00:00.000 UTC",
+      "native_volume_eth": 159434.82176537215,
+      "tx_count": 1558856
+    },
+    {
+      "active_wallet": 178309,
+      "day": "2024-03-19 00:00:00.000 UTC",
+      "native_volume_eth": 70995.23287087254,
+      "tx_count": 1129169
+    },
+    {
+      "active_wallet": 203583,
+      "day": "2024-03-18 00:00:00.000 UTC",
+      "native_volume_eth": 66263.67791298452,
+      "tx_count": 1126703
+    },
+    {
+      "active_wallet": 222579,
+      "day": "2024-03-17 00:00:00.000 UTC",
+      "native_volume_eth": 58742.025197375675,
+      "tx_count": 1104888
+    },
+    {
+      "active_wallet": 854697,
+      "day": "2024-03-16 00:00:00.000 UTC",
+      "native_volume_eth": 54963.742142942094,
+      "tx_count": 2064920
+    },
+    {
+      "active_wallet": 247675,
+      "day": "2024-03-15 00:00:00.000 UTC",
+      "native_volume_eth": 55599.70885494685,
+      "tx_count": 1308432
+    },
+    {
+      "active_wallet": 209478,
+      "day": "2024-03-14 00:00:00.000 UTC",
+      "native_volume_eth": 59108.67485416962,
+      "tx_count": 1162239
+    },
+    {
+      "active_wallet": 91789,
+      "day": "2024-03-13 00:00:00.000 UTC",
+      "native_volume_eth": 35260.67003141612,
+      "tx_count": 441577
+    },
+    {
+      "active_wallet": 98383,
+      "day": "2024-03-12 00:00:00.000 UTC",
+      "native_volume_eth": 37935.003953057996,
+      "tx_count": 440159
+    },
+    {
+      "active_wallet": 93717,
+      "day": "2024-03-11 00:00:00.000 UTC",
+      "native_volume_eth": 37585.86448804732,
+      "tx_count": 445916
+    },
+    {
+      "active_wallet": 97517,
+      "day": "2024-03-10 00:00:00.000 UTC",
+      "native_volume_eth": 38695.73895745411,
+      "tx_count": 456454
+    },
+    {
+      "active_wallet": 94891,
+      "day": "2024-03-09 00:00:00.000 UTC",
+      "native_volume_eth": 33850.21113314857,
+      "tx_count": 436524
+    },
+    {
+      "active_wallet": 96679,
+      "day": "2024-03-08 00:00:00.000 UTC",
+      "native_volume_eth": 36391.726796827774,
+      "tx_count": 429201
+    },
+    {
+      "active_wallet": 99915,
+      "day": "2024-03-07 00:00:00.000 UTC",
+      "native_volume_eth": 46145.613527369285,
+      "tx_count": 492165
+    },
+    {
+      "active_wallet": 90778,
+      "day": "2024-03-06 00:00:00.000 UTC",
+      "native_volume_eth": 38528.76760897567,
+      "tx_count": 500139
+    },
+    {
+      "active_wallet": 81585,
+      "day": "2024-03-05 00:00:00.000 UTC",
+      "native_volume_eth": 45941.801482769326,
+      "tx_count": 444184
+    },
+    {
+      "active_wallet": 73960,
+      "day": "2024-03-04 00:00:00.000 UTC",
+      "native_volume_eth": 30214.701710154357,
+      "tx_count": 376121
+    },
+    {
+      "active_wallet": 87679,
+      "day": "2024-03-03 00:00:00.000 UTC",
+      "native_volume_eth": 33309.25160930174,
+      "tx_count": 435700
+    },
+    {
+      "active_wallet": 90731,
+      "day": "2024-03-02 00:00:00.000 UTC",
+      "native_volume_eth": 35569.73816436736,
+      "tx_count": 434957
+    },
+    {
+      "active_wallet": 92929,
+      "day": "2024-03-01 00:00:00.000 UTC",
+      "native_volume_eth": 32740.830462754977,
+      "tx_count": 405794
+    },
+    {
+      "active_wallet": 119101,
+      "day": "2024-02-29 00:00:00.000 UTC",
+      "native_volume_eth": 32746.29672898035,
+      "tx_count": 470008
+    },
+    {
+      "active_wallet": 89315,
+      "day": "2024-02-28 00:00:00.000 UTC",
+      "native_volume_eth": 29793.455997177654,
+      "tx_count": 434413
+    },
+    {
+      "active_wallet": 90418,
+      "day": "2024-02-27 00:00:00.000 UTC",
+      "native_volume_eth": 37913.63127477862,
+      "tx_count": 441057
+    },
+    {
+      "active_wallet": 93281,
+      "day": "2024-02-26 00:00:00.000 UTC",
+      "native_volume_eth": 50664.687164266405,
+      "tx_count": 425837
+    },
+    {
+      "active_wallet": 106928,
+      "day": "2024-02-25 00:00:00.000 UTC",
+      "native_volume_eth": 41334.302506166714,
+      "tx_count": 518601
+    },
+    {
+      "active_wallet": 108301,
+      "day": "2024-02-24 00:00:00.000 UTC",
+      "native_volume_eth": 27176.9908075086,
+      "tx_count": 482962
+    },
+    {
+      "active_wallet": 79724,
+      "day": "2024-02-23 00:00:00.000 UTC",
+      "native_volume_eth": 26081.028732941326,
+      "tx_count": 361357
+    },
+    {
+      "active_wallet": 81539,
+      "day": "2024-02-22 00:00:00.000 UTC",
+      "native_volume_eth": 31845.251318772433,
+      "tx_count": 387219
+    },
+    {
+      "active_wallet": 112368,
+      "day": "2024-02-21 00:00:00.000 UTC",
+      "native_volume_eth": 43036.482313629625,
+      "tx_count": 463118
+    },
+    {
+      "active_wallet": 102397,
+      "day": "2024-02-20 00:00:00.000 UTC",
+      "native_volume_eth": 24413.619982015935,
+      "tx_count": 420451
+    },
+    {
+      "active_wallet": 112996,
+      "day": "2024-02-19 00:00:00.000 UTC",
+      "native_volume_eth": 21703.670564310847,
+      "tx_count": 458927
+    },
+    {
+      "active_wallet": 143912,
+      "day": "2024-02-18 00:00:00.000 UTC",
+      "native_volume_eth": 21593.284179472503,
+      "tx_count": 556646
+    },
+    {
+      "active_wallet": 187527,
+      "day": "2024-02-17 00:00:00.000 UTC",
+      "native_volume_eth": 22146.729649648005,
+      "tx_count": 624365
+    },
+    {
+      "active_wallet": 127960,
+      "day": "2024-02-16 00:00:00.000 UTC",
+      "native_volume_eth": 21668.914351730713,
+      "tx_count": 491134
+    },
+    {
+      "active_wallet": 86987,
+      "day": "2024-02-15 00:00:00.000 UTC",
+      "native_volume_eth": 19281.269605911493,
+      "tx_count": 396781
+    },
+    {
+      "active_wallet": 83274,
+      "day": "2024-02-14 00:00:00.000 UTC",
+      "native_volume_eth": 17407.28282460251,
+      "tx_count": 382676
+    },
+    {
+      "active_wallet": 129984,
+      "day": "2024-02-13 00:00:00.000 UTC",
+      "native_volume_eth": 32667.675746992973,
+      "tx_count": 491058
+    },
+    {
+      "active_wallet": 90016,
+      "day": "2024-02-12 00:00:00.000 UTC",
+      "native_volume_eth": 32219.412038501843,
+      "tx_count": 442623
+    },
+    {
+      "active_wallet": 91307,
+      "day": "2024-02-11 00:00:00.000 UTC",
+      "native_volume_eth": 20211.24567774356,
+      "tx_count": 482355
+    },
+    {
+      "active_wallet": 84175,
+      "day": "2024-02-10 00:00:00.000 UTC",
+      "native_volume_eth": 23400.16167831253,
+      "tx_count": 455530
+    },
+    {
+      "active_wallet": 95740,
+      "day": "2024-02-09 00:00:00.000 UTC",
+      "native_volume_eth": 22695.005455497594,
+      "tx_count": 458639
+    },
+    {
+      "active_wallet": 82690,
+      "day": "2024-02-08 00:00:00.000 UTC",
+      "native_volume_eth": 28578.940445720575,
+      "tx_count": 433274
+    },
+    {
+      "active_wallet": 85264,
+      "day": "2024-02-07 00:00:00.000 UTC",
+      "native_volume_eth": 29513.428413898957,
+      "tx_count": 432145
+    },
+    {
+      "active_wallet": 89382,
+      "day": "2024-02-06 00:00:00.000 UTC",
+      "native_volume_eth": 25470.23550989863,
+      "tx_count": 452235
+    },
+    {
+      "active_wallet": 99823,
+      "day": "2024-02-05 00:00:00.000 UTC",
+      "native_volume_eth": 34417.7910975658,
+      "tx_count": 504267
+    },
+    {
+      "active_wallet": 91182,
+      "day": "2024-02-04 00:00:00.000 UTC",
+      "native_volume_eth": 30325.44866121364,
+      "tx_count": 482738
+    },
+    {
+      "active_wallet": 81987,
+      "day": "2024-02-03 00:00:00.000 UTC",
+      "native_volume_eth": 32883.032263785644,
+      "tx_count": 430223
+    },
+    {
+      "active_wallet": 73404,
+      "day": "2024-02-02 00:00:00.000 UTC",
+      "native_volume_eth": 13843.579705045384,
+      "tx_count": 395438
+    },
+    {
+      "active_wallet": 61235,
+      "day": "2024-02-01 00:00:00.000 UTC",
+      "native_volume_eth": 20412.622156837246,
+      "tx_count": 333288
+    },
+    {
+      "active_wallet": 68442,
+      "day": "2024-01-31 00:00:00.000 UTC",
+      "native_volume_eth": 13483.18937090758,
+      "tx_count": 332056
+    },
+    {
+      "active_wallet": 65913,
+      "day": "2024-01-30 00:00:00.000 UTC",
+      "native_volume_eth": 18420.781880706138,
+      "tx_count": 317349
+    },
+    {
+      "active_wallet": 81877,
+      "day": "2024-01-29 00:00:00.000 UTC",
+      "native_volume_eth": 19638.271258252345,
+      "tx_count": 454911
+    },
+    {
+      "active_wallet": 72064,
+      "day": "2024-01-28 00:00:00.000 UTC",
+      "native_volume_eth": 16951.04369439019,
+      "tx_count": 438400
+    },
+    {
+      "active_wallet": 68825,
+      "day": "2024-01-27 00:00:00.000 UTC",
+      "native_volume_eth": 16401.959740393773,
+      "tx_count": 360552
+    },
+    {
+      "active_wallet": 69994,
+      "day": "2024-01-26 00:00:00.000 UTC",
+      "native_volume_eth": 29115.722374862973,
+      "tx_count": 374289
+    },
+    {
+      "active_wallet": 70094,
+      "day": "2024-01-25 00:00:00.000 UTC",
+      "native_volume_eth": 19491.206881615617,
+      "tx_count": 383533
+    },
+    {
+      "active_wallet": 115891,
+      "day": "2024-01-24 00:00:00.000 UTC",
+      "native_volume_eth": 12869.413105404117,
+      "tx_count": 525063
+    },
+    {
+      "active_wallet": 69026,
+      "day": "2024-01-23 00:00:00.000 UTC",
+      "native_volume_eth": 19176.021915287365,
+      "tx_count": 401278
+    },
+    {
+      "active_wallet": 64029,
+      "day": "2024-01-22 00:00:00.000 UTC",
+      "native_volume_eth": 16090.712843107867,
+      "tx_count": 346752
+    },
+    {
+      "active_wallet": 72446,
+      "day": "2024-01-21 00:00:00.000 UTC",
+      "native_volume_eth": 13915.859188294988,
+      "tx_count": 347373
+    },
+    {
+      "active_wallet": 85324,
+      "day": "2024-01-20 00:00:00.000 UTC",
+      "native_volume_eth": 13366.334562606095,
+      "tx_count": 390949
+    },
+    {
+      "active_wallet": 73098,
+      "day": "2024-01-19 00:00:00.000 UTC",
+      "native_volume_eth": 12500.83712400064,
+      "tx_count": 311347
+    },
+    {
+      "active_wallet": 60848,
+      "day": "2024-01-18 00:00:00.000 UTC",
+      "native_volume_eth": 20043.738939260264,
+      "tx_count": 280724
+    },
+    {
+      "active_wallet": 63773,
+      "day": "2024-01-17 00:00:00.000 UTC",
+      "native_volume_eth": 15615.203747228963,
+      "tx_count": 286875
+    },
+    {
+      "active_wallet": 64270,
+      "day": "2024-01-16 00:00:00.000 UTC",
+      "native_volume_eth": 12701.518455064506,
+      "tx_count": 283958
+    },
+    {
+      "active_wallet": 70867,
+      "day": "2024-01-15 00:00:00.000 UTC",
+      "native_volume_eth": 14142.170963439054,
+      "tx_count": 315417
+    },
+    {
+      "active_wallet": 54752,
+      "day": "2024-01-14 00:00:00.000 UTC",
+      "native_volume_eth": 10212.885294771384,
+      "tx_count": 266359
+    },
+    {
+      "active_wallet": 67101,
+      "day": "2024-01-13 00:00:00.000 UTC",
+      "native_volume_eth": 16586.467717534364,
+      "tx_count": 335553
+    },
+    {
+      "active_wallet": 62359,
+      "day": "2024-01-12 00:00:00.000 UTC",
+      "native_volume_eth": 16225.096118672831,
+      "tx_count": 333322
+    },
+    {
+      "active_wallet": 61140,
+      "day": "2024-01-11 00:00:00.000 UTC",
+      "native_volume_eth": 18007.962532078553,
+      "tx_count": 298485
+    },
+    {
+      "active_wallet": 60926,
+      "day": "2024-01-10 00:00:00.000 UTC",
+      "native_volume_eth": 24465.161476485067,
+      "tx_count": 327043
+    },
+    {
+      "active_wallet": 70523,
+      "day": "2024-01-09 00:00:00.000 UTC",
+      "native_volume_eth": 28517.756877992597,
+      "tx_count": 386473
+    },
+    {
+      "active_wallet": 69015,
+      "day": "2024-01-08 00:00:00.000 UTC",
+      "native_volume_eth": 20287.242422013853,
+      "tx_count": 351846
+    },
+    {
+      "active_wallet": 54769,
+      "day": "2024-01-07 00:00:00.000 UTC",
+      "native_volume_eth": 13373.488733438846,
+      "tx_count": 266401
+    },
+    {
+      "active_wallet": 63156,
+      "day": "2024-01-06 00:00:00.000 UTC",
+      "native_volume_eth": 27092.58517033505,
+      "tx_count": 330429
+    },
+    {
+      "active_wallet": 61294,
+      "day": "2024-01-05 00:00:00.000 UTC",
+      "native_volume_eth": 16556.946461955875,
+      "tx_count": 323507
+    },
+    {
+      "active_wallet": 65962,
+      "day": "2024-01-04 00:00:00.000 UTC",
+      "native_volume_eth": 20314.191608053992,
+      "tx_count": 331088
+    },
+    {
+      "active_wallet": 61361,
+      "day": "2024-01-03 00:00:00.000 UTC",
+      "native_volume_eth": 20563.497243136462,
+      "tx_count": 333329
+    },
+    {
+      "active_wallet": 67700,
+      "day": "2024-01-02 00:00:00.000 UTC",
+      "native_volume_eth": 22562.244276095284,
+      "tx_count": 362149
+    },
+    {
+      "active_wallet": 68144,
+      "day": "2024-01-01 00:00:00.000 UTC",
+      "native_volume_eth": 17417.959449061338,
+      "tx_count": 410231
+    },
+    {
+      "active_wallet": 68583,
+      "day": "2023-12-31 00:00:00.000 UTC",
+      "native_volume_eth": 20958.73146860879,
+      "tx_count": 393043
+    },
+    {
+      "active_wallet": 69439,
+      "day": "2023-12-30 00:00:00.000 UTC",
+      "native_volume_eth": 24118.059033178717,
+      "tx_count": 388986
+    },
+    {
+      "active_wallet": 62027,
+      "day": "2023-12-29 00:00:00.000 UTC",
+      "native_volume_eth": 36811.78942879835,
+      "tx_count": 331152
+    },
+    {
+      "active_wallet": 59907,
+      "day": "2023-12-28 00:00:00.000 UTC",
+      "native_volume_eth": 28045.437028449283,
+      "tx_count": 325222
+    },
+    {
+      "active_wallet": 65878,
+      "day": "2023-12-27 00:00:00.000 UTC",
+      "native_volume_eth": 34411.59984069697,
+      "tx_count": 347514
+    },
+    {
+      "active_wallet": 70151,
+      "day": "2023-12-26 00:00:00.000 UTC",
+      "native_volume_eth": 36721.64836521857,
+      "tx_count": 367397
+    },
+    {
+      "active_wallet": 59429,
+      "day": "2023-12-25 00:00:00.000 UTC",
+      "native_volume_eth": 42348.22486774407,
+      "tx_count": 306409
+    },
+    {
+      "active_wallet": 62646,
+      "day": "2023-12-24 00:00:00.000 UTC",
+      "native_volume_eth": 22350.607222189956,
+      "tx_count": 321229
+    },
+    {
+      "active_wallet": 78893,
+      "day": "2023-12-23 00:00:00.000 UTC",
+      "native_volume_eth": 32570.5620425944,
+      "tx_count": 382175
+    },
+    {
+      "active_wallet": 62238,
+      "day": "2023-12-22 00:00:00.000 UTC",
+      "native_volume_eth": 27204.056137478532,
+      "tx_count": 335268
+    },
+    {
+      "active_wallet": 57127,
+      "day": "2023-12-21 00:00:00.000 UTC",
+      "native_volume_eth": 26595.803787240355,
+      "tx_count": 298187
+    },
+    {
+      "active_wallet": 50087,
+      "day": "2023-12-20 00:00:00.000 UTC",
+      "native_volume_eth": 23479.053070996673,
+      "tx_count": 247632
+    },
+    {
+      "active_wallet": 44582,
+      "day": "2023-12-19 00:00:00.000 UTC",
+      "native_volume_eth": 33367.55001044017,
+      "tx_count": 238253
+    },
+    {
+      "active_wallet": 46295,
+      "day": "2023-12-18 00:00:00.000 UTC",
+      "native_volume_eth": 20446.77309986432,
+      "tx_count": 254891
+    },
+    {
+      "active_wallet": 60395,
+      "day": "2023-12-17 00:00:00.000 UTC",
+      "native_volume_eth": 23094.278743141484,
+      "tx_count": 301530
+    },
+    {
+      "active_wallet": 45731,
+      "day": "2023-12-16 00:00:00.000 UTC",
+      "native_volume_eth": 22449.10148795828,
+      "tx_count": 237251
+    },
+    {
+      "active_wallet": 47112,
+      "day": "2023-12-15 00:00:00.000 UTC",
+      "native_volume_eth": 20489.609106675987,
+      "tx_count": 228721
+    },
+    {
+      "active_wallet": 45744,
+      "day": "2023-12-14 00:00:00.000 UTC",
+      "native_volume_eth": 23777.527709861813,
+      "tx_count": 247886
+    },
+    {
+      "active_wallet": 48517,
+      "day": "2023-12-13 00:00:00.000 UTC",
+      "native_volume_eth": 30693.727221158308,
+      "tx_count": 269584
+    },
+    {
+      "active_wallet": 52647,
+      "day": "2023-12-12 00:00:00.000 UTC",
+      "native_volume_eth": 49800.8115148823,
+      "tx_count": 288407
+    },
+    {
+      "active_wallet": 52665,
+      "day": "2023-12-11 00:00:00.000 UTC",
+      "native_volume_eth": 37416.68782859377,
+      "tx_count": 282973
+    },
+    {
+      "active_wallet": 61569,
+      "day": "2023-12-10 00:00:00.000 UTC",
+      "native_volume_eth": 17380.858203221873,
+      "tx_count": 307482
+    },
+    {
+      "active_wallet": 56980,
+      "day": "2023-12-09 00:00:00.000 UTC",
+      "native_volume_eth": 18576.22370632377,
+      "tx_count": 288246
+    },
+    {
+      "active_wallet": 46702,
+      "day": "2023-12-08 00:00:00.000 UTC",
+      "native_volume_eth": 21442.34364665262,
+      "tx_count": 250744
+    },
+    {
+      "active_wallet": 48383,
+      "day": "2023-12-07 00:00:00.000 UTC",
+      "native_volume_eth": 16301.189448782023,
+      "tx_count": 257434
+    },
+    {
+      "active_wallet": 41738,
+      "day": "2023-12-06 00:00:00.000 UTC",
+      "native_volume_eth": 12563.54923219094,
+      "tx_count": 227542
+    },
+    {
+      "active_wallet": 48515,
+      "day": "2023-12-05 00:00:00.000 UTC",
+      "native_volume_eth": 13655.07887939244,
+      "tx_count": 249980
+    },
+    {
+      "active_wallet": 53375,
+      "day": "2023-12-04 00:00:00.000 UTC",
+      "native_volume_eth": 12105.88520424297,
+      "tx_count": 238232
+    },
+    {
+      "active_wallet": 67105,
+      "day": "2023-12-03 00:00:00.000 UTC",
+      "native_volume_eth": 15691.57969432909,
+      "tx_count": 279496
+    },
+    {
+      "active_wallet": 79629,
+      "day": "2023-12-02 00:00:00.000 UTC",
+      "native_volume_eth": 57946.79250956702,
+      "tx_count": 297932
+    },
+    {
+      "active_wallet": 46443,
+      "day": "2023-12-01 00:00:00.000 UTC",
+      "native_volume_eth": 12627.14618433892,
+      "tx_count": 232946
+    },
+    {
+      "active_wallet": 56194,
+      "day": "2023-11-30 00:00:00.000 UTC",
+      "native_volume_eth": 17805.723442730774,
+      "tx_count": 255732
+    },
+    {
+      "active_wallet": 52654,
+      "day": "2023-11-29 00:00:00.000 UTC",
+      "native_volume_eth": 7930.482910448538,
+      "tx_count": 260251
+    },
+    {
+      "active_wallet": 48272,
+      "day": "2023-11-28 00:00:00.000 UTC",
+      "native_volume_eth": 8708.39672067208,
+      "tx_count": 247171
+    },
+    {
+      "active_wallet": 56414,
+      "day": "2023-11-27 00:00:00.000 UTC",
+      "native_volume_eth": 14521.807842583452,
+      "tx_count": 282978
+    },
+    {
+      "active_wallet": 61088,
+      "day": "2023-11-26 00:00:00.000 UTC",
+      "native_volume_eth": 14177.349519131563,
+      "tx_count": 310584
+    },
+    {
+      "active_wallet": 58369,
+      "day": "2023-11-25 00:00:00.000 UTC",
+      "native_volume_eth": 11811.416532529845,
+      "tx_count": 308554
+    },
+    {
+      "active_wallet": 53671,
+      "day": "2023-11-24 00:00:00.000 UTC",
+      "native_volume_eth": 12285.192616924302,
+      "tx_count": 284204
+    },
+    {
+      "active_wallet": 51507,
+      "day": "2023-11-23 00:00:00.000 UTC",
+      "native_volume_eth": 9147.078337547413,
+      "tx_count": 276324
+    },
+    {
+      "active_wallet": 56131,
+      "day": "2023-11-22 00:00:00.000 UTC",
+      "native_volume_eth": 20773.60533321198,
+      "tx_count": 309423
+    },
+    {
+      "active_wallet": 53974,
+      "day": "2023-11-21 00:00:00.000 UTC",
+      "native_volume_eth": 20772.131128855977,
+      "tx_count": 297475
+    },
+    {
+      "active_wallet": 51300,
+      "day": "2023-11-20 00:00:00.000 UTC",
+      "native_volume_eth": 22411.46041738423,
+      "tx_count": 295808
+    },
+    {
+      "active_wallet": 62041,
+      "day": "2023-11-19 00:00:00.000 UTC",
+      "native_volume_eth": 20708.18761678915,
+      "tx_count": 391951
+    },
+    {
+      "active_wallet": 58825,
+      "day": "2023-11-18 00:00:00.000 UTC",
+      "native_volume_eth": 19938.91270672566,
+      "tx_count": 342644
+    },
+    {
+      "active_wallet": 51809,
+      "day": "2023-11-17 00:00:00.000 UTC",
+      "native_volume_eth": 17526.942252711,
+      "tx_count": 264889
+    },
+    {
+      "active_wallet": 49595,
+      "day": "2023-11-16 00:00:00.000 UTC",
+      "native_volume_eth": 33247.40294067232,
+      "tx_count": 260394
+    },
+    {
+      "active_wallet": 50929,
+      "day": "2023-11-15 00:00:00.000 UTC",
+      "native_volume_eth": 13682.650725173145,
+      "tx_count": 247867
+    },
+    {
+      "active_wallet": 49024,
+      "day": "2023-11-14 00:00:00.000 UTC",
+      "native_volume_eth": 14072.430668224979,
+      "tx_count": 230744
+    },
+    {
+      "active_wallet": 47469,
+      "day": "2023-11-13 00:00:00.000 UTC",
+      "native_volume_eth": 11826.384701733088,
+      "tx_count": 214570
+    },
+    {
+      "active_wallet": 56423,
+      "day": "2023-11-12 00:00:00.000 UTC",
+      "native_volume_eth": 8647.424113070269,
+      "tx_count": 250044
+    },
+    {
+      "active_wallet": 54240,
+      "day": "2023-11-11 00:00:00.000 UTC",
+      "native_volume_eth": 9173.429916779458,
+      "tx_count": 251045
+    },
+    {
+      "active_wallet": 45703,
+      "day": "2023-11-10 00:00:00.000 UTC",
+      "native_volume_eth": 11542.942451534254,
+      "tx_count": 220888
+    },
+    {
+      "active_wallet": 59507,
+      "day": "2023-11-09 00:00:00.000 UTC",
+      "native_volume_eth": 15070.54112704678,
+      "tx_count": 268470
+    },
+    {
+      "active_wallet": 72536,
+      "day": "2023-11-08 00:00:00.000 UTC",
+      "native_volume_eth": 13915.011958548987,
+      "tx_count": 301907
+    },
+    {
+      "active_wallet": 58205,
+      "day": "2023-11-07 00:00:00.000 UTC",
+      "native_volume_eth": 9670.29372586524,
+      "tx_count": 264924
+    },
+    {
+      "active_wallet": 53336,
+      "day": "2023-11-06 00:00:00.000 UTC",
+      "native_volume_eth": 11715.388937548838,
+      "tx_count": 253799
+    },
+    {
+      "active_wallet": 59418,
+      "day": "2023-11-05 00:00:00.000 UTC",
+      "native_volume_eth": 13185.001596770906,
+      "tx_count": 295052
+    },
+    {
+      "active_wallet": 61843,
+      "day": "2023-11-04 00:00:00.000 UTC",
+      "native_volume_eth": 12729.80352210298,
+      "tx_count": 301603
+    },
+    {
+      "active_wallet": 59478,
+      "day": "2023-11-03 00:00:00.000 UTC",
+      "native_volume_eth": 9093.071247518334,
+      "tx_count": 277585
+    },
+    {
+      "active_wallet": 62504,
+      "day": "2023-11-02 00:00:00.000 UTC",
+      "native_volume_eth": 15512.325864066617,
+      "tx_count": 279178
+    },
+    {
+      "active_wallet": 65225,
+      "day": "2023-11-01 00:00:00.000 UTC",
+      "native_volume_eth": 11458.058870285713,
+      "tx_count": 298151
+    },
+    {
+      "active_wallet": 64505,
+      "day": "2023-10-31 00:00:00.000 UTC",
+      "native_volume_eth": 11345.991613706183,
+      "tx_count": 288641
+    },
+    {
+      "active_wallet": 68394,
+      "day": "2023-10-30 00:00:00.000 UTC",
+      "native_volume_eth": 11920.010595375084,
+      "tx_count": 320256
+    },
+    {
+      "active_wallet": 80399,
+      "day": "2023-10-29 00:00:00.000 UTC",
+      "native_volume_eth": 9070.115089545292,
+      "tx_count": 340925
+    },
+    {
+      "active_wallet": 74309,
+      "day": "2023-10-28 00:00:00.000 UTC",
+      "native_volume_eth": 10909.698936849021,
+      "tx_count": 374849
+    },
+    {
+      "active_wallet": 68983,
+      "day": "2023-10-27 00:00:00.000 UTC",
+      "native_volume_eth": 12413.897345281874,
+      "tx_count": 348790
+    },
+    {
+      "active_wallet": 72151,
+      "day": "2023-10-26 00:00:00.000 UTC",
+      "native_volume_eth": 14767.200035092697,
+      "tx_count": 331580
+    },
+    {
+      "active_wallet": 70876,
+      "day": "2023-10-25 00:00:00.000 UTC",
+      "native_volume_eth": 14468.220034378275,
+      "tx_count": 331728
+    },
+    {
+      "active_wallet": 60266,
+      "day": "2023-10-24 00:00:00.000 UTC",
+      "native_volume_eth": 21816.71922556667,
+      "tx_count": 325927
+    },
+    {
+      "active_wallet": 70608,
+      "day": "2023-10-23 00:00:00.000 UTC",
+      "native_volume_eth": 18423.731748958937,
+      "tx_count": 338755
+    },
+    {
+      "active_wallet": 108554,
+      "day": "2023-10-22 00:00:00.000 UTC",
+      "native_volume_eth": 16190.751061373403,
+      "tx_count": 400482
+    },
+    {
+      "active_wallet": 87853,
+      "day": "2023-10-21 00:00:00.000 UTC",
+      "native_volume_eth": 15348.502644400209,
+      "tx_count": 388629
+    },
+    {
+      "active_wallet": 104409,
+      "day": "2023-10-20 00:00:00.000 UTC",
+      "native_volume_eth": 19681.509634735372,
+      "tx_count": 408276
+    },
+    {
+      "active_wallet": 113432,
+      "day": "2023-10-19 00:00:00.000 UTC",
+      "native_volume_eth": 16861.027197685853,
+      "tx_count": 435152
+    },
+    {
+      "active_wallet": 88958,
+      "day": "2023-10-18 00:00:00.000 UTC",
+      "native_volume_eth": 18063.15977034234,
+      "tx_count": 461452
+    },
+    {
+      "active_wallet": 106488,
+      "day": "2023-10-17 00:00:00.000 UTC",
+      "native_volume_eth": 19472.814593645668,
+      "tx_count": 429043
+    },
+    {
+      "active_wallet": 88639,
+      "day": "2023-10-16 00:00:00.000 UTC",
+      "native_volume_eth": 17320.016634831416,
+      "tx_count": 414863
+    },
+    {
+      "active_wallet": 133948,
+      "day": "2023-10-15 00:00:00.000 UTC",
+      "native_volume_eth": 19313.390346106782,
+      "tx_count": 460801
+    },
+    {
+      "active_wallet": 91095,
+      "day": "2023-10-14 00:00:00.000 UTC",
+      "native_volume_eth": 21768.319084774386,
+      "tx_count": 403152
+    },
+    {
+      "active_wallet": 58919,
+      "day": "2023-10-13 00:00:00.000 UTC",
+      "native_volume_eth": 19495.013701239357,
+      "tx_count": 325459
+    },
+    {
+      "active_wallet": 68902,
+      "day": "2023-10-12 00:00:00.000 UTC",
+      "native_volume_eth": 25616.621051512106,
+      "tx_count": 368595
+    },
+    {
+      "active_wallet": 68344,
+      "day": "2023-10-11 00:00:00.000 UTC",
+      "native_volume_eth": 21512.750847777363,
+      "tx_count": 388460
+    },
+    {
+      "active_wallet": 80580,
+      "day": "2023-10-10 00:00:00.000 UTC",
+      "native_volume_eth": 21559.192544612804,
+      "tx_count": 492912
+    },
+    {
+      "active_wallet": 77787,
+      "day": "2023-10-09 00:00:00.000 UTC",
+      "native_volume_eth": 24208.01108390256,
+      "tx_count": 510312
+    },
+    {
+      "active_wallet": 76271,
+      "day": "2023-10-08 00:00:00.000 UTC",
+      "native_volume_eth": 18094.140689811724,
+      "tx_count": 425890
+    },
+    {
+      "active_wallet": 61189,
+      "day": "2023-10-07 00:00:00.000 UTC",
+      "native_volume_eth": 22358.49832687107,
+      "tx_count": 486057
+    },
+    {
+      "active_wallet": 69077,
+      "day": "2023-10-06 00:00:00.000 UTC",
+      "native_volume_eth": 21076.638966308146,
+      "tx_count": 489789
+    },
+    {
+      "active_wallet": 75963,
+      "day": "2023-10-05 00:00:00.000 UTC",
+      "native_volume_eth": 32325.966590230346,
+      "tx_count": 580487
+    },
+    {
+      "active_wallet": 69462,
+      "day": "2023-10-04 00:00:00.000 UTC",
+      "native_volume_eth": 30720.949602858924,
+      "tx_count": 561489
+    },
+    {
+      "active_wallet": 70703,
+      "day": "2023-10-03 00:00:00.000 UTC",
+      "native_volume_eth": 25838.453552339924,
+      "tx_count": 523512
+    },
+    {
+      "active_wallet": 66075,
+      "day": "2023-10-02 00:00:00.000 UTC",
+      "native_volume_eth": 32259.478186358145,
+      "tx_count": 835460
+    },
+    {
+      "active_wallet": 67837,
+      "day": "2023-10-01 00:00:00.000 UTC",
+      "native_volume_eth": 29976.347123879274,
+      "tx_count": 655658
+    },
+    {
+      "active_wallet": 70795,
+      "day": "2023-09-30 00:00:00.000 UTC",
+      "native_volume_eth": 24970.767974798175,
+      "tx_count": 558345
+    },
+    {
+      "active_wallet": 68923,
+      "day": "2023-09-29 00:00:00.000 UTC",
+      "native_volume_eth": 26166.679445519156,
+      "tx_count": 499306
+    },
+    {
+      "active_wallet": 78578,
+      "day": "2023-09-28 00:00:00.000 UTC",
+      "native_volume_eth": 27967.742537134844,
+      "tx_count": 630217
+    },
+    {
+      "active_wallet": 80089,
+      "day": "2023-09-27 00:00:00.000 UTC",
+      "native_volume_eth": 23722.58871324457,
+      "tx_count": 735161
+    },
+    {
+      "active_wallet": 75948,
+      "day": "2023-09-26 00:00:00.000 UTC",
+      "native_volume_eth": 27240.61134540607,
+      "tx_count": 772232
+    },
+    {
+      "active_wallet": 69262,
+      "day": "2023-09-25 00:00:00.000 UTC",
+      "native_volume_eth": 25050.101730094982,
+      "tx_count": 523889
+    },
+    {
+      "active_wallet": 67203,
+      "day": "2023-09-24 00:00:00.000 UTC",
+      "native_volume_eth": 17386.358441834014,
+      "tx_count": 483354
+    },
+    {
+      "active_wallet": 70531,
+      "day": "2023-09-23 00:00:00.000 UTC",
+      "native_volume_eth": 22915.889238829033,
+      "tx_count": 494874
+    },
+    {
+      "active_wallet": 67544,
+      "day": "2023-09-22 00:00:00.000 UTC",
+      "native_volume_eth": 20805.066331414382,
+      "tx_count": 597396
+    },
+    {
+      "active_wallet": 62708,
+      "day": "2023-09-21 00:00:00.000 UTC",
+      "native_volume_eth": 26575.939058312815,
+      "tx_count": 470408
+    },
+    {
+      "active_wallet": 66996,
+      "day": "2023-09-20 00:00:00.000 UTC",
+      "native_volume_eth": 22671.54998439435,
+      "tx_count": 597501
+    },
+    {
+      "active_wallet": 78891,
+      "day": "2023-09-19 00:00:00.000 UTC",
+      "native_volume_eth": 22839.414202048487,
+      "tx_count": 766147
+    },
+    {
+      "active_wallet": 66855,
+      "day": "2023-09-18 00:00:00.000 UTC",
+      "native_volume_eth": 26838.061718165645,
+      "tx_count": 716308
+    },
+    {
+      "active_wallet": 65068,
+      "day": "2023-09-17 00:00:00.000 UTC",
+      "native_volume_eth": 17640.188416679845,
+      "tx_count": 676530
+    },
+    {
+      "active_wallet": 67684,
+      "day": "2023-09-16 00:00:00.000 UTC",
+      "native_volume_eth": 22732.922376688806,
+      "tx_count": 854202
+    },
+    {
+      "active_wallet": 69435,
+      "day": "2023-09-15 00:00:00.000 UTC",
+      "native_volume_eth": 23906.58189569783,
+      "tx_count": 652457
+    },
+    {
+      "active_wallet": 77486,
+      "day": "2023-09-14 00:00:00.000 UTC",
+      "native_volume_eth": 27668.98291088539,
+      "tx_count": 636212
+    },
+    {
+      "active_wallet": 71606,
+      "day": "2023-09-13 00:00:00.000 UTC",
+      "native_volume_eth": 34159.83385885638,
+      "tx_count": 552990
+    },
+    {
+      "active_wallet": 63391,
+      "day": "2023-09-12 00:00:00.000 UTC",
+      "native_volume_eth": 33144.73534835412,
+      "tx_count": 431609
+    },
+    {
+      "active_wallet": 62040,
+      "day": "2023-09-11 00:00:00.000 UTC",
+      "native_volume_eth": 30217.05245661139,
+      "tx_count": 387049
+    },
+    {
+      "active_wallet": 64309,
+      "day": "2023-09-10 00:00:00.000 UTC",
+      "native_volume_eth": 23169.747491265618,
+      "tx_count": 399939
+    },
+    {
+      "active_wallet": 59715,
+      "day": "2023-09-09 00:00:00.000 UTC",
+      "native_volume_eth": 25370.450663814583,
+      "tx_count": 366512
+    },
+    {
+      "active_wallet": 59898,
+      "day": "2023-09-08 00:00:00.000 UTC",
+      "native_volume_eth": 23127.25968019316,
+      "tx_count": 366179
+    },
+    {
+      "active_wallet": 60544,
+      "day": "2023-09-07 00:00:00.000 UTC",
+      "native_volume_eth": 19826.327896537936,
+      "tx_count": 347285
+    },
+    {
+      "active_wallet": 67042,
+      "day": "2023-09-06 00:00:00.000 UTC",
+      "native_volume_eth": 20112.530971554126,
+      "tx_count": 359517
+    },
+    {
+      "active_wallet": 68829,
+      "day": "2023-09-05 00:00:00.000 UTC",
+      "native_volume_eth": 20114.308752761786,
+      "tx_count": 361445
+    },
+    {
+      "active_wallet": 63383,
+      "day": "2023-09-04 00:00:00.000 UTC",
+      "native_volume_eth": 21867.189955573824,
+      "tx_count": 329284
+    },
+    {
+      "active_wallet": 64832,
+      "day": "2023-09-03 00:00:00.000 UTC",
+      "native_volume_eth": 21850.12953547954,
+      "tx_count": 326908
+    },
+    {
+      "active_wallet": 64406,
+      "day": "2023-09-02 00:00:00.000 UTC",
+      "native_volume_eth": 28538.876453570676,
+      "tx_count": 336700
+    },
+    {
+      "active_wallet": 73394,
+      "day": "2023-09-01 00:00:00.000 UTC",
+      "native_volume_eth": 47032.880425311094,
+      "tx_count": 367759
+    },
+    {
+      "active_wallet": 89703,
+      "day": "2023-08-31 00:00:00.000 UTC",
+      "native_volume_eth": 96735.82088632179,
+      "tx_count": 494765
+    },
+    {
+      "active_wallet": 79466,
+      "day": "2023-08-30 00:00:00.000 UTC",
+      "native_volume_eth": 25199.741307838125,
+      "tx_count": 380844
+    },
+    {
+      "active_wallet": 76822,
+      "day": "2023-08-29 00:00:00.000 UTC",
+      "native_volume_eth": 27335.3384363299,
+      "tx_count": 373578
+    },
+    {
+      "active_wallet": 82910,
+      "day": "2023-08-28 00:00:00.000 UTC",
+      "native_volume_eth": 21525.88169164764,
+      "tx_count": 372436
+    },
+    {
+      "active_wallet": 81068,
+      "day": "2023-08-27 00:00:00.000 UTC",
+      "native_volume_eth": 23205.494078861346,
+      "tx_count": 407632
+    },
+    {
+      "active_wallet": 77775,
+      "day": "2023-08-26 00:00:00.000 UTC",
+      "native_volume_eth": 20419.33312737031,
+      "tx_count": 396407
+    },
+    {
+      "active_wallet": 98096,
+      "day": "2023-08-25 00:00:00.000 UTC",
+      "native_volume_eth": 26588.609052480657,
+      "tx_count": 556952
+    },
+    {
+      "active_wallet": 127223,
+      "day": "2023-08-24 00:00:00.000 UTC",
+      "native_volume_eth": 28669.557529481837,
+      "tx_count": 619237
+    },
+    {
+      "active_wallet": 109552,
+      "day": "2023-08-23 00:00:00.000 UTC",
+      "native_volume_eth": 29468.188760996312,
+      "tx_count": 651116
+    },
+    {
+      "active_wallet": 120099,
+      "day": "2023-08-22 00:00:00.000 UTC",
+      "native_volume_eth": 33853.974234800204,
+      "tx_count": 686981
+    },
+    {
+      "active_wallet": 137010,
+      "day": "2023-08-21 00:00:00.000 UTC",
+      "native_volume_eth": 32759.758450986476,
+      "tx_count": 853163
+    },
+    {
+      "active_wallet": 112659,
+      "day": "2023-08-20 00:00:00.000 UTC",
+      "native_volume_eth": 26904.24525709183,
+      "tx_count": 702548
+    },
+    {
+      "active_wallet": 99248,
+      "day": "2023-08-19 00:00:00.000 UTC",
+      "native_volume_eth": 30151.22634018538,
+      "tx_count": 598115
+    },
+    {
+      "active_wallet": 79471,
+      "day": "2023-08-18 00:00:00.000 UTC",
+      "native_volume_eth": 29080.795250574487,
+      "tx_count": 441279
+    },
+    {
+      "active_wallet": 73704,
+      "day": "2023-08-17 00:00:00.000 UTC",
+      "native_volume_eth": 42331.8737525426,
+      "tx_count": 393478
+    },
+    {
+      "active_wallet": 75547,
+      "day": "2023-08-16 00:00:00.000 UTC",
+      "native_volume_eth": 50245.2083613256,
+      "tx_count": 435377
+    },
+    {
+      "active_wallet": 88033,
+      "day": "2023-08-15 00:00:00.000 UTC",
+      "native_volume_eth": 69734.3265930864,
+      "tx_count": 505953
+    },
+    {
+      "active_wallet": 103012,
+      "day": "2023-08-14 00:00:00.000 UTC",
+      "native_volume_eth": 44303.4278826405,
+      "tx_count": 510683
+    },
+    {
+      "active_wallet": 106954,
+      "day": "2023-08-13 00:00:00.000 UTC",
+      "native_volume_eth": 41321.68564275164,
+      "tx_count": 571820
+    },
+    {
+      "active_wallet": 95532,
+      "day": "2023-08-12 00:00:00.000 UTC",
+      "native_volume_eth": 43656.773774558314,
+      "tx_count": 511988
+    },
+    {
+      "active_wallet": 114636,
+      "day": "2023-08-11 00:00:00.000 UTC",
+      "native_volume_eth": 45631.990858184254,
+      "tx_count": 610523
+    },
+    {
+      "active_wallet": 126448,
+      "day": "2023-08-10 00:00:00.000 UTC",
+      "native_volume_eth": 59891.40969009094,
+      "tx_count": 579752
+    },
+    {
+      "active_wallet": 90646,
+      "day": "2023-08-09 00:00:00.000 UTC",
+      "native_volume_eth": 34534.39431670516,
+      "tx_count": 473377
+    },
+    {
+      "active_wallet": 73556,
+      "day": "2023-08-08 00:00:00.000 UTC",
+      "native_volume_eth": 24845.103663392492,
+      "tx_count": 346738
+    },
+    {
+      "active_wallet": 81323,
+      "day": "2023-08-07 00:00:00.000 UTC",
+      "native_volume_eth": 25554.677015935184,
+      "tx_count": 381247
+    },
+    {
+      "active_wallet": 90298,
+      "day": "2023-08-06 00:00:00.000 UTC",
+      "native_volume_eth": 25856.716384782772,
+      "tx_count": 360506
+    },
+    {
+      "active_wallet": 55878,
+      "day": "2023-08-05 00:00:00.000 UTC",
+      "native_volume_eth": 22377.854877414164,
+      "tx_count": 314027
+    },
+    {
+      "active_wallet": 70931,
+      "day": "2023-08-04 00:00:00.000 UTC",
+      "native_volume_eth": 23658.904512461886,
+      "tx_count": 320761
+    },
+    {
+      "active_wallet": 51384,
+      "day": "2023-08-03 00:00:00.000 UTC",
+      "native_volume_eth": 47444.93040795503,
+      "tx_count": 488654
+    },
+    {
+      "active_wallet": 27040,
+      "day": "2023-08-02 00:00:00.000 UTC",
+      "native_volume_eth": 19578.327371939988,
+      "tx_count": 175326
+    },
+    {
+      "active_wallet": 27554,
+      "day": "2023-08-01 00:00:00.000 UTC",
+      "native_volume_eth": 17322.75440307258,
+      "tx_count": 190950
+    },
+    {
+      "active_wallet": 85372,
+      "day": "2023-07-31 00:00:00.000 UTC",
+      "native_volume_eth": 69785.63726212873,
+      "tx_count": 560617
+    },
+    {
+      "active_wallet": 48476,
+      "day": "2023-07-30 00:00:00.000 UTC",
+      "native_volume_eth": 106062.94594112081,
+      "tx_count": 607699
+    },
+    {
+      "active_wallet": 5983,
+      "day": "2023-07-29 00:00:00.000 UTC",
+      "native_volume_eth": 737.3227059480568,
+      "tx_count": 63754
+    },
+    {
+      "active_wallet": 3225,
+      "day": "2023-07-28 00:00:00.000 UTC",
+      "native_volume_eth": 197.42318235884247,
+      "tx_count": 52896
+    },
+    {
+      "active_wallet": 2940,
+      "day": "2023-07-27 00:00:00.000 UTC",
+      "native_volume_eth": 175.27471932125778,
+      "tx_count": 53991
+    },
+    {
+      "active_wallet": 3350,
+      "day": "2023-07-26 00:00:00.000 UTC",
+      "native_volume_eth": 54.25911114630706,
+      "tx_count": 54910
+    },
+    {
+      "active_wallet": 2708,
+      "day": "2023-07-25 00:00:00.000 UTC",
+      "native_volume_eth": 49.49590126935734,
+      "tx_count": 59795
+    },
+    {
+      "active_wallet": 4408,
+      "day": "2023-07-24 00:00:00.000 UTC",
+      "native_volume_eth": 38.84605145992244,
+      "tx_count": 61121
+    },
+    {
+      "active_wallet": 5817,
+      "day": "2023-07-23 00:00:00.000 UTC",
+      "native_volume_eth": 46.77586035112415,
+      "tx_count": 65959
+    },
+    {
+      "active_wallet": 6479,
+      "day": "2023-07-22 00:00:00.000 UTC",
+      "native_volume_eth": 44.972221802355776,
+      "tx_count": 68945
+    },
+    {
+      "active_wallet": 3672,
+      "day": "2023-07-21 00:00:00.000 UTC",
+      "native_volume_eth": 105.92221613718918,
+      "tx_count": 60074
+    },
+    {
+      "active_wallet": 4248,
+      "day": "2023-07-20 00:00:00.000 UTC",
+      "native_volume_eth": 17.807282586244877,
+      "tx_count": 60924
+    },
+    {
+      "active_wallet": 5988,
+      "day": "2023-07-19 00:00:00.000 UTC",
+      "native_volume_eth": 23.108154018018176,
+      "tx_count": 65966
+    },
+    {
+      "active_wallet": 6002,
+      "day": "2023-07-18 00:00:00.000 UTC",
+      "native_volume_eth": 142.16422364413387,
+      "tx_count": 60265
+    },
+    {
+      "active_wallet": 7381,
+      "day": "2023-07-17 00:00:00.000 UTC",
+      "native_volume_eth": 24.010799968348014,
+      "tx_count": 58992
+    },
+    {
+      "active_wallet": 11780,
+      "day": "2023-07-16 00:00:00.000 UTC",
+      "native_volume_eth": 27.835859992894058,
+      "tx_count": 67279
+    },
+    {
+      "active_wallet": 17660,
+      "day": "2023-07-15 00:00:00.000 UTC",
+      "native_volume_eth": 29.119893368715623,
+      "tx_count": 77051
+    },
+    {
+      "active_wallet": 6567,
+      "day": "2023-07-14 00:00:00.000 UTC",
+      "native_volume_eth": 30.4048954025558,
+      "tx_count": 61010
+    },
+    {
+      "active_wallet": 315,
+      "day": "2023-07-13 00:00:00.000 UTC",
+      "native_volume_eth": 33.833368398966,
+      "tx_count": 44070
+    },
+    {
+      "active_wallet": 13,
+      "day": "2023-07-12 00:00:00.000 UTC",
+      "native_volume_eth": 1.595274024156709,
+      "tx_count": 43265
+    },
+    {
+      "active_wallet": 15,
+      "day": "2023-07-11 00:00:00.000 UTC",
+      "native_volume_eth": 2.6404575128455,
+      "tx_count": 43281
+    },
+    {
+      "active_wallet": 8,
+      "day": "2023-07-10 00:00:00.000 UTC",
+      "native_volume_eth": 0.6590892422653521,
+      "tx_count": 43217
+    },
+    {
+      "active_wallet": 1,
+      "day": "2023-07-09 00:00:00.000 UTC",
+      "native_volume_eth": 0,
+      "tx_count": 43200
+    },
+    {
+      "active_wallet": 1,
+      "day": "2023-07-08 00:00:00.000 UTC",
+      "native_volume_eth": 0,
+      "tx_count": 43200
+    },
+    {
+      "active_wallet": 2,
+      "day": "2023-07-07 00:00:00.000 UTC",
+      "native_volume_eth": 0.6,
+      "tx_count": 43206
+    },
+    {
+      "active_wallet": 3,
+      "day": "2023-07-06 00:00:00.000 UTC",
+      "native_volume_eth": 0.0001,
+      "tx_count": 43213
+    },
+    {
+      "active_wallet": 5,
+      "day": "2023-07-05 00:00:00.000 UTC",
+      "native_volume_eth": 400.004703,
+      "tx_count": 43207
+    },
+    {
+      "active_wallet": 3,
+      "day": "2023-07-04 00:00:00.000 UTC",
+      "native_volume_eth": 0.0002000000000001,
+      "tx_count": 43208
+    },
+    {
+      "active_wallet": 1,
+      "day": "2023-07-03 00:00:00.000 UTC",
+      "native_volume_eth": 0,
+      "tx_count": 43200
+    },
+    {
+      "active_wallet": 1,
+      "day": "2023-07-02 00:00:00.000 UTC",
+      "native_volume_eth": 0,
+      "tx_count": 43200
+    },
+    {
+      "active_wallet": 1,
+      "day": "2023-07-01 00:00:00.000 UTC",
+      "native_volume_eth": 0,
+      "tx_count": 43200
+    },
+    {
+      "active_wallet": 3,
+      "day": "2023-06-30 00:00:00.000 UTC",
+      "native_volume_eth": 0.005,
+      "tx_count": 43203
+    },
+    {
+      "active_wallet": 8,
+      "day": "2023-06-29 00:00:00.000 UTC",
+      "native_volume_eth": 0.44576072145722234,
+      "tx_count": 43216
+    },
+    {
+      "active_wallet": 5,
+      "day": "2023-06-28 00:00:00.000 UTC",
+      "native_volume_eth": 0.041001,
+      "tx_count": 43214
+    },
+    {
+      "active_wallet": 3,
+      "day": "2023-06-27 00:00:00.000 UTC",
+      "native_volume_eth": 0.1000000000000001,
+      "tx_count": 43202
+    },
+    {
+      "active_wallet": 2,
+      "day": "2023-06-26 00:00:00.000 UTC",
+      "native_volume_eth": 5e-15,
+      "tx_count": 43201
+    },
+    {
+      "active_wallet": 1,
+      "day": "2023-06-25 00:00:00.000 UTC",
+      "native_volume_eth": 0,
+      "tx_count": 43200
+    },
+    {
+      "active_wallet": 1,
+      "day": "2023-06-24 00:00:00.000 UTC",
+      "native_volume_eth": 0,
+      "tx_count": 43200
+    },
+    {
+      "active_wallet": 2,
+      "day": "2023-06-23 00:00:00.000 UTC",
+      "native_volume_eth": 0,
+      "tx_count": 43201
+    },
+    {
+      "active_wallet": 2,
+      "day": "2023-06-22 00:00:00.000 UTC",
+      "native_volume_eth": 0.002653153334050419,
+      "tx_count": 43202
+    },
+    {
+      "active_wallet": 3,
+      "day": "2023-06-21 00:00:00.000 UTC",
+      "native_volume_eth": 11.997506327679,
+      "tx_count": 43202
+    },
+    {
+      "active_wallet": 5,
+      "day": "2023-06-20 00:00:00.000 UTC",
+      "native_volume_eth": 0.02337263794772451,
+      "tx_count": 43205
+    },
+    {
+      "active_wallet": 3,
+      "day": "2023-06-19 00:00:00.000 UTC",
+      "native_volume_eth": 0.0431972831757776,
+      "tx_count": 43203
+    },
+    {
+      "active_wallet": 1,
+      "day": "2023-06-18 00:00:00.000 UTC",
+      "native_volume_eth": 0,
+      "tx_count": 43200
+    },
+    {
+      "active_wallet": 3,
+      "day": "2023-06-17 00:00:00.000 UTC",
+      "native_volume_eth": 0.05497848497692603,
+      "tx_count": 43204
+    },
+    {
+      "active_wallet": 3,
+      "day": "2023-06-16 00:00:00.000 UTC",
+      "native_volume_eth": 0.078221098,
+      "tx_count": 43203
+    },
+    {
+      "active_wallet": 7,
+      "day": "2023-06-15 00:00:00.000 UTC",
+      "native_volume_eth": 0.96,
+      "tx_count": 42140
+    }
+  ],
+  "metadata": {
+    "column_names": [
+      "day",
+      "tx_count",
+      "native_volume_eth",
+      "active_wallet"
+    ],
+    "column_types": [
+      "timestamp(3) with time zone",
+      "bigint",
+      "double",
+      "bigint"
+    ],
+    "row_count": 95,
+    "result_set_bytes": 5589,
+    "total_row_count": 1095,
+    "total_result_set_bytes": 35040,
+    "datapoint_count": 380,
+    "pending_time_millis": 829,
+    "execution_time_millis": 21651
+  },
+  "fetched_at": "2026-06-13T07:54:16.546Z"
+}

@@ -1,0 +1,71 @@
+{
+  "name": "Daily Summary (Phase 9)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": { "interval": [{ "field": "cronExpression", "expression": "0 0 * * *" }] }
+      },
+      "id": "schedule-daily",
+      "name": "Daily Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [240, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ ($env.RESEARCH_API_URL || 'http://research-api:8100') + '/agent/workflow/run' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"workflow_name\":\"daily_summary\",\"payload\":{}}",
+        "options": { "timeout": 120000 }
+      },
+      "id": "run-daily",
+      "name": "Run Daily Summary",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ ($env.RESEARCH_API_URL || 'http://research-api:8100') + '/agent/chat' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"message\":\"Generate daily performance summary\",\"channel\":\"n8n\"}",
+        "options": { "timeout": 120000 }
+      },
+      "id": "ai-summary",
+      "name": "AI Daily Summary",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [720, 300]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "=📊 Daily Summary\n{{ $json.answer || JSON.stringify($json).slice(0,1500) }}",
+        "additionalFields": {}
+      },
+      "id": "telegram-daily",
+      "name": "Send Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [960, 300],
+      "credentials": { "telegramApi": { "id": "telegram-bot", "name": "Telegram Bot" } }
+    }
+  ],
+  "connections": {
+    "Daily Schedule": {
+      "main": [[{ "node": "Run Daily Summary", "type": "main", "index": 0 }]]
+    },
+    "Run Daily Summary": {
+      "main": [[{ "node": "AI Daily Summary", "type": "main", "index": 0 }]]
+    },
+    "AI Daily Summary": {
+      "main": [[{ "node": "Send Telegram", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "tags": [{ "name": "crypto-trading" }, { "name": "phase9" }]
+}

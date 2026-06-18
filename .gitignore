@@ -4,6 +4,7 @@ build/
 .env
 .env.local
 backend/.env
+backend/data/
 frontend/.env
 n8n/workflows/production.env.json
 *.log

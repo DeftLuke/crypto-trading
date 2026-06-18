@@ -1,0 +1,20 @@
+{
+  "providers": [
+    {
+      "id": "vip_channel_1",
+      "name": "VIP_Channel_1",
+      "enabled": true,
+      "chats": ["VIP_Channel_1"],
+      "parser": "generic",
+      "symbols_quote_asset": "USDT"
+    },
+    {
+      "id": "vip_channel_2",
+      "name": "VIP_Channel_2",
+      "enabled": false,
+      "chats": [-1001234567890],
+      "parser": "generic",
+      "symbols_quote_asset": "USDT"
+    }
+  ]
+}

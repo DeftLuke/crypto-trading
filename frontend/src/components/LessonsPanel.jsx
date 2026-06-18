@@ -22,7 +22,7 @@ function LessonCard({ lesson }) {
   );
 }
 
-export default function SkippedLessonsPanel() {
+export default function SkippedLessonsPanel({ bare = false }) {
   const [lessons, setLessons] = useState([]);
   const [stats, setStats] = useState(null);
 
@@ -44,9 +44,9 @@ export default function SkippedLessonsPanel() {
 
   const skippedStats = stats?.skipped;
 
-  return (
-    <div className="panel lessons-panel skipped-panel">
-      <h3>⏭ Skipped Trade Lessons</h3>
+  const inner = (
+    <>
+      {!bare && <h3>⏭ Skipped Trade Lessons</h3>}
       {skippedStats && (
         <div className="lesson-stats-bar">
           <span className="trade-pnl-positive">Wins: {skippedStats.wins}</span>
@@ -61,11 +61,14 @@ export default function SkippedLessonsPanel() {
         <p className="signal-detail">No skipped trade lessons yet. Skip a signal — outcome checked at 15/20 min.</p>
       )}
       {lessons.map((l) => <LessonCard key={l.id} lesson={l} />)}
-    </div>
+    </>
   );
+
+  if (bare) return inner;
+  return <div className="panel lessons-panel skipped-panel">{inner}</div>;
 }
 
-export function ExecutedLessonsPanel() {
+export function ExecutedLessonsPanel({ bare = false }) {
   const [lessons, setLessons] = useState([]);
   const [stats, setStats] = useState(null);
 
@@ -87,9 +90,9 @@ export function ExecutedLessonsPanel() {
 
   const execStats = stats?.executed;
 
-  return (
-    <div className="panel lessons-panel executed-panel">
-      <h3>✅ Real Trade Lessons</h3>
+  const inner = (
+    <>
+      {!bare && <h3>✅ Real Trade Lessons</h3>}
       {execStats && (
         <div className="lesson-stats-bar">
           <span className="trade-pnl-positive">Wins: {execStats.wins}</span>
@@ -104,6 +107,9 @@ export function ExecutedLessonsPanel() {
         <p className="signal-detail">No executed trade lessons yet. Lessons appear after real trades close.</p>
       )}
       {lessons.map((l) => <LessonCard key={l.id} lesson={l} />)}
-    </div>
+    </>
   );
+
+  if (bare) return inner;
+  return <div className="panel lessons-panel executed-panel">{inner}</div>;
 }

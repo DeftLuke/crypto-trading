@@ -34,8 +34,9 @@ export default function LoginPage() {
   return (
     <div className="auth-page">
       <div className="auth-card">
-        <h1>TradeGPT Dashboard</h1>
-        <p className="auth-sub">Sign in to access live charts, signals & AI trading data</p>
+        <img src="/logo.png" alt="TradeGPT" className="login-logo" width="72" height="72" />
+        <h1>TradeGPT</h1>
+        <p className="auth-sub">Trade smart. Trade ahead. Sign in for live charts, signals &amp; AI trading.</p>
 
         <form onSubmit={handleSubmit} className="auth-form">
           {mode === 'register' && (

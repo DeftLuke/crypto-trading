@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { fetchStrategyStats, fetchLearnedPatterns, fetchStrategies } from '../services/api';
-import FreqtradeControlPanel from './FreqtradeControlPanel';
 
 export default function StrategyStatsPage() {
   const [strategyId, setStrategyId] = useState('smc-mtf');
@@ -10,7 +9,9 @@ export default function StrategyStatsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchStrategies().then(setStrategies).catch(() => {});
+    fetchStrategies()
+      .then((items) => setStrategies((items || []).filter((s) => s.id !== 'freqtrade')))
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
@@ -34,7 +35,6 @@ export default function StrategyStatsPage() {
   }, [strategyId]);
 
   const selected = strategies.find((s) => s.id === strategyId);
-  const isFreqtrade = strategyId === 'freqtrade';
 
   return (
     <div className="strategy-stats-page">
@@ -50,7 +50,7 @@ export default function StrategyStatsPage() {
             value={strategyId}
             onChange={(e) => setStrategyId(e.target.value)}
           >
-            {(strategies.length ? strategies : [{ id: 'smc-mtf', name: 'SMC Multi-Timeframe' }, { id: 'freqtrade', name: 'Freqtrade (RSI / EMA)' }]).map((s) => (
+            {(strategies.length ? strategies : [{ id: 'smc-mtf', name: 'SMC Multi-Timeframe' }]).map((s) => (
               <option key={s.id} value={s.id}>{s.name}</option>
             ))}
           </select>
@@ -63,9 +63,7 @@ export default function StrategyStatsPage() {
 
       {loading && <div className="page-loading">Loading…</div>}
 
-      {!loading && isFreqtrade && <FreqtradeControlPanel />}
-
-      {!loading && !isFreqtrade && stats && (
+      {!loading && stats && (
         <>
           <div className="stats-grid">
             <div className="stat-card">

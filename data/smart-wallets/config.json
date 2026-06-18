@@ -1,0 +1,25 @@
+{
+  "rules": {
+    "minWinRate": 0.55,
+    "minRoi90d": 50,
+    "minProfitFactor": 1.5,
+    "minTrades": 20,
+    "maxWallets": 1000,
+    "targetWallets": 750
+  },
+  "consensus": {
+    "minWallets": 5,
+    "minAvgScore": 80,
+    "minWalletScore": 70,
+    "windowHours": 2
+  },
+  "liquidity": {
+    "minLiquidityUsd": 200000,
+    "minVolume24hUsd": 200000,
+    "minFdvUsd": 500000
+  },
+  "dune": {
+    "dashboard": "https://dune.com/maditim/solmemecoinstradewallets",
+    "note": "Set DUNE_SOL_WALLETS_QUERY_ID and DUNE_SOL_TRADES_QUERY_ID in deploy/.env from Dune query URLs"
+  }
+}

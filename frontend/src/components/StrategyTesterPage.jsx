@@ -2,7 +2,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import BacktestChart from './BacktestChart';
 import BacktestEquityChart from './BacktestEquityChart';
 import BacktestProgressBar from './BacktestProgressBar';
-import FreqtradeControlPanel from './FreqtradeControlPanel';
 import {
   fetchStrategies,
   runBacktest,
@@ -30,15 +29,6 @@ const DEFAULT_STRATEGIES = [
     timeframes: ['1h', '30m', '15m', '5m', '3m'],
     engine: 'native',
     backtestInApp: true,
-  },
-  {
-    id: 'freqtrade',
-    name: 'Freqtrade (RSI / EMA)',
-    description:
-      'Python Freqtrade bot — control dry-run/live trading and switch Python strategies from the dashboard.',
-    timeframes: ['5m', '15m', '30m', '1h'],
-    engine: 'freqtrade',
-    backtestInApp: false,
   },
 ];
 
@@ -113,8 +103,9 @@ export default function StrategyTesterPage() {
 
   const strategyOptions = useMemo(() => {
     if (!strategies?.length) return DEFAULT_STRATEGIES;
-    const ids = new Set(strategies.map((s) => s.id));
-    const merged = [...strategies];
+    const nativeStrategies = strategies.filter((s) => s.id !== 'freqtrade' && s.engine !== 'freqtrade');
+    const ids = new Set(nativeStrategies.map((s) => s.id));
+    const merged = [...nativeStrategies];
     for (const d of DEFAULT_STRATEGIES) {
       if (!ids.has(d.id)) merged.push(d);
     }
@@ -122,12 +113,11 @@ export default function StrategyTesterPage() {
   }, [strategies]);
 
   const selectedStrategy = strategyOptions.find((s) => s.id === strategyId) || strategyOptions[0];
-  const isFreqtrade = strategyId === 'freqtrade';
 
   useEffect(() => {
     fetchStrategies()
       .then((list) => {
-        if (Array.isArray(list) && list.length > 0) setStrategies(list);
+        if (Array.isArray(list) && list.length > 0) setStrategies(list.filter((s) => s.id !== 'freqtrade' && s.engine !== 'freqtrade'));
       })
       .catch(() => {});
     fetchAllPairs().then((p) => {
@@ -138,9 +128,8 @@ export default function StrategyTesterPage() {
   }, []);
 
   useEffect(() => {
-    if (isFreqtrade) return;
     fetchBacktestEstimate(period, timeframe).then(setEstimate).catch(() => {});
-  }, [period, timeframe, isFreqtrade]);
+  }, [period, timeframe]);
 
   const executeBacktest = useCallback(async (sym, strat, tf, per) => {
     const runId = ++abortRef.current;
@@ -180,7 +169,7 @@ export default function StrategyTesterPage() {
   }, []);
 
   useEffect(() => {
-    if (!autoRunRef.current || isFreqtrade) return;
+    if (!autoRunRef.current) return;
     const shortPeriods = ['1w', '1m', '3m'];
     if (!shortPeriods.includes(period)) return;
 
@@ -188,7 +177,7 @@ export default function StrategyTesterPage() {
       executeBacktest(symbol, strategyId, timeframe, period);
     }, 400);
     return () => clearTimeout(timer);
-  }, [symbol, strategyId, timeframe, period, executeBacktest, isFreqtrade]);
+  }, [symbol, strategyId, timeframe, period, executeBacktest]);
 
   const handleRun = () => executeBacktest(symbol, strategyId, timeframe, period);
 
@@ -217,7 +206,6 @@ export default function StrategyTesterPage() {
             </select>
           </div>
 
-          {!isFreqtrade && (
           <>
           <div className="toolbar-field">
             <span className="toolbar-label">Pair</span>
@@ -272,7 +260,6 @@ export default function StrategyTesterPage() {
             {running ? `Running ${progress}%` : 'Run backtest'}
           </button>
           </>
-          )}
         </div>
 
         {selectedStrategy?.description && (
@@ -280,23 +267,6 @@ export default function StrategyTesterPage() {
         )}
       </header>
 
-      {isFreqtrade ? (
-        <div className="freqtrade-tester-wrap">
-          <div className="tester-hint">
-            Freqtrade backtests run on the server via CLI. Use <strong>Strategy Control</strong> to
-            start/stop the bot, switch Python strategies, and force-exit trades.
-          </div>
-          <FreqtradeControlPanel />
-          <section className="freqtrade-card">
-            <h2>CLI backtest (on Kali/VPS)</h2>
-            <pre className="cli-block">{`docker compose --profile freqtrade run --rm freqtrade backtesting \\
-  --config user_data/config.json \\
-  --strategy TradeGPT_RSI_Momentum \\
-  --timerange 20260301-`}</pre>
-          </section>
-        </div>
-      ) : (
-        <>
       <BacktestProgressBar
         running={running}
         estimate={estimate}
@@ -457,8 +427,6 @@ export default function StrategyTesterPage() {
           )}
         </aside>
       </div>
-        </>
-      )}
     </div>
   );
 }

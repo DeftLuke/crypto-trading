@@ -10,6 +10,8 @@ import { config } from '../config/index.js';
 import { sendAlert } from '../services/telegram.js';
 
 const pendingChecks = new Map();
+const recentOutcomeAlerts = new Map();
+const OUTCOME_ALERT_DEDUPE_MS = 30 * 60 * 1000;
 
 export function scheduleSignalOutcomeCheck(signal) {
   if (!signal?.id || signal.direction === 'IGNORE') return;
@@ -109,14 +111,18 @@ export async function evaluateSignalOutcome(signalId, checkMinutes) {
           await updatePairStats(signal.symbol, result.outcome, result.rMultiple || 0);
         }
 
-        // Single outcome alert at 20min only — skip if user already skipped
-        if (signal.user_action !== 'skipped' && signal.status !== 'skipped') {
+        // Executed trades use trade lifecycle alerts; suppress near-identical signal outcome spam.
+        const alertKey = `${signal.symbol}:${signal.direction}:${result.outcome}:${result.hitTp1}:${result.hitSl}`;
+        const lastAlertAt = recentOutcomeAlerts.get(alertKey) || 0;
+        const canAlert = Date.now() - lastAlertAt > OUTCOME_ALERT_DEDUPE_MS;
+        if (signal.user_action !== 'executed' && signal.user_action !== 'skipped' && signal.status !== 'skipped' && canAlert) {
           const emoji = result.outcome === 'win' ? '✅' : result.outcome === 'loss' ? '❌' : '⚪';
+          recentOutcomeAlerts.set(alertKey, Date.now());
           await sendAlert(
-            `${emoji} <b>Outcome — ${signal.symbol}</b>\n` +
-            `${signal.direction} → <b>${result.outcome.toUpperCase()}</b> (20min)\n` +
+            `${emoji} <b>Signal Outcome (not traded) — ${signal.symbol}</b>\n` +
+            `${signal.direction} → <b>${result.outcome.toUpperCase()}</b> if taken (20min)\n` +
             `Entry: ${signal.entry_price} → ${currentPrice}\n` +
-            `${result.hitTp1 ? '✅ Hit TP1' : result.hitSl ? '🛑 Hit SL' : '⏳ No clear hit'}`
+            `${result.hitTp1 ? '✅ Would have hit TP1' : result.hitSl ? '🛑 Would have hit SL' : '⏳ No clear hit'}`
           );
         }
 

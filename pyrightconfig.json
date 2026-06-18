@@ -1,0 +1,43 @@
+{
+    "include": [
+        "telegram-signal-service",
+        "research-platform"
+    ],
+    "exclude": [
+        "**/node_modules",
+        "**/__pycache__",
+        "research-platform/tests"
+    ],
+    "venvPath": ".",
+    "venv": ".venv",
+    "pythonVersion": "3.11",
+    "pythonPlatform": "Windows",
+    "typeCheckingMode": "basic",
+    "reportMissingTypeStubs": "none",
+    "reportMissingImports": "warning",
+    "reportAttributeAccessIssue": "none",
+    "reportOptionalMemberAccess": "none",
+    "reportOptionalOperand": "none",
+    "reportArgumentType": "none",
+    "reportOperatorIssue": "none",
+    "reportRedeclaration": "none",
+    "reportReturnType": "none",
+    "reportUndefinedVariable": "warning",
+    "reportWildcardImportFromLibrary": "none",
+    "reportImplicitOverride": "none",
+    "reportIncompatibleMethodOverride": "none",
+    "reportUnusedCallResult": "none",
+    "reportAny": "none",
+    "reportExplicitAny": "none",
+    "executionEnvironments": [
+        {
+            "root": "telegram-signal-service",
+            "extraPaths": [
+                "telegram-signal-service/typings"
+            ]
+        },
+        {
+            "root": "research-platform"
+        }
+    ]
+}

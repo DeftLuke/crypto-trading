@@ -6,6 +6,7 @@ name: crypto-trading
 
 services:
   backend:
+    profiles: ["legacy"]
     build:
       context: ..
       dockerfile: deploy/Dockerfile.backend
@@ -24,13 +25,12 @@ services:
       AI_GATEWAY_URL: ${AI_GATEWAY_URL:-http://host.docker.internal:8080}
       OLLAMA_URL: ${OLLAMA_URL:-http://host.docker.internal:11434}
       OLLAMA_VIA_GATEWAY: "true"
-      FREQTRADE_URL: ${FREQTRADE_URL:-http://freqtrade:8080}
-      FREQTRADE_API_USER: ${FREQTRADE_API_USER:-freqtrader}
-      FREQTRADE_API_PASSWORD: ${FREQTRADE_API_PASSWORD:-}
-      FREQTRADE_PUBLIC_URL: ${FREQTRADE_PUBLIC_URL:-}
-      FREQTRADE_CONFIG_PATH: /freqtrade-data/config.json
+      RESEARCH_API_URL: ${RESEARCH_API_URL:-http://research-api:8100}
+      FREQTRADE_ENABLED: "false"
+      WALLET_SCANNER_DATA_DIR: /app/data/smart-wallets
     volumes:
-      - ../freqtrade/user_data:/freqtrade-data:rw
+      - ../data/smart-wallets:/app/data/smart-wallets:rw
+      - ./keys:/app/keys:ro
     networks:
       - trading
 
@@ -42,11 +42,121 @@ services:
         VITE_API_URL: ${PUBLIC_API_URL:-https://api.deftluke.online}
         VITE_WS_URL: ${PUBLIC_WS_URL:-wss://api.deftluke.online}
         VITE_APP_URL: ${PUBLIC_APP_URL:-https://trade.deftluke.online}
+        VITE_PLATFORM_URL: ${PUBLIC_PLATFORM_URL:-https://terminal.deftluke.online}
         VITE_SUPABASE_URL: ${SUPABASE_URL}
         VITE_SUPABASE_PUBLISHABLE_KEY: ${SUPABASE_PUBLISHABLE_KEY}
     restart: always
     ports:
       - "127.0.0.1:5173:80"
+    networks:
+      - trading
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    ports:
+      - "127.0.0.1:6380:6379"
+    volumes:
+      - research_redis_data:/data
+    networks:
+      - trading
+
+  qdrant:
+    image: qdrant/qdrant:v1.12.5
+    restart: always
+    ports:
+      - "127.0.0.1:6333:6333"
+      - "127.0.0.1:6334:6334"
+    volumes:
+      - research_qdrant_data:/qdrant/storage
+    environment:
+      QDRANT__SERVICE__GRPC_PORT: 6334
+    networks:
+      - trading
+
+  research-api:
+    build:
+      context: ../research-platform
+      dockerfile: Dockerfile
+    restart: always
+    env_file: .env
+    environment:
+      APP_ENV: production
+      API_HOST: 0.0.0.0
+      API_PORT: 8100
+      REDIS_URL: redis://redis:6379/0
+      QDRANT_URL: http://qdrant:6333
+      DATA_ROOT: /app/data
+      MEMORY_EMBEDDING_PROVIDER: ${MEMORY_EMBEDDING_PROVIDER:-hash}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
+      BINANCE_API_KEY: ${BINANCE_API_KEY}
+      BINANCE_API_SECRET: ${BINANCE_API_SECRET}
+      CONTROL_AUTO_TRADING: ${CONTROL_AUTO_TRADING:-false}
+      CONTROL_MANUAL_APPROVAL: ${CONTROL_MANUAL_APPROVAL:-true}
+      CONTROL_TRADING_MODE: ${CONTROL_TRADING_MODE:-demo}
+      TRADE_APPROVAL_PASSCODE: ${TRADE_APPROVAL_PASSCODE:-8888}
+    ports:
+      - "127.0.0.1:8100:8100"
+    volumes:
+      - ../research-platform/data:/app/data
+    depends_on:
+      - redis
+      - qdrant
+    networks:
+      - trading
+
+  analytics-dashboard:
+    build:
+      context: ..
+      dockerfile: ${ANALYTICS_DOCKERFILE:-deploy/Dockerfile.analytics-dashboard}
+      args:
+        NEXT_PUBLIC_RESEARCH_API_URL: ${NEXT_PUBLIC_RESEARCH_API_URL:-/api/research}
+        NEXT_PUBLIC_TRADING_API_URL: ${NEXT_PUBLIC_TRADING_API_URL:-https://api.deftluke.online/api}
+        NEXT_PUBLIC_WS_URL: ${PUBLIC_WS_URL:-wss://api.deftluke.online/ws}
+        NEXT_PUBLIC_SUPABASE_URL: ${SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${SUPABASE_PUBLISHABLE_KEY}
+        TRADING_API_URL: http://host.docker.internal:3002
+        RESEARCH_API_URL: http://research-api:8100
+    restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    environment:
+      PORT: 3000
+      RESEARCH_API_URL: ${RESEARCH_API_URL:-http://research-api:8100}
+      TRADING_API_URL: http://host.docker.internal:3002
+      NEXT_PUBLIC_RESEARCH_API_URL: ${NEXT_PUBLIC_RESEARCH_API_URL:-/api/research}
+      NEXT_PUBLIC_TRADING_API_URL: ${NEXT_PUBLIC_TRADING_API_URL:-https://api.deftluke.online/api}
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      - research-api
+    networks:
+      - trading
+
+  telegram-signal-service:
+    profiles: ["telegram-ingestion"]
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile.telegram-signal-service
+    restart: always
+    env_file: .env
+    environment:
+      MAIN_TRADING_API_URL: http://host.docker.internal:3002/api
+      TELEGRAM_SESSION_NAME: /app/data/kali_user_session
+      TELEGRAM_SERVICE_CONFIG: /app/config.json
+      SIGNAL_STORE_PATH: /app/data/signals.jsonl
+      AI_PARSER_ENABLED: "true"
+      AI_PARSER_URL: ${AI_PARSER_URL:-http://host.docker.internal:8080/chat}
+      AI_GATEWAY_URL: ${AI_GATEWAY_URL:-http://host.docker.internal:8080}
+      AI_PARSER_API_KEY: ${AI_API_KEY:-}
+      AI_PARSER_MODEL: ${AI_PARSER_MODEL:-qwen2.5:7b-instruct}
+      AI_VISION_MODEL: ${AI_VISION_MODEL:-llava:7b}
+    volumes:
+      - ../telegram-signal-service/config.json:/app/config.json:ro
+      - ../telegram-signal-service/data:/app/data:rw
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     networks:
       - trading
 
@@ -123,7 +233,9 @@ services:
       OLLAMA_MODEL: ${OLLAMA_MODEL:-mistral:7b}
       OLLAMA_FALLBACK: ${OLLAMA_FALLBACK_MODEL:-mistral:7b}
       AI_API_KEY: ${AI_API_KEY}
-      BACKEND_URL: http://backend:3001
+      BACKEND_URL: http://host.docker.internal:3002
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       ollama:
         condition: service_healthy
@@ -144,8 +256,9 @@ services:
     environment:
       TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
     depends_on:
-      - backend
       - frontend
+      - analytics-dashboard
+      - research-api
       - n8n
       - ai-gateway
     networks:
@@ -190,3 +303,5 @@ networks:
 volumes:
   n8n_data:
   ollama_data:
+  research_redis_data:
+  research_qdrant_data:

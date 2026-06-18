@@ -1,0 +1,21 @@
+{
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+    "python.analysis.diagnosticMode": "openFilesOnly",
+    "python.analysis.exclude": [
+        "**/node_modules",
+        "analytics-dashboard/**",
+        "frontend/**",
+        "backend/**"
+    ],
+    "basedpyright.analysis.diagnosticMode": "openFilesOnly",
+    "basedpyright.analysis.diagnosticSeverityOverrides": {
+        "reportMissingTypeStubs": "none",
+        "reportAttributeAccessIssue": "none",
+        "reportOptionalMemberAccess": "none",
+        "reportOptionalOperand": "none",
+        "reportArgumentType": "none",
+        "reportWildcardImportFromLibrary": "none",
+        "reportImplicitOverride": "none",
+        "reportIncompatibleMethodOverride": "none"
+    }
+}

@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+
+jobs:
+  research-platform:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: research-platform
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install pytest pytest-asyncio httpx
+      - name: Run tests
+        env:
+          QDRANT_URL: ":memory:"
+          MEMORY_EMBEDDING_PROVIDER: hash
+          LIVE_DRY_RUN: "true"
+          CONTROL_AUTO_TRADING: "false"
+          PAPER_LATENCY_MS: "0"
+          LIVE_SIMULATED_LATENCY_MS: "0"
+        run: pytest tests/ -q --tb=short
+
+  analytics-dashboard:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: analytics-dashboard
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install and build
+        run: |
+          npm ci
+          npm run build

@@ -67,11 +67,18 @@ const CHAT_ID = backendEnv.TELEGRAM_CHAT_ID || prodEnv.TELEGRAM_CHAT_ID || '6006
 const TELEGRAM_TOKEN = backendEnv.TELEGRAM_BOT_TOKEN || '';
 
 const WORKFLOW_FILES = [
+  'tradegpt-unified-telegram.json',
   'ai-assistant.json',
   'trade-execution.json',
-  'signal-notify.json',
   'app-integration.json',
 ];
+
+const DEACTIVATE_WORKFLOW_NAMES = new Set([
+  'Signal Notify (Production)',
+  'Platform Event Handler (Phase 9)',
+  'Daily Summary (Phase 9)',
+  'Trading App Integration (Production)',
+]);
 
 async function ensureTelegramCredential() {
   if (!TELEGRAM_TOKEN) return CRED_ID_ENV;
@@ -89,9 +96,11 @@ async function ensureTelegramCredential() {
 
 function applyTelegramNodes(nodes, credId) {
   for (const node of nodes) {
-    if (node.type === 'n8n-nodes-base.telegram') {
+    if (node.type === 'n8n-nodes-base.telegram' || node.type === 'n8n-nodes-base.telegramTrigger') {
       node.credentials = { telegramApi: { id: credId, name: CRED_NAME } };
-      node.parameters.chatId = CHAT_ID;
+      if (node.parameters && 'chatId' in node.parameters) {
+        node.parameters.chatId = CHAT_ID;
+      }
     }
   }
 }
@@ -136,8 +145,19 @@ for (const file of WORKFLOW_FILES) {
   }
 }
 
+for (const workflow of existing) {
+  if (!workflow.isArchived && DEACTIVATE_WORKFLOW_NAMES.has(workflow.name) && workflow.active) {
+    try {
+      await api('POST', `/workflows/${workflow.id}/deactivate`);
+      console.log(`✓ Deactivated duplicate Telegram workflow: ${workflow.name} (${workflow.id})`);
+    } catch (err) {
+      console.log(`! Could not deactivate ${workflow.name}: ${err.message}`);
+    }
+  }
+}
+
 console.log('\nWebhooks:');
-for (const wh of ['signal-notify', 'trade-execute', 'ai-assistant', 'app-signal']) {
+for (const wh of ['tradegpt-event', 'trade-execute', 'ai-assistant', 'app-signal']) {
   const res = await fetch(`${N8N_URL}/webhook/${wh}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

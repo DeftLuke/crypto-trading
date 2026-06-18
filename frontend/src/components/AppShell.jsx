@@ -1,48 +1,91 @@
-import { useAuth } from '../context/AuthContext';
+import { useState } from 'react';
+import TopBar from './TopBar';
+import { NAV_SECTIONS } from '../lib/platformUrl';
 
-const NAV_ITEMS = [
-  { id: 'trading', label: 'Trading', icon: '📈' },
-  { id: 'strategy-stats', label: 'Strategy Control', icon: '📊' },
-  { id: 'strategy-tester', label: 'Strategy Tester', icon: '🧪' },
-  { id: 'settings', label: 'Settings', icon: '⚙️' },
-];
+const MOBILE_QUICK_IDS = ['home', 'trading', 'platform-paper', 'platform-live', 'platform-dashboard'];
 
 export default function AppShell({ page, onNavigate, children }) {
-  const { user, signOut } = useAuth();
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const allItems = NAV_SECTIONS.flatMap((section) => section.items);
+  const quickItems = MOBILE_QUICK_IDS.map((id) => allItems.find((item) => item.id === id)).filter(Boolean);
+
+  const navigate = (id) => {
+    onNavigate(id);
+    setMobileMenuOpen(false);
+  };
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell ${collapsed ? 'nav-collapsed' : ''} ${mobileMenuOpen ? 'mobile-nav-open' : ''}`}>
+      {mobileMenuOpen && (
+        <button
+          type="button"
+          className="mobile-nav-overlay"
+          onClick={() => setMobileMenuOpen(false)}
+          aria-label="Close navigation"
+        />
+      )}
       <nav className="left-nav">
-        <div className="nav-brand">
-          <span className="nav-logo">⚡</span>
+        <button
+          type="button"
+          className="nav-brand nav-brand-link"
+          onClick={() => navigate('home')}
+          title="TradeGPT Home"
+        >
+          <img src="/logo.png" alt="" className="nav-logo-img" width="32" height="32" />
           <span>TradeGPT</span>
-        </div>
-        <ul className="nav-list">
-          {NAV_ITEMS.map((item) => (
-            <li key={item.id}>
-              <button
-                type="button"
-                className={`nav-item ${page === item.id ? 'active' : ''}`}
-                onClick={() => onNavigate(item.id)}
-              >
-                <span className="nav-icon">{item.icon}</span>
-                {item.label}
-              </button>
-            </li>
-          ))}
-        </ul>
-        <div className="nav-footer">
-          {user?.email && <span className="nav-user">{user.email}</span>}
-          {user && (
-            <button type="button" className="nav-logout" onClick={signOut}>Sign out</button>
-          )}
-        </div>
+          <span
+            className="nav-collapse-btn"
+            role="button"
+            tabIndex={0}
+            onClick={(e) => { e.stopPropagation(); setCollapsed(!collapsed); }}
+            onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); setCollapsed(!collapsed); } }}
+            aria-label={collapsed ? 'Expand navigation' : 'Collapse navigation'}
+          >
+            {collapsed ? '»' : '«'}
+          </span>
+        </button>
+        {NAV_SECTIONS.map((section) => (
+          <div key={section.id} className="nav-section">
+            {!collapsed && <p className="nav-section-label">{section.label}</p>}
+            <ul className="nav-list">
+              {section.items.map((item) => (
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    className={`nav-item ${page === item.id ? 'active' : ''} ${item.live ? 'nav-live' : ''}`}
+                    onClick={() => navigate(item.id)}
+                    title={item.label}
+                  >
+                    <span className="nav-glyph">{item.glyph}</span>
+                    <span className="nav-label">{item.label}</span>
+                    {item.live && <span className="nav-live-dot" />}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
       </nav>
-      <main className="app-main">
-        {children}
-      </main>
+      <div className="app-content">
+        <TopBar onNavigate={onNavigate} onMenuClick={() => setMobileMenuOpen(true)} />
+        <main className="app-main">{children}</main>
+      </div>
+      <nav className="mobile-bottom-nav" aria-label="Quick navigation">
+        {quickItems.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            className={`mobile-bottom-btn ${page === item.id ? 'active' : ''}`}
+            onClick={() => navigate(item.id)}
+          >
+            <span className="mobile-bottom-glyph">{item.glyph}</span>
+            <span>{item.short || item.label}</span>
+          </button>
+        ))}
+      </nav>
     </div>
   );
 }
 
-export { NAV_ITEMS };
+export { NAV_SECTIONS };

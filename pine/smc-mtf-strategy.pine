@@ -1,0 +1,64 @@
+// Smart Money Algo Pro — STRATEGY version for TradingView Strategy Tester
+// Paste into TradingView Pine Editor → Save → Add to chart → Strategy Tester tab
+// Based on same SMC + RSI rules as pinscript.txt / smc-mtf backend
+//@version=5
+strategy("SMC MTF Strategy - TradeGPT", overlay=true, max_bars_back=500, default_qty_type=strategy.percent_of_equity, default_qty_value=10, initial_capital=1000, commission_type=strategy.commission.percent, commission_value=0.04)
+
+// ── Inputs (match your E5 groups) ──
+rsiLen     = input.int(14, "RSI Length", group="RSI Gate")
+rsiBuyMax  = input.float(30, "BUY only if RSI below", group="RSI Gate")
+rsiSellMin = input.float(70, "SELL only if RSI above", group="RSI Gate")
+emaLen     = input.int(100, "Trend EMA", group="Trend")
+slAtrMult  = input.float(1.5, "Stop Loss (ATR x)", group="Risk")
+tpRMult    = input.float(2.0, "Take Profit (R x)", group="Risk")
+useEmaTrend = input.bool(true, "Require EMA100 trend", group="Trend")
+
+// ── Indicators ──
+rsiVal = ta.rsi(close, rsiLen)
+ema100 = ta.ema(close, emaLen)
+atrVal = ta.atr(14)
+
+bullTrend = close > ema100
+bearTrend = close < ema100
+
+// Simple SMC-style structure: swing highs/lows
+swingLen = 10
+swingHigh = ta.pivothigh(high, swingLen, swingLen)
+swingLow  = ta.pivotlow(low, swingLen, swingLen)
+
+var float lastHigh = na
+var float lastLow  = na
+if not na(swingHigh)
+    lastHigh := swingHigh
+if not na(swingLow)
+    lastLow := swingLow
+
+// BOS-style break
+bullBos = not na(lastHigh) and close > lastHigh and close[1] <= lastHigh
+bearBos = not na(lastLow) and close < lastLow and close[1] >= lastLow
+
+// Entry conditions (RSI gate + structure — same logic as TradeGPT smc-mtf)
+longCond  = rsiVal < rsiBuyMax and bullBos and (not useEmaTrend or bullTrend)
+shortCond = rsiVal > rsiSellMin and bearBos and (not useEmaTrend or bearTrend)
+
+// ── Orders ──
+if longCond and strategy.position_size == 0
+    sl = close - atrVal * slAtrMult
+    risk = close - sl
+    tp = close + risk * tpRMult
+    strategy.entry("Long", strategy.long)
+    strategy.exit("Long Exit", "Long", stop=sl, limit=tp)
+
+if shortCond and strategy.position_size == 0
+    sl = close + atrVal * slAtrMult
+    risk = sl - close
+    tp = close - risk * tpRMult
+    strategy.entry("Short", strategy.short)
+    strategy.exit("Short Exit", "Short", stop=sl, limit=tp)
+
+// ── Visuals (like your indicator) ──
+plot(ema100, "EMA 100", color=color.new(color.purple, 0), linewidth=2)
+plotshape(longCond, "Buy", shape.triangleup, location.belowbar, color.green, size=size.small)
+plotshape(shortCond, "Sell", shape.triangledown, location.abovebar, color.red, size=size.small)
+
+bgcolor(longCond ? color.new(color.green, 90) : shortCond ? color.new(color.red, 90) : na)

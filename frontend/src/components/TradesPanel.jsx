@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchTrades, fetchOpenTrades } from '../services/api';
 
-export default function TradesPanel() {
+export default function TradesPanel({ bare = false }) {
   const [trades, setTrades] = useState([]);
   const [openTrades, setOpenTrades] = useState([]);
 
@@ -22,8 +22,8 @@ export default function TradesPanel() {
     }
   }
 
-  return (
-    <div className="panel">
+  const inner = (
+    <>
       <h3>Open Trades ({openTrades.length})</h3>
       {openTrades.map((t) => (
         <div key={t.id} className="trade-row">
@@ -54,6 +54,9 @@ export default function TradesPanel() {
           </span>
         </div>
       ))}
-    </div>
+    </>
   );
+
+  if (bare) return inner;
+  return <div className="panel">{inner}</div>;
 }

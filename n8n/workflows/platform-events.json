@@ -1,0 +1,80 @@
+{
+  "name": "Platform Event Handler (Phase 9)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "platform-event",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "webhook-event",
+      "name": "Platform Event Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [240, 300],
+      "webhookId": "platform-event"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ ($env.RESEARCH_API_URL || 'http://research-api:8100') + '/operations/event' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ event_type: $json.body.event_type || $json.event_type, payload: $json.body || $json }) }}",
+        "options": { "timeout": 30000 }
+      },
+      "id": "forward-research",
+      "name": "Forward to Research API",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [480, 200]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.body?.event_type || $json.event_type }}",
+              "operation": "contains",
+              "value2": "trade"
+            }
+          ]
+        }
+      },
+      "id": "if-trade",
+      "name": "Trade Event?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [480, 400]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "=🔔 {{ $json.body?.event_type || $json.event_type }}\n{{ $json.body?.message || JSON.stringify($json.body).slice(0,500) }}",
+        "additionalFields": {}
+      },
+      "id": "telegram-notify",
+      "name": "Telegram Notify",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [720, 400],
+      "credentials": { "telegramApi": { "id": "telegram-bot", "name": "Telegram Bot" } }
+    }
+  ],
+  "connections": {
+    "Platform Event Webhook": {
+      "main": [
+        [
+          { "node": "Forward to Research API", "type": "main", "index": 0 },
+          { "node": "Trade Event?", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Trade Event?": {
+      "main": [[{ "node": "Telegram Notify", "type": "main", "index": 0 }], []]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "tags": [{ "name": "crypto-trading" }, { "name": "phase9" }]
+}

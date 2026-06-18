@@ -1,5 +1,5 @@
 {
-  "name": "Trade Execution Guard (Production)",
+  "name": "Trade Execution Guard (Phase 10)",
   "nodes": [
     {
       "parameters": {
@@ -18,17 +18,17 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "={{ $env.BACKEND_URL || 'https://api.deftluke.online' }}/api/execute",
+        "url": "={{ ($env.BACKEND_URL || 'https://api.deftluke.online') + '/api/control/signal' }}",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify($json.body || $json) }}",
-        "options": { "timeout": 30000 }
+        "jsonBody": "={{ JSON.stringify({ ...( $json.body || $json ), source: ($json.body || $json).source || 'n8n', mode: $env.CONTROL_TRADING_MODE || 'demo', demo_unlimited: ($env.CONTROL_TRADING_MODE || 'demo') !== 'live' }) }}",
+        "options": { "timeout": 60000 }
       },
-      "id": "execute-trade",
-      "name": "Execute Trade (Backend)",
+      "id": "control-signal",
+      "name": "Control Center Signal",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
-      "position": [680, 300]
+      "position": [480, 300]
     },
     {
       "parameters": {
@@ -36,8 +36,8 @@
           "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
           "conditions": [
             {
-              "id": "check-success",
-              "leftValue": "={{ $json.success }}",
+              "id": "needs-approval",
+              "leftValue": "={{ $json.approval_required }}",
               "rightValue": true,
               "operator": { "type": "boolean", "operation": "equals" }
             }
@@ -46,71 +46,115 @@
         },
         "options": {}
       },
-      "id": "if-success",
-      "name": "Trade Success?",
+      "id": "if-approval",
+      "name": "Needs Approval?",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2,
-      "position": [900, 300]
+      "position": [700, 300]
     },
     {
       "parameters": {
-        "chatId": "600639327",
-        "text": "=✅ Trade Executed\n\nSymbol: {{ $('Webhook Trigger').item.json.body.symbol }}\nDirection: {{ $('Webhook Trigger').item.json.body.direction }}\nEntry: {{ $('Webhook Trigger').item.json.body.entry_price }}\nSL: {{ $('Webhook Trigger').item.json.body.stop_loss }}\n\nSL/TP managed automatically.",
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "=⏳ <b>Approval Required</b>\n\n{{ $('Webhook Trigger').item.json.body.symbol }} {{ $('Webhook Trigger').item.json.body.direction }}\nEntry: {{ $('Webhook Trigger').item.json.body.entry }}\nSL: {{ $('Webhook Trigger').item.json.body.sl }}\n\nApprove via dashboard or POST /control/approve with passcode.",
+        "additionalFields": {}
+      },
+      "id": "telegram-approval",
+      "name": "Telegram Approval Request",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [920, 200],
+      "credentials": { "telegramApi": { "id": "telegram-bot", "name": "Telegram Bot" } }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "executed",
+              "leftValue": "={{ $json.executed }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-executed",
+      "name": "Executed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [920, 400]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "=✅ <b>Trade Executed</b>\n\n{{ $('Webhook Trigger').item.json.body.symbol }} {{ $('Webhook Trigger').item.json.body.direction }}\nMode: {{ $json.mode }}\nEntry: {{ $json.entry }}",
         "additionalFields": {}
       },
       "id": "telegram-success",
       "name": "Telegram Success",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [1120, 200],
-      "credentials": { "telegramApi": { "id": "SNHZjAKoQFrl7Atc", "name": "PipBotX TradeGPT" } }
+      "position": [1140, 320],
+      "credentials": { "telegramApi": { "id": "telegram-bot", "name": "Telegram Bot" } }
     },
     {
       "parameters": {
-        "chatId": "600639327",
-        "text": "=❌ Trade Rejected\n\n{{ $json.error || 'Risk validation failed' }}\n\nChecks: {{ JSON.stringify($json.checks || []) }}",
+        "chatId": "={{ $env.TELEGRAM_CHAT_ID }}",
+        "text": "=📡 {{ $json.reason || 'Signal processed' }}\n\n{{ $('Webhook Trigger').item.json.body.symbol }} {{ $('Webhook Trigger').item.json.body.direction }}",
         "additionalFields": {}
       },
-      "id": "telegram-fail",
-      "name": "Telegram Rejected",
+      "id": "telegram-info",
+      "name": "Telegram Info",
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
-      "position": [1120, 400],
-      "credentials": { "telegramApi": { "id": "SNHZjAKoQFrl7Atc", "name": "PipBotX TradeGPT" } }
+      "position": [1140, 520],
+      "credentials": { "telegramApi": { "id": "telegram-bot", "name": "Telegram Bot" } }
     },
     {
       "parameters": {
         "respondWith": "json",
-        "responseBody": "={{ $json }}",
+        "responseBody": "={{ JSON.stringify($('Control Center Signal').item.json) }}",
         "options": {}
       },
       "id": "respond",
       "name": "Respond to Webhook",
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
-      "position": [1340, 300]
+      "position": [1360, 300]
     }
   ],
   "connections": {
     "Webhook Trigger": {
-      "main": [[{ "node": "Execute Trade (Backend)", "type": "main", "index": 0 }]]
+      "main": [[{ "node": "Control Center Signal", "type": "main", "index": 0 }]]
     },
-    "Execute Trade (Backend)": {
-      "main": [[{ "node": "Trade Success?", "type": "main", "index": 0 }]]
+    "Control Center Signal": {
+      "main": [[{ "node": "Needs Approval?", "type": "main", "index": 0 }]]
     },
-    "Trade Success?": {
+    "Needs Approval?": {
+      "main": [
+        [{ "node": "Telegram Approval Request", "type": "main", "index": 0 }],
+        [{ "node": "Executed?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Telegram Approval Request": {
+      "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]]
+    },
+    "Executed?": {
       "main": [
         [{ "node": "Telegram Success", "type": "main", "index": 0 }],
-        [{ "node": "Telegram Rejected", "type": "main", "index": 0 }]
+        [{ "node": "Telegram Info", "type": "main", "index": 0 }]
       ]
     },
     "Telegram Success": {
       "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]]
     },
-    "Telegram Rejected": {
+    "Telegram Info": {
       "main": [[{ "node": "Respond to Webhook", "type": "main", "index": 0 }]]
     }
   },
   "settings": { "executionOrder": "v1" },
-  "tags": [{ "name": "crypto-trading" }, { "name": "production" }]
+  "tags": [{ "name": "crypto-trading" }, { "name": "phase10" }, { "name": "production" }]
 }

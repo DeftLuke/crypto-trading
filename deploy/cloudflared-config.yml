@@ -10,6 +10,8 @@ ingress:
     service: http://backend:3001
   - hostname: trade.deftluke.online
     service: http://frontend:80
+  - hostname: terminal.deftluke.online
+    service: http://analytics-dashboard:3000
   - hostname: n8n.deftluke.online
     service: http://n8n:5678
   - hostname: ai.deftluke.online

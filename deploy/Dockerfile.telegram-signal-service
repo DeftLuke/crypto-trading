@@ -1,0 +1,15 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+COPY telegram-signal-service/requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY telegram-signal-service ./
+
+ENV TELEGRAM_SERVICE_CONFIG=/app/config.json
+ENV SIGNAL_STORE_PATH=/app/data/signals.jsonl
+ENV TELEGRAM_SESSION_NAME=/app/data/tradegpt_signal_ingestion
+ENV PYTHONUNBUFFERED=1
+
+CMD ["python", "-u", "main.py"]

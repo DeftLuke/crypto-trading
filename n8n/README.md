@@ -31,13 +31,17 @@ Copy from `production.env.json` (create from `production.env.example.json`):
 | `N8N_BASE_URL` | `https://n8n.deftluke.online` |
 | `N8N_API_KEY` | your n8n Public API key (Settings → API) |
 | `TELEGRAM_CHAT_ID` | `600639327` |
+| `RESEARCH_API_URL` | `http://research-api:8100` or production research URL |
 
 ## Workflows
 
-| File | Webhook |
-|------|---------|
-| `trade-execution.json` | `/webhook/trade-execute` |
-| `signal-notify.json` | `/webhook/signal-notify` |
+| File | Webhook | Target (Phase 10) |
+|------|---------|-------------------|
+| `trade-execution.json` | `/webhook/trade-execute` | **`RESEARCH_API_URL/control/signal`** (replaces legacy `/api/execute`) |
+| `platform-ai-chat.json` | `/webhook/platform-ai` | Research `/agent/chat` |
+| `platform-events.json` | `/webhook/platform-event` | Research `/operations/event` |
+| `daily-summary.json` | Schedule | Daily report workflow |
+| `signal-notify.json` | `/webhook/signal-notify` | Telegram notify only |
 | `ai-assistant.json` | `/webhook/ai-assistant` |
 | `app-integration.json` | `/webhook/app-signal` |
 
