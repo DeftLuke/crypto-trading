@@ -263,6 +263,7 @@ export async function approveTelegramInboxMessage(messageId, { marginUsdt = 0, l
     id: ingested.signal.id,
     source: 'telegram',
     manual_approved: !autoMode,
+    auto_executed: autoMode,
     test_levels_refreshed: Boolean(
       workingMessage.api_result?.test_levels_refreshed || prepared.levelsAdapted,
     ),

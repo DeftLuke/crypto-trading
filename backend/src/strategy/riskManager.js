@@ -188,7 +188,8 @@ export async function validateTelegramTradeExecution(signal) {
   }
 
   const minConfidence = config.externalSignals?.minValidationScore || config.strategy.minConfidence;
-  if (!signal.manual_approved && (signal.confidence || 0) < minConfidence) {
+  const skipConfidenceGate = signal.manual_approved || adaptedTelegram || unlimitedDemo;
+  if (!skipConfidenceGate && (signal.confidence || 0) < minConfidence) {
     passed = false;
     checks.push({
       rule: 'confidence',
@@ -200,7 +201,9 @@ export async function validateTelegramTradeExecution(signal) {
   }
 
   const testMode = config.externalSignals?.testMode === true;
-  const manualTest = testMode && (signal.manual_approved === true || signal.test_levels_refreshed === true);
+  const adaptedTelegram = signal.source === 'telegram' && signal.levels_adapted === true;
+  const manualTest = (testMode && (signal.manual_approved === true || signal.test_levels_refreshed === true))
+    || adaptedTelegram;
   const unlimitedDemo = hasUnlimitedDemoRisk(signal);
 
   const todayCount = await getTodayTradesCount();
@@ -262,7 +265,13 @@ export async function validateTelegramTradeExecution(signal) {
       checks.push({ rule: 'freshness', passed: true, message: `Valid until ${signal.expires_at}` });
     }
   } else if (manualTest) {
-    checks.push({ rule: 'freshness', passed: true, message: 'Test mode — freshness skipped for manual approve' });
+    checks.push({
+      rule: 'freshness',
+      passed: true,
+      message: adaptedTelegram
+        ? 'Levels adapted to current market — freshness reset'
+        : 'Test mode — freshness skipped for manual approve',
+    });
   }
 
   checks.push({ rule: 'ema_gate', passed: true, message: 'Skipped for Telegram VIP signal' });
