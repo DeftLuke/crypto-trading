@@ -32,7 +32,15 @@ export default function AppShell({ page, onNavigate, children }) {
           onClick={() => navigate('home')}
           title="TradeGPT Home"
         >
-          <img src="/logo.png" alt="" className="nav-logo-img" width="32" height="32" />
+          <img
+            src="/logo-32.webp"
+            srcSet="/logo-32.webp 1x, /logo-64.webp 2x"
+            alt=""
+            className="nav-logo-img"
+            width="32"
+            height="32"
+            decoding="async"
+          />
           <span>TradeGPT</span>
           <span
             className="nav-collapse-btn"

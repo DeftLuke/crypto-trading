@@ -1157,8 +1157,10 @@ body {
 /* App shell — left navigation */
 .app-shell {
   display: grid;
-  grid-template-columns: 220px 1fr;
-  min-height: 100vh;
+  grid-template-columns: var(--nav-width) 1fr;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
 }
 
 .left-nav {
@@ -1221,7 +1223,6 @@ body {
 
 .app-main {
   overflow-y: auto;
-  max-height: 100vh;
 }
 
 .page-header {

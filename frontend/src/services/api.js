@@ -1,4 +1,7 @@
 import { supabase } from '../lib/supabase';
+import { fetchWithTimeout } from '../lib/fetchTimeout';
+
+const API_TIMEOUT_MS = 5000;
 
 const API_URL = import.meta.env.VITE_API_URL || '';
 
@@ -64,7 +67,11 @@ export async function fetchPairStats() {
 }
 
 export async function fetchBalance() {
-  const res = await fetch(`${API_URL}/api/balance`, { headers: await authHeaders() });
+  const res = await fetchWithTimeout(
+    `${API_URL}/api/balance`,
+    { headers: await authHeaders() },
+    API_TIMEOUT_MS,
+  );
   return res.json();
 }
 
@@ -133,7 +140,7 @@ export async function fetchLearnedPatterns(limit = 30) {
 }
 
 export async function fetchScannerStatus() {
-  const res = await fetch(`${API_URL}/api/scanner/status`);
+  const res = await fetchWithTimeout(`${API_URL}/api/scanner/status`, {}, API_TIMEOUT_MS);
   return res.json();
 }
 

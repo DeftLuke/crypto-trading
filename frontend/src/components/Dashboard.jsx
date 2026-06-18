@@ -1,14 +1,19 @@
-import { useState } from 'react';
+import { lazy, Suspense, useState } from 'react';
 import AppShell from './AppShell';
 import { AppProvider } from '../context/AppContext';
 import HomePage from './HomePage';
-import TradingPage from './TradingPage';
-import StrategyStatsPage from './StrategyStatsPage';
-import StrategyTesterPage from './StrategyTesterPage';
-import SmartWalletScannerPage from './SmartWalletScannerPage';
-import SettingsPage from './SettingsPage';
-import PlatformFrame from './PlatformFrame';
 import { getNavItem } from '../lib/platformUrl';
+
+const TradingPage = lazy(() => import('./TradingPage'));
+const StrategyStatsPage = lazy(() => import('./StrategyStatsPage'));
+const StrategyTesterPage = lazy(() => import('./StrategyTesterPage'));
+const SmartWalletScannerPage = lazy(() => import('./SmartWalletScannerPage'));
+const SettingsPage = lazy(() => import('./SettingsPage'));
+const PlatformFrame = lazy(() => import('./PlatformFrame'));
+
+function PageLoader() {
+  return <div className="page-loading">Loading module…</div>;
+}
 
 function PlatformRoute({ pageId }) {
   const item = getNavItem(pageId);
@@ -47,7 +52,9 @@ export default function Dashboard() {
   return (
     <AppProvider>
       <AppShell page={page} onNavigate={setPage}>
-        {content}
+        <Suspense fallback={<PageLoader />}>
+          {content}
+        </Suspense>
       </AppShell>
     </AppProvider>
   );

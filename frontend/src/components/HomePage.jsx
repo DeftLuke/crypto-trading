@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { fetchControlDashboard } from '../services/researchApi';
+import { deferNonCritical } from '../lib/fetchTimeout';
 import { ALL_NAV_ITEMS, SERVICE_TO_PAGE } from '../lib/platformUrl';
 
 const FALLBACK_APPS = [
@@ -30,12 +31,13 @@ function healthClass(health) {
 export default function HomePage({ onNavigate }) {
   const [services, setServices] = useState([]);
   const [settings, setSettings] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [syncing, setSyncing] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
     let alive = true;
     async function load() {
+      setSyncing(true);
       try {
         const dash = await fetchControlDashboard();
         if (!alive) return;
@@ -45,10 +47,10 @@ export default function HomePage({ onNavigate }) {
       } catch (err) {
         if (alive) setError(err.message || 'Platform API unavailable');
       } finally {
-        if (alive) setLoading(false);
+        if (alive) setSyncing(false);
       }
     }
-    load();
+    deferNonCritical(load);
     const id = setInterval(load, 30000);
     return () => { alive = false; clearInterval(id); };
   }, []);
@@ -82,7 +84,7 @@ export default function HomePage({ onNavigate }) {
           <p className="home-kicker">TradeGPT Platform</p>
           <h1>Command center</h1>
           <p className="home-sub">
-            {loading ? 'Loading services…' : `${running} of ${cards.length} modules active`}
+            {syncing && services.length === 0 ? 'Syncing platform status…' : `${running} of ${cards.length} modules active`}
             {settings?.auto_trading && ' · Auto-trade enabled'}
           </p>
         </div>
@@ -95,7 +97,9 @@ export default function HomePage({ onNavigate }) {
 
       {error && <div className="home-notice">Platform status limited — {error}. Core trading still works.</div>}
 
-      <div className="app-card-grid">
+      <section className="home-services" aria-labelledby="services-heading">
+        <h2 id="services-heading" className="home-section-title">All services</h2>
+        <div className="app-card-grid">
         {cards.map((card) => (
           <button key={card.id} type="button" className={`app-card ${stateClass(card.state)}`} onClick={() => onNavigate(card.id)}>
             <div className="app-card-top">
@@ -112,7 +116,8 @@ export default function HomePage({ onNavigate }) {
             </div>
           </button>
         ))}
-      </div>
+        </div>
+      </section>
     </div>
   );
 }

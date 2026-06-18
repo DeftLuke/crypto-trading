@@ -3,6 +3,7 @@ import {
   fetchBalance, fetchScannerStatus, startScanner, stopScanner, connectWebSocket,
 } from '../services/api';
 import { fetchControlSettings, updateControlSettings } from '../services/researchApi';
+import { deferNonCritical } from '../lib/fetchTimeout';
 
 const AppContext = createContext(null);
 
@@ -28,11 +29,16 @@ export function AppProvider({ children }) {
   }, []);
 
   useEffect(() => {
-    loadBalance();
-    loadPlatformSettings();
-    fetchScannerStatus().then((s) => setScannerOn(s.isRunning)).catch(() => {});
     connectWebSocket((data) => {
       if (data.type === 'scanner') setScannerOn(data.isRunning);
+    });
+    deferNonCritical(async () => {
+      await loadBalance();
+      await loadPlatformSettings();
+      try {
+        const s = await fetchScannerStatus();
+        setScannerOn(s.isRunning);
+      } catch { /* optional */ }
     });
     const id = setInterval(loadBalance, 60000);
     const onBalance = () => loadBalance();
