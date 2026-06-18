@@ -19,11 +19,11 @@ export function Sidebar({ collapsed }: { collapsed?: boolean }) {
   return (
     <aside
       className={cn(
-        "hidden md:flex flex-col border-r border-zinc-800 bg-zinc-950/90",
+        "hidden md:flex h-screen shrink-0 flex-col overflow-hidden border-r border-zinc-800 bg-zinc-950/90",
         collapsed ? "w-16" : "w-56"
       )}
     >
-      <div className="flex h-14 items-center gap-2 border-b border-zinc-800 px-4">
+      <div className="flex h-14 shrink-0 items-center gap-2 border-b border-zinc-800 px-4">
         <Activity className="h-5 w-5 text-emerald-500" />
         {!collapsed && (
           <div>
@@ -32,7 +32,7 @@ export function Sidebar({ collapsed }: { collapsed?: boolean }) {
           </div>
         )}
       </div>
-      <nav className="flex-1 space-y-0.5 p-2">
+      <nav className="min-h-0 flex-1 space-y-0.5 overflow-y-auto p-2">
         {items.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`);
           return (

@@ -14,6 +14,7 @@ recover_backend() {
     -p 127.0.0.1:3002:3001 --env-file .env -e PORT=3001 -e NODE_ENV=production \
     -e RESEARCH_API_URL= \
     --dns 8.8.8.8 --dns 1.1.1.1 \
+    --add-host=host.docker.internal:host-gateway \
     -v "$DEPLOY/keys:/app/keys:ro" \
     crypto-trading-backend:latest
 

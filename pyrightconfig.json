@@ -8,8 +8,6 @@
         "**/__pycache__",
         "research-platform/tests"
     ],
-    "venvPath": ".",
-    "venv": ".venv",
     "pythonVersion": "3.11",
     "pythonPlatform": "Windows",
     "typeCheckingMode": "basic",
@@ -37,7 +35,9 @@
             ]
         },
         {
-            "root": "research-platform"
+            "root": "research-platform",
+            "venvPath": "research-platform",
+            "venv": ".venv"
         }
     ]
 }

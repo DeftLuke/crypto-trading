@@ -34,7 +34,7 @@ export function TopNav({ onMenuClick }: { onMenuClick?: () => void }) {
 
   return (
     <>
-      <header className="sticky top-0 z-40 flex min-h-14 flex-wrap items-center gap-2 border-b border-zinc-800 bg-zinc-950/85 px-3 py-2 backdrop-blur-md sm:flex-nowrap sm:px-4">
+      <header className="z-40 flex min-h-14 shrink-0 flex-wrap items-center gap-2 border-b border-zinc-800 bg-zinc-950/85 px-3 py-2 backdrop-blur-md sm:flex-nowrap sm:px-4">
         <Button variant="ghost" size="icon" className="md:hidden" onClick={onMenuClick}>
           <Menu className="h-5 w-5" />
         </Button>

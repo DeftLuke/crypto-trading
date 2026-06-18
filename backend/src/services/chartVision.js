@@ -56,37 +56,58 @@ function normalizeChartSymbol(raw) {
   return s.endsWith('USDT') ? s : `${s}USDT`;
 }
 
+function gatewayCandidates() {
+  const urls = [
+    config.ai?.gatewayUrl,
+    config.ai?.publicUrl,
+    'https://ai.deftluke.online',
+  ]
+    .filter(Boolean)
+    .map((u) => String(u).replace(/\/$/, ''));
+  return [...new Set(urls)];
+}
+
 export async function callVisionModel(imageB64, userText) {
-  const gateway = config.ai?.gatewayUrl;
-  if (!gateway) throw new Error('AI gateway not configured');
+  const gateways = gatewayCandidates();
+  if (!gateways.length) throw new Error('AI gateway not configured');
 
   const prompt = `${CHART_SCAN_SYSTEM}\n\nUSER:\n${userText || 'Scan this chart for market structure and any trade setup.'}\n\nAnalyze the attached chart image.`;
 
-  const res = await fetch(`${gateway.replace(/\/$/, '')}/ollama/generate`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(config.ai?.apiKey ? { 'X-API-Key': config.ai.apiKey } : {}),
-    },
-    body: JSON.stringify({
-      model: VISION_MODEL,
-      prompt,
-      stream: false,
-      images: [imageB64],
-      options: { temperature: 0.2, num_predict: 900 },
-    }),
-    signal: AbortSignal.timeout(120000),
-  });
+  let lastError;
+  for (const gateway of gateways) {
+    try {
+      const res = await fetch(`${gateway}/ollama/generate`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(config.ai?.apiKey ? { 'X-API-Key': config.ai.apiKey } : {}),
+        },
+        body: JSON.stringify({
+          model: VISION_MODEL,
+          prompt,
+          stream: false,
+          images: [imageB64],
+          options: { temperature: 0.2, num_predict: 900 },
+        }),
+        signal: AbortSignal.timeout(120000),
+      });
 
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) {
-    throw new Error(data.error || `Vision API HTTP ${res.status}`);
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        throw new Error(data.error || `Vision API HTTP ${res.status}`);
+      }
+      if (data.error) throw new Error(data.error);
+
+      const parsed = parseJsonFromModel(data.response);
+      if (!parsed) throw new Error('Could not parse chart analysis from vision model');
+      return { parsed, model: VISION_MODEL };
+    } catch (err) {
+      lastError = err;
+      console.warn(`[ChartVision] ${gateway} failed:`, err.message);
+    }
   }
-  if (data.error) throw new Error(data.error);
 
-  const parsed = parseJsonFromModel(data.response);
-  if (!parsed) throw new Error('Could not parse chart analysis from vision model');
-  return { parsed, model: VISION_MODEL };
+  throw lastError || new Error('Vision gateway unreachable');
 }
 
 /** Download largest Telegram photo (or image document) as base64. */

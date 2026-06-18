@@ -17,12 +17,12 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   useWebSocket();
 
   return (
-    <div className="flex min-h-screen bg-zinc-950 pb-16 text-zinc-100 md:pb-0">
+    <div className="flex h-screen overflow-hidden bg-zinc-950 pb-16 text-zinc-100 md:pb-0">
       <Sidebar />
       <MobileDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} />
-      <div className="flex min-w-0 flex-1 flex-col">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
         <TopNav onMenuClick={() => setMobileOpen(true)} />
-        <main className="flex-1 overflow-auto px-3 py-4 sm:px-4 md:p-6">{children}</main>
+        <main className="min-h-0 flex-1 overflow-y-auto px-3 py-4 sm:px-4 md:p-6">{children}</main>
       </div>
       <MobileQuickNav />
     </div>

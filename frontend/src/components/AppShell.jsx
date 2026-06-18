@@ -4,7 +4,7 @@ import { NAV_SECTIONS } from '../lib/platformUrl';
 
 const MOBILE_QUICK_IDS = ['home', 'trading', 'platform-paper', 'platform-live', 'platform-dashboard'];
 
-export default function AppShell({ page, onNavigate, children }) {
+export default function AppShell({ page, onNavigate, children, embed = false }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const allItems = NAV_SECTIONS.flatMap((section) => section.items);
@@ -77,7 +77,7 @@ export default function AppShell({ page, onNavigate, children }) {
       </nav>
       <div className="app-content">
         <TopBar onNavigate={onNavigate} onMenuClick={() => setMobileMenuOpen(true)} />
-        <main className="app-main">{children}</main>
+        <main className={`app-main${embed ? ' app-main-embed' : ''}`}>{children}</main>
       </div>
       <nav className="mobile-bottom-nav" aria-label="Quick navigation">
         {quickItems.map((item) => (

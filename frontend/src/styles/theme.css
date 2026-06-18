@@ -992,6 +992,12 @@ body {
   backdrop-filter: blur(22px);
   border-right: 1px solid var(--border);
   box-shadow: inset -1px 0 0 rgba(255,255,255,0.03);
+  height: 100vh;
+  max-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .nav-brand,
@@ -1059,6 +1065,7 @@ body {
 
 .top-bar {
   height: 68px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1204,6 +1211,13 @@ select.mode-pill {
 
 .app-main {
   padding: 22px;
+}
+
+.app-main-embed {
+  overflow: hidden;
+  padding: 16px 22px 22px;
+  display: flex;
+  flex-direction: column;
 }
 
 .home-page {
@@ -1373,7 +1387,9 @@ select.mode-pill {
 .app-card:hover .app-card-go { opacity: 1; transform: translateX(3px); }
 
 .platform-frame-wrap {
-  height: calc(100vh - 112px);
+  flex: 1;
+  min-height: 0;
+  height: auto;
   border: 1px solid var(--border);
   border-radius: 24px;
   overflow: hidden;

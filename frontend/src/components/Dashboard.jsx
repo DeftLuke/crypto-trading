@@ -51,7 +51,7 @@ export default function Dashboard() {
 
   return (
     <AppProvider>
-      <AppShell page={page} onNavigate={setPage}>
+      <AppShell page={page} onNavigate={setPage} embed={page.startsWith('platform-')}>
         <Suspense fallback={<PageLoader />}>
           {content}
         </Suspense>
