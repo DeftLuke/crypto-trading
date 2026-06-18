@@ -25,7 +25,8 @@ class MainTradingApiClient:
         return data.get("sources", [])
 
     async def validate_signal(self, payload: dict[str, Any]) -> dict[str, Any]:
-        body = {**payload, "allow_stale": True, "test_mode": True}
+        test_mode = os.getenv("TG_TEST_MODE", "").lower() in {"1", "true", "yes"}
+        body = {**payload, "allow_stale": test_mode, "test_mode": test_mode}
         return await asyncio.to_thread(self._post, "/external-signals/validate", body)
 
     async def request_scrape_recent(self, limit: int = 25) -> dict[str, Any]:

@@ -51,6 +51,15 @@ class AiParserClient:
         self.model = os.getenv("AI_PARSER_MODEL", "qwen2.5:7b-instruct")
         self.vision_model = os.getenv("AI_VISION_MODEL", "llava:7b")
 
+    @property
+    def _gateway_candidates(self) -> list[str]:
+        urls = [
+            self.gateway_url,
+            os.getenv("AI_GATEWAY_PUBLIC_URL", "").strip(),
+            "https://ai.deftluke.online",
+        ]
+        return list(dict.fromkeys(u.rstrip("/") for u in urls if u))
+
     def parse(self, context: ParseContext, provider: ProviderConfig) -> NormalizedSignal | None:
         if not self.enabled:
             return None
@@ -153,34 +162,42 @@ MESSAGES:
                 return vision
 
         if self.url and "/chat" in self.url:
-            return self._parse_json_content(self._post_json(self.url, {
+            parsed = self._parse_json_content(self._post_json(self.url, {
                 "question": f"{user_text}\n\nExtract the futures signal as JSON.",
                 "systemPrompt": system,
             }))
+            if parsed:
+                return parsed
 
-        gateway_chat = f"{self.gateway_url}/chat"
-        content = self._post_json(gateway_chat, {
-            "question": f"{user_text}\n\nExtract the futures signal as JSON.",
-            "systemPrompt": system,
-        })
-        return self._parse_json_content(content)
+        for base in self._gateway_candidates:
+            content = self._post_json(f"{base}/chat", {
+                "question": f"{user_text}\n\nExtract the futures signal as JSON.",
+                "systemPrompt": system,
+            })
+            parsed = self._parse_json_content(content)
+            if parsed:
+                return parsed
+        return None
 
     def _call_vision(self, system: str, user_text: str, image_b64: str) -> dict | None:
-        ollama_url = f"{self.gateway_url}/ollama/generate"
         payload = {
             "model": self.vision_model,
             "prompt": f"{system}\n\nUSER MESSAGE:\n{user_text}\n\nRead the chart image and extract the signal JSON.",
             "stream": False,
             "images": [image_b64],
         }
-        content = self._post_json(ollama_url, payload, ollama=True)
-        parsed = self._parse_json_content(content)
-        if parsed:
-            return parsed
-
-        payload["model"] = self.model
-        content = self._post_json(ollama_url, payload, ollama=True)
-        return self._parse_json_content(content)
+        for base in self._gateway_candidates:
+            content = self._post_json(f"{base}/ollama/generate", payload, ollama=True)
+            parsed = self._parse_json_content(content)
+            if parsed:
+                return parsed
+            payload["model"] = self.model
+            content = self._post_json(f"{base}/ollama/generate", payload, ollama=True)
+            parsed = self._parse_json_content(content)
+            if parsed:
+                return parsed
+            payload["model"] = self.vision_model
+        return None
 
     def _headers(self) -> dict[str, str]:
         headers = {"Content-Type": "application/json"}

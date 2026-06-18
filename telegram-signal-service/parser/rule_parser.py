@@ -17,6 +17,10 @@ TAKE_PROFIT_BLOCK_RE = re.compile(
     re.IGNORECASE,
 )
 NUMBER_RE = re.compile(r"(?<![A-Za-z])([0-9]+(?:\.[0-9]+)?)(?![A-Za-z])")
+COMPACT_SIGNAL_RE = re.compile(
+    r"\b([A-Za-z][A-Za-z0-9]{1,11})\s+(long|short|buy|sell)\s+([0-9]+(?:\.[0-9]+)?)\b",
+    re.IGNORECASE,
+)
 
 
 def _first_float(match: re.Match[str] | None) -> float | None:
@@ -70,8 +74,35 @@ def _extract_take_profits(cleaned: str, entry: float | None, stop_loss: float | 
     return []
 
 
+def _try_compact_signal(cleaned: str, provider: ProviderConfig) -> NormalizedSignal | None:
+    match = COMPACT_SIGNAL_RE.search(cleaned)
+    if not match:
+        return None
+    base = match.group(1).upper()
+    symbol = base if base.endswith("USDT") else f"{base}USDT"
+    side_token = match.group(2).upper()
+    side = "LONG" if side_token in {"LONG", "BUY"} else "SHORT"
+    entry = float(match.group(3))
+    stop_pct = 0.025
+    stop_loss = entry * (1 + stop_pct) if side == "SHORT" else entry * (1 - stop_pct)
+    return NormalizedSignal(
+        provider=provider.name,
+        symbol=symbol,
+        side=side,
+        entry=entry,
+        stop_loss=stop_loss,
+        take_profit=[],
+        raw_message=cleaned,
+        parser="rule-compact",
+        metadata={"levels_source": "inferred", "compact_format": True},
+    ).ensure_take_profits().validate()
+
+
 def parse_generic_signal(message: str, provider: ProviderConfig) -> NormalizedSignal | None:
     cleaned = message.replace(",", "").replace(":", " ")
+    compact = _try_compact_signal(cleaned, provider)
+    if compact:
+        return compact
     symbol = _normalize_symbol(cleaned, provider.symbols_quote_asset)
     entry = _first_float(ENTRY_RE.search(cleaned))
     stop_loss = _first_float(SL_RE.search(cleaned))

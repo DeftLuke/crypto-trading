@@ -905,17 +905,30 @@ router.post('/telegram/messages', async (req, res) => {
     const stage = body.api_result?.pipeline_stage
       || (body.parse_status === 'skipped' ? 'received' : body.api_result?.passed ? 'validated' : 'parsing');
     const isScrape = Boolean(body.api_result?.scrape);
+    const isLive = body.api_result?.live === true;
     const prevStage = existing?.api_result?.pipeline_stage;
     const stageChanged = prevStage !== stage;
     const isNew = !existing;
-    if (!isScrape && (isNew || stageChanged)) {
+    if (isNew || stageChanged || (isScrape && stage === 'validated')) {
       broadcastTelegramPipeline(data, stage);
     }
     if (data?.parse_status === 'parsed' && data?.id) {
       const { tryAutoExecuteTelegramMessage } = await import('../services/telegramInbox.js');
-      tryAutoExecuteTelegramMessage(data.id).catch((err) =>
-        logEvent('warn', 'telegramInbox', `Auto-trade skipped: ${err.message}`, { messageId: data.id })
-      );
+      tryAutoExecuteTelegramMessage(data.id)
+        .then(async (autoResult) => {
+          if (autoResult?.ok) return;
+          const reason = autoResult?.reason || 'unknown';
+          if (reason === 'auto_trading_off' || reason === 'scrape_inbox_only' || reason === 'already_executed') return;
+          await logEvent('info', 'telegramInbox', `Auto-trade not executed: ${reason}`, {
+            messageId: data.id,
+            symbol: data.parsed_signal?.symbol,
+            live: isLive,
+            scrape: isScrape,
+          });
+        })
+        .catch((err) =>
+          logEvent('warn', 'telegramInbox', `Auto-trade skipped: ${err.message}`, { messageId: data.id })
+        );
     }
     res.json({ ok: true, message: data });
   } catch (err) {

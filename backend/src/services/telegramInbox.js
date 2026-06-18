@@ -315,9 +315,37 @@ export async function tryAutoExecuteTelegramMessage(messageId) {
   if (error || !message) return { ok: false, reason: 'not_found' };
   if (message.parse_status !== 'parsed' || !message.parsed_signal) return { ok: false, reason: 'not_parsed' };
   if (message.api_result?.executed || message.api_result?.approved) return { ok: false, reason: 'already_executed' };
+
+  const isScrape = Boolean(message.api_result?.scrape);
+  const isLive = message.api_result?.live === true;
+  const testMode = config.externalSignals.testMode === true;
+  const maxAgeMinutes = config.externalSignals.maxSignalAgeMinutes || 15;
+  const receivedAt = new Date(message.received_at || message.message_date || 0).getTime();
+  const ageMinutes = Number.isFinite(receivedAt)
+    ? Math.round((Date.now() - receivedAt) / 60000)
+    : null;
+  const freshEnough = ageMinutes == null || ageMinutes <= maxAgeMinutes;
+
+  if (isScrape && !isLive) {
+    if (!freshEnough && !testMode) {
+      return { ok: false, reason: 'scrape_stale_skip', ageMinutes };
+    }
+    if (!message.api_result?.passed && !message.api_result?.ready_to_approve) {
+      return { ok: false, reason: 'scrape_not_validated' };
+    }
+    return { ok: false, reason: 'scrape_inbox_only', ready_to_approve: true };
+  }
+
+  const payload = parsedSignalToPayload(message);
+  const ingestOpts = {
+    validateOnly: true,
+    allowStale: testMode || freshEnough,
+    testMode,
+    skipScoreGate: testMode,
+  };
+
   if (!message.api_result?.passed && !message.api_result?.ready_to_approve) {
-    const payload = parsedSignalToPayload(message);
-    const validation = await ingestExternalSignal(payload, { validateOnly: true });
+    const validation = await ingestExternalSignal(payload, ingestOpts);
     if (!validation.passed) {
       await updateTelegramSignalMessage(messageId, {
         api_result: {
@@ -326,8 +354,13 @@ export async function tryAutoExecuteTelegramMessage(messageId) {
           ready_to_approve: false,
           reason: validation.reason,
           validation: validation.validation,
+          pipeline_stage: 'rejected',
         },
       });
+      broadcastTelegramPipeline(
+        { ...message, api_result: { ...(message.api_result || {}), passed: false, reason: validation.reason } },
+        'rejected',
+      );
       return { ok: false, reason: validation.reason || 'validation_failed' };
     }
     await updateTelegramSignalMessage(messageId, {
@@ -342,11 +375,46 @@ export async function tryAutoExecuteTelegramMessage(messageId) {
   }
 
   const symbolCheck = await assertSymbolAvailableForApprove(message);
-  if (!symbolCheck.ok) return { ok: false, reason: symbolCheck.error };
+  if (!symbolCheck.ok) {
+    await logEvent('warn', 'telegramInbox', `Auto-trade blocked: ${symbolCheck.error}`, {
+      messageId,
+      symbol: payload.symbol,
+    });
+    return { ok: false, reason: symbolCheck.error };
+  }
 
-  const defaults = await getDefaultTradeParams();
-  return approveTelegramInboxMessage(messageId, {
+  const defaults = await getDefaultTradeParams({
+    entry: payload.entry,
+    stopLoss: payload.stop_loss,
+    symbol: payload.symbol,
+  });
+  const result = await approveTelegramInboxMessage(messageId, {
     marginUsdt: defaults.margin_usdt,
     leverage: defaults.leverage,
   });
+
+  if (!result.ok) {
+    await logEvent('warn', 'telegramInbox', `Auto-trade failed: ${result.error || result.reason || 'unknown'}`, {
+      messageId,
+      symbol: payload.symbol,
+      reason: result.error || result.reason,
+      checks: result.checks,
+    });
+    if (message.api_result?.passed || message.api_result?.ready_to_approve) {
+      try {
+        const { sendSignalNotification } = await import('./telegram.js');
+        const ingested = await ingestExternalSignal(payload, {
+          ...ingestOpts,
+          validateOnly: false,
+        });
+        if (ingested.passed && ingested.signal?.id) {
+          await sendSignalNotification(ingested.signal, ingested.signal.id);
+        }
+      } catch (notifyErr) {
+        await logEvent('warn', 'telegramInbox', `Fallback notify failed: ${notifyErr.message}`, { messageId });
+      }
+    }
+  }
+
+  return result;
 }
