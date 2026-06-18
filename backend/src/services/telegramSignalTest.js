@@ -4,6 +4,7 @@ import { ingestExternalSignal } from './externalSignalIngestion.js';
 import { getTelegramMessageById, parsedSignalToPayload } from './telegramInbox.js';
 import { logEvent, updateTelegramSignalMessage } from './supabase.js';
 import { broadcastTelegramPipeline } from './wsBroadcast.js';
+import { repriceSignalLevels } from './telegramSignalLevels.js';
 
 function roundLevels(symbol, levels, rules) {
   const tick = rules?.tickSize || 0.0001;
@@ -14,42 +15,6 @@ function roundLevels(symbol, levels, rules) {
     tp1: roundPriceToTick(levels.tp1, tick),
     tp2: roundPriceToTick(levels.tp2, tick),
     tp3: roundPriceToTick(levels.tp3, tick),
-  };
-}
-
-/** Reprice entry/SL/TPs from current mark while keeping original % distances. */
-export function repriceSignalLevels(parsed = {}, markPrice, side) {
-  const isLong = String(side || parsed.side || 'LONG').toUpperCase() === 'LONG';
-  const entry = parseFloat(parsed.entry) || markPrice;
-  const sl = parseFloat(parsed.stop_loss);
-  const tps = (Array.isArray(parsed.take_profit) ? parsed.take_profit : [])
-    .map((v) => parseFloat(v))
-    .filter((v) => Number.isFinite(v) && v > 0);
-
-  const slPct = Number.isFinite(sl) && entry > 0 ? Math.abs(entry - sl) / entry : 0.03;
-  const tpPcts = tps.length
-    ? tps.map((tp) => Math.abs(tp - entry) / entry)
-    : [0.02, 0.04, 0.06];
-
-  const newEntry = markPrice;
-  let newSl;
-  let newTps;
-  if (isLong) {
-    newSl = newEntry * (1 - slPct);
-    newTps = tpPcts.map((pct) => newEntry * (1 + pct));
-  } else {
-    newSl = newEntry * (1 + slPct);
-    newTps = tpPcts.map((pct) => newEntry * (1 - pct));
-  }
-
-  return {
-    side: isLong ? 'LONG' : 'SHORT',
-    entry: newEntry,
-    stop_loss: newSl,
-    take_profit: newTps,
-    tp1: newTps[0],
-    tp2: newTps[1],
-    tp3: newTps[2],
   };
 }
 

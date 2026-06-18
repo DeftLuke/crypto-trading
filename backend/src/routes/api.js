@@ -918,7 +918,7 @@ router.post('/telegram/messages', async (req, res) => {
         .then(async (autoResult) => {
           if (autoResult?.ok) return;
           const reason = autoResult?.reason || 'unknown';
-          if (reason === 'auto_trading_off' || reason === 'scrape_inbox_only' || reason === 'already_executed') return;
+          if (reason === 'auto_trading_off' || reason === 'already_executed' || reason === 'manual_approval_required') return;
           await logEvent('info', 'telegramInbox', `Auto-trade not executed: ${reason}`, {
             messageId: data.id,
             symbol: data.parsed_signal?.symbol,
@@ -1624,7 +1624,7 @@ router.post('/execute', strictRateLimit(20), optionalAuth, requireInternalOrAuth
       return res.status(400).json({ error: 'Calculated quantity is zero' });
     }
 
-    const levelIssues = (signal.test_levels_refreshed || (config.externalSignals.testMode && signal.manual_approved))
+    const levelIssues = (signal.test_levels_refreshed || signal.levels_adapted || (config.externalSignals.testMode && signal.manual_approved))
       ? []
       : protectionTriggerIssues(direction, markPrice, { stopLoss, tp1, tp2 });
     if (levelIssues.length > 0) {
