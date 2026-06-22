@@ -4,7 +4,7 @@ import { NAV_SECTIONS } from '../lib/platformUrl';
 
 const MOBILE_QUICK_IDS = ['home', 'trading', 'platform-paper', 'platform-live', 'platform-dashboard'];
 
-export default function AppShell({ page, onNavigate, children, embed = false }) {
+export default function AppShell({ page, onNavigate, children, embed = false, navPending = false }) {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const allItems = NAV_SECTIONS.flatMap((section) => section.items);
@@ -16,7 +16,8 @@ export default function AppShell({ page, onNavigate, children, embed = false }) 
   };
 
   return (
-    <div className={`app-shell ${collapsed ? 'nav-collapsed' : ''} ${mobileMenuOpen ? 'mobile-nav-open' : ''}`}>
+    <div className={`app-shell ${collapsed ? 'nav-collapsed' : ''} ${mobileMenuOpen ? 'mobile-nav-open' : ''} ${navPending ? 'is-nav-pending' : ''}`}>
+      {navPending && <div className="app-nav-progress" aria-hidden="true" />}
       {mobileMenuOpen && (
         <button
           type="button"

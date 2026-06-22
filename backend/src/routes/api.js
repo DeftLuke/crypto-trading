@@ -30,6 +30,15 @@ import {
   supersedeAllTelegramMessagesForChat,
 } from '../services/supabase.js';
 import {
+  recordTelegramMessageAudit,
+  getTelegramRawMessages,
+  getTelegramRawMessageById,
+  getParsedSignalsRaw,
+  getTelegramSignalRejections,
+  getTelegramGroupMemory,
+  upsertTelegramGroupMemory,
+} from '../services/telegramAudit.js';
+import {
   getKlines,
   parseKlines,
   getUsdtBalance,
@@ -48,18 +57,22 @@ import {
   getMarkPrice,
   getSymbolRules,
   roundPriceToTick,
+  isBlockedTradeSymbol,
 } from '../services/binance.js';
+import { getFreshMarkPrice } from '../services/markPrice.js';
 import { attachIndicators } from '../strategy/indicators.js';
 import { analyzeSMC } from '../strategy/smc.js';
 import { runMTFAnalysis, getMTFBias } from '../strategy/mtfAnalysis.js';
 import { positionMonitor } from '../jobs/positionMonitor.js';
-import { sendAlert, sendSignalNotification } from '../services/telegram.js';
+import { sendAlert, sendSignalNotification, sendTradeLifecycle, sendTradeUpdate } from '../services/telegram.js';
 import { getSupabase } from '../services/supabase.js';
 import { checkOllamaHealth } from '../services/ollama.js';
+import { checkOpenClawHealth } from '../services/openclaw.js';
 import { checkN8nHealth } from '../services/n8n.js';
 import { askTradingAgent, buildTradingContext, getLessonsSummary } from '../services/aiAgent.js';
 import { askPersonalAssistant } from '../services/personalAssistant.js';
 import { scheduleSignalOutcomeCheck } from '../jobs/signalOutcomeTracker.js';
+import { extractLineageFromSignal } from '../services/signalLineage.js';
 import {
   getSimplePrices,
   getOHLC,
@@ -70,6 +83,14 @@ import { getChartSetups } from '../services/chartSetups.js';
 import { getScannerState, setScannerRunning } from '../services/scannerState.js';
 import { triggerScan } from '../jobs/marketScanner.js';
 import { getStrategyStats, getLearnedPatterns } from '../services/tradeLearner.js';
+import { getStrategy, listStrategies } from '../strategies/registry.js';
+import { listCatalog, getBacktestRankings } from '../services/strategyCatalog.js';
+import { getSignalPerformanceReport, getRecentLessons, getSignalPerformanceFeed } from '../services/signalAnalytics.js';
+import { isExchangeBlocked, getExchangeBlockInfo, noteExchangeRateLimit } from '../services/exchangeRateLimit.js';
+import { findDbTradeForLivePosition, reconcileLivePosition, reconcileAllFlatExchangeTrades } from '../services/tradeReconcile.js';
+import { finalizeTradeClose, reconcileFlatExchangeTrade } from '../services/tradeClose.js';
+import { resolveTradePnl, resolveClosedTradeSizing, fetchExchangeRealizedPnl } from '../services/tradePnl.js';
+import { validateBacktestGate } from '../services/strategyGate.js';
 import {
   saveUserApiKeys,
   saveUserTradingMode,
@@ -177,6 +198,22 @@ import {
 import { loadSignals } from '../services/walletScanner/store.js';
 import { startWalletScannerJob, stopWalletScannerJob, triggerWalletScan, triggerDailyMaintenance } from '../jobs/walletScannerJob.js';
 import { ingestExternalSignal } from '../services/externalSignalIngestion.js';
+import {
+  placeInitialTradeProtection,
+  placeScaleOutTakeProfits,
+  verifyExchangeProtection,
+  ensureTradeProtection,
+} from '../services/tradeProtection.js';
+import { calculateTPQuantities } from '../strategy/riskManager.js';
+import { computeOpenExposure, computeOpenMargin } from '../services/tradePnl.js';
+import { finalizeTradeOpen } from '../services/tradeExecution.js';
+import {
+  acquireExecutionLock,
+  releaseExecutionLock,
+  logDuplicateBlocked,
+} from '../services/executionLock.js';
+import { getCandleCoverage } from '../services/candleStore.js';
+import { runPythonBacktest } from '../services/pythonBacktest.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -189,8 +226,8 @@ function runBacktestIsolated(options) {
       if (settled) return;
       settled = true;
       child.kill('SIGTERM');
-      reject(new Error('Backtest timed out after 3 minutes. Try 15m timeframe or 1M period.'));
-    }, 180000);
+      reject(new Error('Backtest timed out after 5 minutes. First run may sync candle data — retry or use 1M period.'));
+    }, 300000);
 
     const finish = (fn) => {
       if (settled) return;
@@ -205,7 +242,7 @@ function runBacktestIsolated(options) {
     child.on('error', (err) => finish(() => reject(err)));
     child.on('exit', (code) => {
       if (!settled && code !== 0) {
-        finish(() => reject(new Error('Backtest process crashed. Use 15m entry TF for 3M+ periods.')));
+        finish(() => reject(new Error(`Backtest process crashed (code ${code}). Often OOM on long periods — use 15m TF or shorter period.`)));
       }
     });
     child.send(options);
@@ -263,15 +300,39 @@ async function getExchangePosition(symbol) {
   }
 }
 
+let positionsCache = null;
+let positionsCacheAt = 0;
+const POSITIONS_CACHE_MS = 15_000;
+
 async function listExchangePositions() {
   try {
+    const { getCachedPositions, isUserStreamLive } = await import('../services/binanceUserStream.js');
+    if (isUserStreamLive()) {
+      const live = getCachedPositions();
+      positionsCache = live;
+      positionsCacheAt = Date.now();
+      return live;
+    }
+  } catch { /* fall through to REST */ }
+
+  if (isExchangeBlocked() && positionsCache) {
+    return positionsCache;
+  }
+  if (positionsCache && Date.now() - positionsCacheAt < POSITIONS_CACHE_MS) {
+    return positionsCache;
+  }
+  try {
     const rows = await getExchangePositionRows();
-    return (Array.isArray(rows) ? rows : [])
+    const list = (Array.isArray(rows) ? rows : [])
       .map(positionRowToExchangePosition)
       .filter(Boolean);
+    positionsCache = list;
+    positionsCacheAt = Date.now();
+    return list;
   } catch (err) {
+    noteExchangeRateLimit(err.message);
     await logEvent('warn', 'exchange.positions', `Position sync failed: ${err.message}`);
-    return [];
+    return positionsCache || [];
   }
 }
 
@@ -310,39 +371,110 @@ async function loadActionTrade(tradeId) {
 
 async function enrichTrade(trade, exchangePosition = null) {
   const entry = toNumber(trade.entry_price);
-  const live = exchangePosition || (['open', 'partial'].includes(trade.status) ? await getExchangePosition(trade.symbol) : null);
-  const quantity = live?.quantity || toNumber(trade.quantity);
+  const isLive = ['open', 'partial'].includes(trade.status);
+  const live = exchangePosition || (isLive ? await getExchangePosition(trade.symbol) : null);
+  const quantity = isLive ? (live?.quantity || toNumber(trade.quantity)) : toNumber(trade.original_quantity || trade.quantity);
   const leverage = live?.leverage || tradeLeverage(trade);
-  const currentPrice = live?.current_price || (['open', 'partial'].includes(trade.status)
-    ? await getMarkPrice(trade.symbol).catch(() => entry)
-    : toNumber(trade.exit_price, entry));
+  let currentPrice = live?.current_price;
+  if (!currentPrice && isLive) {
+    currentPrice = await getFreshMarkPrice(trade.symbol).catch(() => null);
+    if (!currentPrice) currentPrice = await getMarkPrice(trade.symbol).catch(() => entry);
+  }
+  if (!currentPrice) currentPrice = toNumber(trade.exit_price, entry);
   const direction = trade.direction;
-  const unrealized = live?.unrealized_pnl ?? (direction === 'LONG'
-    ? (currentPrice - entry) * quantity
-    : (entry - currentPrice) * quantity);
-  const realized = toNumber(trade.pnl);
-  const notional = live?.notional || currentPrice * quantity;
-  const margin = live?.margin || (leverage > 0 ? notional / leverage : notional);
-  const totalPnl = ['open', 'partial'].includes(trade.status) ? realized + unrealized : realized;
+
+  const pnlBreakdown = await resolveTradePnl(trade, live, currentPrice);
+  const closedSizing = !isLive ? resolveClosedTradeSizing(trade) : null;
+  const notional = isLive
+    ? (live?.notional || currentPrice * toNumber(live?.quantity || trade.quantity))
+    : closedSizing.notional;
+  const margin = isLive
+    ? (live?.margin || (leverage > 0 ? notional / leverage : notional))
+    : closedSizing.margin;
+  const displayQty = isLive ? toNumber(live?.quantity || trade.quantity) : closedSizing.quantity;
+  const runnerMargin = margin;
+  const roeBase = isLive && (trade.tp1_hit || trade.tp2_hit) ? runnerMargin : margin;
+  const unrealizedOnly = pnlBreakdown.unrealized;
+
+  let protection = null;
+  let protectionIssues = [];
+  if (isLive) {
+    try {
+      protection = await verifyExchangeProtection(trade.symbol);
+    } catch {
+      protection = null;
+    }
+  }
+
+  let displaySl = toNumber(trade.stop_loss ?? trade.initial_stop_loss);
+  let displayTp1 = toNumber(trade.tp1);
+  let displayTp2 = toNumber(trade.tp2);
+  if (protection?.hasPosition) {
+    const slPx = parseFloat(protection.slOrders?.[0]?.triggerPrice);
+    if (Number.isFinite(slPx) && slPx > 0) displaySl = slPx;
+
+    const tpOrders = (protection.tpOrders || [])
+      .map((o) => ({ price: parseFloat(o.triggerPrice), qty: parseFloat(o.quantity || 0) }))
+      .filter((o) => Number.isFinite(o.price) && o.price > 0);
+    if (tpOrders.length > 0) {
+      const origQty = toNumber(trade.original_quantity || trade.quantity || live?.quantity);
+      const { tp1Qty, tp2Qty } = calculateTPQuantities(origQty);
+      const matchTp = (targetQty, fallback) => {
+        if (!targetQty || tpOrders.length === 0) return fallback;
+        const hit = tpOrders.find((o) => o.qty > 0 && Math.abs(o.qty - targetQty) / targetQty <= 0.06);
+        return hit?.price ?? fallback;
+      };
+      if (!trade.tp1_hit) displayTp1 = matchTp(tp1Qty, tpOrders[0]?.price ?? displayTp1);
+      else if (!trade.tp2_hit) displayTp2 = matchTp(tp2Qty, tpOrders[0]?.price ?? displayTp2);
+    }
+    if (protection.slCount < 1) protectionIssues.push('missing_sl');
+    const minTp = trade.tp1_hit ? (trade.tp2_hit ? 0 : 1) : 1;
+    if (protection.tpCount < minTp) protectionIssues.push('missing_tp');
+  } else if (isLive && live?.quantity > 0) {
+    protectionIssues.push('unverified');
+  }
+
+  const protectionOk = protection?.hasPosition && protection.slCount >= 1
+    && protection.tpCount >= (trade.tp1_hit ? (trade.tp2_hit ? 0 : 1) : 1);
 
   return {
     ...trade,
     entry_price: live?.entry_price || entry,
-    quantity,
+    quantity: displayQty,
     exchange_quantity: live?.quantity,
     current_price: currentPrice,
-    unrealized_pnl: ['open', 'partial'].includes(trade.status) ? unrealized : 0,
-    profit_usd: totalPnl,
-    profit_percent: entry && quantity ? (totalPnl / (entry * quantity)) * 100 : 0,
-    pnl_usd: totalPnl,
-    pnl_pct: entry && quantity ? (totalPnl / (entry * quantity)) * 100 : 0,
-    roe_pct: margin > 0 ? (totalPnl / margin) * 100 : 0,
+    stop_loss: displaySl || trade.stop_loss,
+    tp1: displayTp1 || trade.tp1,
+    tp2: displayTp2 || trade.tp2,
+    realized_pnl: pnlBreakdown.realized,
+    unrealized_pnl: isLive ? unrealizedOnly : 0,
+    exchange_realized_pnl: pnlBreakdown.exchangeSynced ? pnlBreakdown.realized : trade.exchange_realized_pnl,
+    profit_usd: isLive ? pnlBreakdown.total : toNumber(trade.exchange_realized_pnl ?? trade.pnl),
+    profit_percent: closedSizing?.profit_percent ?? (entry && displayQty ? (pnlBreakdown.total / (entry * displayQty)) * 100 : 0),
+    pnl_usd: isLive ? pnlBreakdown.total : toNumber(trade.exchange_realized_pnl ?? trade.pnl),
+    pnl_pct: closedSizing?.profit_percent ?? (entry && displayQty ? (pnlBreakdown.total / (entry * displayQty)) * 100 : 0),
+    roe_pct: isLive
+      ? (roeBase > 0 ? (unrealizedOnly / roeBase) * 100 : 0)
+      : closedSizing.roe_pct,
     leverage,
     notional,
     margin,
-    take_profit: trade.tp1,
+    take_profit: trade.tp2_hit ? trade.tp1 : trade.tp1,
+    runner_stop: trade.tp2_hit ? trade.stop_loss : null,
     position_id: trade.id,
     strategy_name: 'SMC-MTF',
+    protection_ok: protectionOk,
+    protection_missing: protectionIssues.length > 0,
+    protection_issues: protectionIssues,
+    exchange_protection: protection
+      ? {
+          sl_count: protection.slCount,
+          tp_count: protection.tpCount,
+          sl_price: protection.slOrders?.[0]?.triggerPrice ?? null,
+          tp_prices: (protection.tpOrders || []).map((o) => o.triggerPrice),
+          has_position: protection.hasPosition,
+        }
+      : undefined,
   };
 }
 
@@ -353,26 +485,76 @@ async function enrichTrades(trades = []) {
 }
 
 async function getMergedOpenTrades(rawOpen = []) {
-  const livePositions = await listExchangePositions();
-  const dbSymbols = new Set((rawOpen || []).map((trade) => trade.symbol));
-  const dbEnriched = (await Promise.all((rawOpen || []).map(async (trade) => {
-    const live = livePositions.find((position) => position.symbol === trade.symbol);
-    if (!live || live.quantity <= 0) return null;
+  const LIST_MIN_NOTIONAL_USDT = 0.05;
+  const allLive = await listExchangePositions();
+  const openBySymbol = new Map((rawOpen || []).map((trade) => [trade.symbol, trade]));
+  const db = getSupabase();
+
+  const livePositions = allLive.filter((position) => {
+    if (position.quantity <= 0) return false;
+    if (openBySymbol.has(position.symbol)) return true;
+    const notional = position.notional || (position.quantity * (position.current_price || position.entry_price));
+    return notional >= LIST_MIN_NOTIONAL_USDT;
+  });
+
+  for (const position of allLive) {
+    if (openBySymbol.has(position.symbol) || !db) continue;
+    let data = null;
+    const { data: openRow } = await db
+      .from('trades')
+      .select('*')
+      .eq('symbol', position.symbol)
+      .in('status', ['open', 'partial'])
+      .order('opened_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    data = openRow;
+    if (!data) {
+      data = await findDbTradeForLivePosition(position.symbol, position.quantity);
+    }
+    if (data) openBySymbol.set(position.symbol, data);
+  }
+
+  const dbEnriched = (await Promise.all([...openBySymbol.entries()].map(async ([symbol, trade]) => {
+    let live = livePositions.find((position) => position.symbol === symbol)
+      || allLive.find((position) => position.symbol === symbol && position.quantity > 0);
+    if (!live || live.quantity <= 0) {
+      const { getLivePositionQty } = await import('../services/tradeProtection.js');
+      const qty = await getLivePositionQty(symbol);
+      if (!qty || qty <= 0) return null;
+      const mark = await getFreshMarkPrice(symbol).catch(() => null)
+        || await getMarkPrice(symbol).catch(() => parseFloat(trade.entry_price));
+      live = {
+        symbol,
+        quantity: qty,
+        entry_price: parseFloat(trade.entry_price),
+        current_price: mark,
+        notional: qty * (mark || 0),
+      };
+    }
     return enrichTrade(trade, live);
   }))).filter(Boolean);
+
+  const mergedSymbols = new Set([...openBySymbol.keys()]);
   const exchangeOnly = await Promise.all(livePositions
-    .filter((position) => !dbSymbols.has(position.symbol))
+    .filter((position) => !mergedSymbols.has(position.symbol))
     .map((position) => enrichTrade(exchangePositionToTrade(position), position)));
+
   return [...dbEnriched, ...exchangeOnly];
 }
 
 function computeTradePerformance(trades = []) {
   const closed = trades.filter((t) => !['open', 'partial'].includes(t.status));
+  const partial = trades.filter((t) => t.status === 'partial');
   const wins = closed.filter((t) => toNumber(t.pnl ?? t.profit_usd) > 0).length;
   const losses = closed.filter((t) => toNumber(t.pnl ?? t.profit_usd) < 0).length;
   const grossProfit = closed.reduce((sum, t) => sum + Math.max(0, toNumber(t.pnl ?? t.profit_usd)), 0);
   const grossLoss = Math.abs(closed.reduce((sum, t) => sum + Math.min(0, toNumber(t.pnl ?? t.profit_usd)), 0));
   const netProfit = closed.reduce((sum, t) => sum + toNumber(t.pnl ?? t.profit_usd), 0);
+  const bookedPartial = partial.reduce(
+    (sum, t) => sum + toNumber(t.exchange_realized_pnl ?? t.realized_pnl ?? t.pnl),
+    0,
+  );
   const total = closed.length;
 
   return {
@@ -382,6 +564,8 @@ function computeTradePerformance(trades = []) {
     win_rate: total ? (wins / total) * 100 : 0,
     profit_factor: grossLoss > 0 ? grossProfit / grossLoss : grossProfit > 0 ? grossProfit : 0,
     net_profit: netProfit,
+    partial_open: partial.length,
+    booked_partial_pnl: bookedPartial,
   };
 }
 
@@ -414,19 +598,33 @@ async function buildTradingDashboard() {
       available: balance.available,
       equity: walletBalance != null ? walletBalance + unrealized : null,
       unrealized_pnl: unrealized,
+      source: balance.source,
+      exchange_unreachable: balance.exchange_unreachable === true,
+      exchange_error: balance.error || null,
     }],
     positions,
     trades,
     performance: perf,
     risk: {
       open_positions: positions.length,
+      total_exposure: computeOpenExposure(positions),
+      total_margin: computeOpenMargin(positions),
       circuit_breaker: false,
       kill_switch: false,
     },
     health: {
       running: true,
       dry_run: config.binance?.demo !== false,
-      exchange_connected: walletBalance != null,
+      exchange_connected: balance.exchange_unreachable !== true && walletBalance != null && balance.source !== 'fallback',
+      user_stream: await (async () => {
+        try {
+          const { isUserStreamLive } = await import('../services/binanceUserStream.js');
+          return isUserStreamLive();
+        } catch {
+          return false;
+        }
+      })(),
+      ...getExchangeBlockInfo(),
     },
     execution: {
       fill_rate_pct: trades.length ? 100 : 0,
@@ -450,6 +648,11 @@ router.get('/health', async (req, res) => {
       research = { ok: false, reason: err.message };
     }
   }
+  let candleIngestion = { started: false };
+  try {
+    const { getCandleIngestionStatus } = await import('../jobs/candleIngestion.js');
+    candleIngestion = getCandleIngestionStatus();
+  } catch { /* */ }
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
@@ -457,8 +660,130 @@ router.get('/health', async (req, res) => {
     dune: dune.ok ? 'connected' : dune.reason || 'offline',
     tradingview: (await testTradingViewConnection()).ok ? 'connected' : 'offline',
     research: research.ok ? 'connected' : (research.reason || 'offline'),
+    candle_ingestion: candleIngestion.started ? 'running' : 'stopped',
     position_monitor: 'running',
+    ...(await import('../services/cache.js').then((m) => m.getCacheStats()).catch(() => ({}))),
   });
+});
+
+/** Institutional SMC v2 engine status (Python research-api). */
+router.get('/institutional-smc/health', async (req, res) => {
+  const { checkInstitutionalSmcHealth, getInstitutionalSmcConfig } = await import('../services/institutionalSmcClient.js');
+  const { getSignalEngineStatus } = await import('../services/signalEngineSelector.js');
+  const cfg = getInstitutionalSmcConfig();
+  const engine = await checkInstitutionalSmcHealth();
+  const selector = await getSignalEngineStatus();
+  res.json({
+    configured: cfg.configured,
+    enabled: cfg.enabled,
+    engine_version: cfg.engineVersion,
+    min_score: cfg.minScore,
+    timeframes: cfg.timeframes,
+    research_api: engine.ok ? engine.data : { ok: false, error: engine.error, offline: engine.offline },
+    phase: engine.ok ? (engine.data?.phase || 'CP6') : 'CP6',
+    signal_engine: selector,
+  });
+});
+
+router.get('/signal-engine/status', async (req, res) => {
+  const { cacheGetOrSet } = await import('../services/cache.js');
+  const { getSignalEngineStatus } = await import('../services/signalEngineSelector.js');
+  const { data, cache } = await cacheGetOrSet('dash:signal-engine', () => getSignalEngineStatus(), { ttlSec: 30, staleSec: 120 });
+  res.set('X-Cache', cache);
+  res.json(data);
+});
+
+router.post('/signal-engine', async (req, res) => {
+  const { setSignalEngine } = await import('../services/signalEngineSelector.js');
+  const engineId = req.body?.signal_engine;
+  if (!engineId) return res.status(400).json({ error: 'signal_engine required (smc-mtf | institutional-smc)' });
+  try {
+    const settings = await setSignalEngine(engineId, req.body?.actor || 'dashboard');
+    const { getSignalEngineStatus } = await import('../services/signalEngineSelector.js');
+    res.json({ ok: true, settings, signal_engine: await getSignalEngineStatus() });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+router.get('/institutional-smc/spec', async (req, res) => {
+  const { getInstitutionalSmcSpec, getInstitutionalSmcConfig } = await import('../services/institutionalSmcClient.js');
+  const cfg = getInstitutionalSmcConfig();
+  if (!cfg.configured) {
+    return res.status(503).json({ error: 'RESEARCH_API_URL not configured' });
+  }
+  const spec = await getInstitutionalSmcSpec();
+  if (!spec.ok) return res.status(502).json({ error: spec.error, offline: spec.offline });
+  res.json(spec.data);
+});
+
+/** Live exchange + WebSocket feed status (admin monitoring). */
+router.get('/exchange/stream-status', async (req, res) => {
+  const block = getExchangeBlockInfo();
+  let userStream = { running: false, live: false };
+  let publicWs = { connected: false, streams: 0 };
+  try {
+    const mod = await import('../services/binanceUserStream.js');
+    userStream = mod.getUserStreamStatus();
+  } catch { /* */ }
+  try {
+    const { binanceWs } = await import('../services/binanceWs.js');
+    publicWs = binanceWs.getStatus();
+  } catch { /* */ }
+
+  let restPing = { ok: false, skipped: true, reason: 'rate_limit_cooldown' };
+  if (!block.blocked) {
+    restPing = { ok: false, skipped: false, reason: null };
+    try {
+      const credentials = await getActiveApiKeys();
+      if (!credentials?.apiKey) {
+        restPing = { ok: false, reason: 'no_credentials' };
+      } else {
+        const result = await testUserConnection(credentials);
+        restPing = {
+          ok: true,
+          mode: result.mode,
+          balance: result.total,
+          available: result.balance,
+        };
+      }
+    } catch (err) {
+      noteExchangeRateLimit(err.message);
+      restPing = { ok: false, reason: err.message };
+    }
+  }
+
+  const positions = userStream.live
+    ? (await import('../services/binanceUserStream.js')).getCachedPositions()
+    : await listExchangePositions().catch(() => []);
+
+  res.json({
+    timestamp: new Date().toISOString(),
+    trading_mode: config.binance?.demo !== false ? 'demo' : 'live',
+    rate_limit: block,
+    rest_ping: restPing,
+    user_stream: userStream,
+    public_ws: publicWs,
+    positions: {
+      count: Array.isArray(positions) ? positions.length : 0,
+      symbols: (positions || []).map((p) => p.symbol),
+    },
+    demo_api_up: restPing.ok === true || userStream.live === true,
+  });
+});
+
+router.post('/exchange/stream-refresh', async (req, res) => {
+  try {
+    const { refreshUserStreamBootstrap, startUserStream } = await import('../services/binanceUserStream.js');
+    if (getExchangeBlockInfo().blocked) {
+      return res.status(429).json({ ok: false, ...getExchangeBlockInfo() });
+    }
+    const boot = await refreshUserStreamBootstrap();
+    const start = boot.ok ? boot : await startUserStream();
+    res.json({ ok: boot.ok || start.ok, bootstrap: boot, stream: start });
+  } catch (err) {
+    res.status(502).json({ ok: false, error: err.message });
+  }
 });
 
 router.all('/research/*', async (req, res) => {
@@ -467,13 +792,25 @@ router.all('/research/*', async (req, res) => {
     const data = await proxyResearch(req.method, path, ['GET', 'HEAD'].includes(req.method) ? undefined : req.body);
     res.json(data);
   } catch (err) {
+    if (err.code === 'ESTIMATE_CONFIRM_REQUIRED') {
+      return res.status(409).json({
+        error: err.message,
+        confirm_required: true,
+        estimate: err.estimate,
+      });
+    }
     res.status(502).json({ error: err.message });
   }
 });
 
 router.get('/control/settings', async (req, res) => {
   try {
-    res.json(await getControlSettings());
+    const { cacheGetOrSet } = await import('../services/cache.js');
+    const { getLocalControlSettings } = await import('../services/controlCenter.js');
+    const { data, cache } = await cacheGetOrSet('dash:settings', () => getLocalControlSettings(), { ttlSec: 30, staleSec: 120 });
+    res.set('Cache-Control', 'private, max-age=15, stale-while-revalidate=60');
+    res.set('X-Cache', cache);
+    res.json(data);
   } catch (err) {
     res.status(502).json({ error: err.message });
   }
@@ -481,7 +818,8 @@ router.get('/control/settings', async (req, res) => {
 
 router.post('/control/settings', async (req, res) => {
   try {
-    res.json(await updateControlSettings(req.body || {}, req.body?.actor || 'tradegpt'));
+    const { updateLocalControlSettings } = await import('../services/controlCenter.js');
+    res.json(await updateLocalControlSettings(req.body || {}, req.body?.actor || 'tradegpt'));
   } catch (err) {
     res.status(502).json({ error: err.message });
   }
@@ -489,7 +827,12 @@ router.post('/control/settings', async (req, res) => {
 
 router.get('/control/dashboard', async (req, res) => {
   try {
-    res.json(await getControlDashboard());
+    const { cacheGetOrSet } = await import('../services/cache.js');
+    const { getLocalControlDashboard } = await import('../services/controlCenter.js');
+    const { data, cache } = await cacheGetOrSet('dash:control', () => getLocalControlDashboard(), { ttlSec: 12, staleSec: 90 });
+    res.set('Cache-Control', 'private, max-age=8, stale-while-revalidate=45');
+    res.set('X-Cache', cache);
+    res.json(data);
   } catch (err) {
     res.status(502).json({ error: err.message });
   }
@@ -855,6 +1198,12 @@ router.patch('/telegram/sources/:id', async (req, res) => {
   try {
     const { data, error } = await updateTelegramSignalSource(req.params.id, req.body || {});
     if (error) return res.status(500).json({ error: error.message || error });
+    if (data?.metadata?.format_profile) {
+      upsertTelegramGroupMemory(data.id, data.metadata.format_profile, {
+        title: data.title,
+        username: data.username,
+      }).catch(() => {});
+    }
     res.json({ ok: true, source: data });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -902,8 +1251,16 @@ router.post('/telegram/messages', async (req, res) => {
     }
     const { data, error } = await saveTelegramSignalMessage(body);
     if (error) return res.status(500).json({ error: error.message || error });
+
+    recordTelegramMessageAudit(body, data).catch((auditErr) => {
+      logEvent('warn', 'telegramAudit', `Audit record failed: ${auditErr.message}`, {
+        chatId: body.telegram_chat_id,
+        messageId: body.message_id,
+      }).catch(() => {});
+    });
+
     const stage = body.api_result?.pipeline_stage
-      || (body.parse_status === 'skipped' ? 'received' : body.api_result?.passed ? 'validated' : 'parsing');
+      || (body.parse_status === 'skipped' ? 'received' : body.parse_status === 'parsing' ? 'parsing' : body.api_result?.passed ? 'validated' : 'parsing');
     const isScrape = Boolean(body.api_result?.scrape);
     const isLive = body.api_result?.live === true;
     const prevStage = existing?.api_result?.pipeline_stage;
@@ -950,6 +1307,128 @@ router.get('/telegram/messages', async (req, res) => {
   }
 });
 
+router.get('/telegram/raw', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit || '100', 10);
+    const offset = parseInt(req.query.offset || '0', 10);
+    const { data, error, count } = await getTelegramRawMessages({
+      limit,
+      offset,
+      sourceId: req.query.source_id || null,
+      chatId: req.query.chat_id || null,
+      processedStatus: req.query.status || req.query.processed_status || null,
+    });
+    if (error) return res.status(500).json({ error: error.message || error });
+    res.json({ messages: data || [], count: count ?? (data || []).length, limit, offset });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/telegram/raw/:id', async (req, res) => {
+  try {
+    const { data, error } = await getTelegramRawMessageById(req.params.id);
+    if (error) return res.status(500).json({ error: error.message || error });
+    if (!data) return res.status(404).json({ error: 'Not found' });
+    res.json({ message: data });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/telegram/raw/:id/image', async (req, res) => {
+  try {
+    const { data, error } = await getTelegramRawMessageById(req.params.id);
+    if (error || !data?.image_base64) return res.status(404).json({ error: 'Image not found' });
+    const mime = data.image_mime || 'image/jpeg';
+    const buf = Buffer.from(data.image_base64, 'base64');
+    res.setHeader('Content-Type', mime);
+    res.setHeader('Cache-Control', 'private, max-age=3600');
+    res.send(buf);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/telegram/parsed', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit || '100', 10);
+    const offset = parseInt(req.query.offset || '0', 10);
+    const { data, error, count } = await getParsedSignalsRaw({
+      limit,
+      offset,
+      sourceId: req.query.source_id || null,
+      chatId: req.query.chat_id || null,
+    });
+    if (error) return res.status(500).json({ error: error.message || error });
+    res.json({ signals: data || [], count: count ?? (data || []).length, limit, offset });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/telegram/rejected', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit || '100', 10);
+    const offset = parseInt(req.query.offset || '0', 10);
+    const { data, error, count } = await getTelegramSignalRejections({
+      limit,
+      offset,
+      sourceId: req.query.source_id || null,
+      chatId: req.query.chat_id || null,
+      rejectStage: req.query.stage || req.query.reject_stage || null,
+    });
+    if (error) return res.status(500).json({ error: error.message || error });
+    res.json({ rejections: data || [], count: count ?? (data || []).length, limit, offset });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/telegram/group-memory', async (req, res) => {
+  try {
+    const { data, error } = await getTelegramGroupMemory({
+      sourceId: req.query.source_id || null,
+      limit: parseInt(req.query.limit || '50', 10),
+    });
+    if (error) return res.status(500).json({ error: error.message || error });
+    res.json({ groups: data || [] });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/telegram/archive/recent', async (req, res) => {
+  try {
+    if (config.externalSignals.ingestionKey) {
+      const key = req.get('X-Ingestion-Key') || req.body?.ingestion_key;
+      if (key !== config.externalSignals.ingestionKey) {
+        return res.status(401).json({ error: 'Invalid ingestion key' });
+      }
+    }
+    const limit = Math.min(parseInt(req.body?.limit || '10', 10), 20);
+    const sourceId = req.body?.source_id || null;
+    const { data: sources, error } = await getTelegramSignalSources({
+      followed: sourceId ? null : true,
+      limit: 500,
+    });
+    if (error) return res.status(500).json({ error: error.message || error });
+    const targets = (sources || []).filter((s) => !sourceId || s.id === sourceId);
+    for (const source of targets) {
+      const metadata = { ...(source.metadata || {}), archive_requested_at: new Date().toISOString(), archive_limit: limit };
+      await updateTelegramSignalSource(source.id, { metadata });
+    }
+    res.json({
+      ok: true,
+      queued: targets.length,
+      limit,
+      message: 'Optional backfill queued (max 20/msg, 1.5s delay) — live listener archives all new messages automatically',
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.get('/telegram/inbox', async (req, res) => {
   try {
     const limit = parseInt(req.query.limit || '200', 10);
@@ -968,14 +1447,43 @@ router.get('/telegram/inbox', async (req, res) => {
     if (msgError) return res.status(500).json({ error: msgError.message || msgError });
     if (srcError) return res.status(500).json({ error: srcError.message || srcError });
 
-    const sorted = (messages || []).sort((a, b) => {
-      const ta = new Date(a.message_date || a.received_at || 0).getTime();
-      const tb = new Date(b.message_date || b.received_at || 0).getTime();
-      return tb - ta;
-    });
+    const sourceByChatId = new Map((sources || []).map((s) => [Number(s.telegram_chat_id), s]));
+    const enrichSource = (row) => {
+      if (row.telegram_signal_sources?.title) return row;
+      const src = sourceByChatId.get(Number(row.telegram_chat_id));
+      if (!src) return row;
+      return {
+        ...row,
+        telegram_signal_sources: {
+          title: src.title,
+          username: src.username,
+          is_followed: src.is_followed,
+        },
+      };
+    };
+
+    const sorted = (messages || [])
+      .map(enrichSource)
+      .sort((a, b) => {
+        const ta = new Date(a.message_date || a.received_at || 0).getTime();
+        const tb = new Date(b.message_date || b.received_at || 0).getTime();
+        return tb - ta;
+      });
+
+    const followedChatIds = new Set(
+      (sources || []).filter((s) => s.is_followed).map((s) => Number(s.telegram_chat_id)),
+    );
+    const followedOnly = req.query.followed_only !== 'false';
+    const followedRows = followedOnly
+      ? sorted.filter(
+          (row) =>
+            row.telegram_signal_sources?.is_followed === true
+            || followedChatIds.has(Number(row.telegram_chat_id)),
+        )
+      : sorted;
 
     const dedupeSignals = req.query.dedupe === 'true';
-    const displayRows = dedupeSignals ? dedupeTelegramInbox(sorted) : sorted;
+    const displayRows = dedupeSignals ? dedupeTelegramInbox(followedRows) : followedRows;
 
     const { getActiveSymbolLocks, symbolBlockForMessage } = await import('../services/telegramInbox.js');
     const symbolLocks = await getActiveSymbolLocks();
@@ -993,12 +1501,21 @@ router.get('/telegram/inbox', async (req, res) => {
         parseStatus: parseStatus === 'all' ? null : parseStatus,
         followedOnly: req.query.followed_only !== 'false',
       });
-      const sortedRefreshed = (refreshed || []).sort((a, b) => {
-        const ta = new Date(a.message_date || a.received_at || 0).getTime();
-        const tb = new Date(b.message_date || b.received_at || 0).getTime();
-        return tb - ta;
-      });
-      const displayRefreshed = dedupeSignals ? dedupeTelegramInbox(sortedRefreshed) : sortedRefreshed;
+      const sortedRefreshed = (refreshed || [])
+        .map(enrichSource)
+        .sort((a, b) => {
+          const ta = new Date(a.message_date || a.received_at || 0).getTime();
+          const tb = new Date(b.message_date || b.received_at || 0).getTime();
+          return tb - ta;
+        });
+      const followedRefreshed = followedOnly
+        ? sortedRefreshed.filter(
+            (row) =>
+              row.telegram_signal_sources?.is_followed === true
+              || followedChatIds.has(Number(row.telegram_chat_id)),
+          )
+        : sortedRefreshed;
+      const displayRefreshed = dedupeSignals ? dedupeTelegramInbox(followedRefreshed) : followedRefreshed;
       messagesWithLocks.length = 0;
       messagesWithLocks.push(...displayRefreshed.map((row) => ({
         ...row,
@@ -1007,16 +1524,22 @@ router.get('/telegram/inbox', async (req, res) => {
     }
 
     const followedSources = (sources || []).filter((s) => s.is_followed);
+    const settings = await getControlSettings().catch(() => ({}));
+    const lastLive = messagesWithLocks.find((m) => m.api_result?.live === true);
     const stats = {
       total: messagesWithLocks.length,
       parsed: messagesWithLocks.filter((m) => m.parse_status === 'parsed').length,
       skipped: messagesWithLocks.filter((m) => m.parse_status === 'skipped').length,
       validated: messagesWithLocks.filter((m) => m.api_result?.passed === true || m.api_result?.ready_to_approve).length,
       rejected: messagesWithLocks.filter((m) => m.parse_status === 'parsed' && m.api_result?.passed === false && !m.api_result?.ready_to_approve).length,
-      stale: messagesWithLocks.filter((m) => m.api_result?.stale === true).length,
+      stale: messagesWithLocks.filter((m) => m.api_result?.stale === true || m.api_result?.pipeline_stage === 'stale').length,
+      executing: messagesWithLocks.filter((m) => m.api_result?.pipeline_stage === 'executing').length,
+      executed: messagesWithLocks.filter((m) => m.api_result?.executed).length,
+      failed: messagesWithLocks.filter((m) => m.api_result?.pipeline_stage === 'approve_failed' || m.api_result?.last_error).length,
       approved: messagesWithLocks.filter((m) => m.api_result?.approved || m.api_result?.executed).length,
       symbol_blocked: messagesWithLocks.filter((m) => m.symbol_blocked).length,
       needs_revalidation: messagesWithLocks.filter(needsRevalidation).length,
+      live_signals: messagesWithLocks.filter((m) => m.api_result?.live === true).length,
     };
 
     res.json({
@@ -1027,6 +1550,12 @@ router.get('/telegram/inbox', async (req, res) => {
       followed_count: followedSources.length,
       test_mode: config.externalSignals.testMode,
       live_listener: true,
+      last_live_at: lastLive?.received_at || lastLive?.message_date || null,
+      control: {
+        auto_trading: settings?.auto_trading === true,
+        manual_approval: settings?.manual_approval === true,
+        mode: settings?.mode || 'demo',
+      },
       source: 'database',
     });
   } catch (err) {
@@ -1270,6 +1799,35 @@ router.post('/telegram/inbox/revalidate', async (req, res) => {
   }
 });
 
+router.post('/telegram/inbox/reparse-skipped', async (req, res) => {
+  try {
+    const { getTelegramSignalMessages } = await import('../services/supabase.js');
+    const {
+      isSkippedInformalCandidate,
+      reparseSkippedTelegramMessages,
+    } = await import('../services/telegramInformalReparse.js');
+    const limit = parseInt(req.body?.limit || '200', 10);
+    const { data: messages } = await getTelegramSignalMessages({
+      limit,
+      followedOnly: true,
+      parseStatus: 'skipped',
+    });
+    const candidates = (messages || []).filter(isSkippedInformalCandidate);
+    const results = await reparseSkippedTelegramMessages(candidates);
+    const ok = results.filter((r) => r.ok);
+    res.json({
+      ok: true,
+      scanned: (messages || []).length,
+      candidates: candidates.length,
+      reparsed: ok.length,
+      failed: results.filter((r) => !r.ok).length,
+      results,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.post('/telegram/messages/:id/approve', async (req, res) => {
   try {
     const { approveTelegramInboxMessage } = await import('../services/telegramInbox.js');
@@ -1299,9 +1857,11 @@ router.get('/telegram/trade-defaults', async (req, res) => {
   }
 });
 
-// Get trades
+// Get trades (merged open + closed history, or filter by status)
 router.get('/trades', async (req, res) => {
-  const { data, error } = await getTrades(parseInt(req.query.limit || '50', 10));
+  const limit = parseInt(req.query.limit || '500', 10);
+  const status = req.query.status || 'all';
+  const { data, error } = await getTrades(limit, { status });
   if (error) return res.status(500).json({ error });
   res.json(await enrichTrades(data || []));
 });
@@ -1311,6 +1871,239 @@ router.get('/trades/open', async (req, res) => {
   const { data, error } = await getOpenTrades();
   if (error) return res.status(500).json({ error });
   res.json(await getMergedOpenTrades(data || []));
+});
+
+router.get('/trades/today', async (req, res) => {
+  try {
+    const { getTradesTodayStats, getDailyPerformanceTable } = await import('../services/tradeAuditAnalytics.js');
+    const day = req.query.day || null;
+    if (req.query.days) {
+      const days = parseInt(req.query.days, 10) || 7;
+      return res.json({ daily: await getDailyPerformanceTable(days) });
+    }
+    res.json(await getTradesTodayStats(day));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/trades/by-day', async (req, res) => {
+  try {
+    const day = req.query.day;
+    if (!day) return res.status(400).json({ error: 'day query required (YYYY-MM-DD)' });
+    const tz = parseInt(String(req.query.tz ?? 0), 10) || 0;
+    const { cacheGetOrSet } = await import('../services/cache.js');
+    const { getTradesByDay } = await import('../services/tradeAuditAnalytics.js');
+    const key = `dash:trades:day:${day}:${tz}`;
+    const { data, cache } = await cacheGetOrSet(
+      key,
+      () => getTradesByDay(day, tz),
+      { ttlSec: 60, staleSec: 300 },
+    );
+    res.set('Cache-Control', 'private, max-age=30, stale-while-revalidate=120');
+    res.set('X-Cache', cache);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/trades/performance', async (req, res) => {
+  try {
+    const { getTradesPerformanceSummary } = await import('../services/tradeAuditAnalytics.js');
+    const result = await getTradesPerformanceSummary({
+      from: req.query.from || null,
+      to: req.query.to || null,
+      source: req.query.source || null,
+      symbol: req.query.symbol || null,
+      limit: parseInt(req.query.limit || '100', 10),
+    });
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/trades/home-dashboard', async (req, res) => {
+  try {
+    const { cacheGetOrSet } = await import('../services/cache.js');
+    const { getHomeDashboardPayload } = await import('../services/tradeAuditAnalytics.js');
+    const dbOnly = req.query.live !== '1' && req.query.live !== 'true';
+    const day = req.query.day || 'today';
+    const tz = req.query.tz ?? 0;
+    const key = `dash:home:${day}:${tz}:${dbOnly ? 'db' : 'live'}`;
+    const { data, cache } = await cacheGetOrSet(key, () => getHomeDashboardPayload({
+      day: req.query.day || null,
+      tz,
+      dbOnly,
+    }), { ttlSec: 20, staleSec: 120 });
+    res.set('Cache-Control', 'private, max-age=10, stale-while-revalidate=60');
+    res.set('X-Cache', cache);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/** Single round-trip payload for homepage — trade audit + services + settings. */
+router.get('/dashboard/snapshot', async (req, res) => {
+  try {
+    const { cacheGetOrSet } = await import('../services/cache.js');
+    const day = req.query.day || new Date().toISOString().slice(0, 10);
+    const tz = parseInt(String(req.query.tz ?? 0), 10) || 0;
+    const key = `dashboard:snapshot:${day}:${tz}`;
+
+    const { data, cache } = await cacheGetOrSet(key, async () => {
+      const { getHomeDashboardPayload } = await import('../services/tradeAuditAnalytics.js');
+      const { getLocalControlServicesLite, getLocalControlSettings } = await import('../services/controlCenter.js');
+      const { getSignalEngineStatus } = await import('../services/signalEngineSelector.js');
+      const [trade, controlLite, settings, signal_engine] = await Promise.all([
+        getHomeDashboardPayload({ day: req.query.day || null, tz, dbOnly: true }),
+        getLocalControlServicesLite(),
+        getLocalControlSettings(),
+        getSignalEngineStatus(),
+      ]);
+      return {
+        trade,
+        control: {
+          services: controlLite.services,
+          scanner: controlLite.scanner,
+          mode: controlLite.mode,
+        },
+        settings,
+        signal_engine,
+        generated_at: new Date().toISOString(),
+      };
+    }, { ttlSec: 15, staleSec: 120 });
+
+    res.set('Cache-Control', 'private, max-age=10, stale-while-revalidate=90');
+    res.set('X-Cache', cache);
+    res.json({ ...data, cache });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/market-data/progress', async (req, res) => {
+  try {
+    const { cacheGetOrSet } = await import('../services/cache.js');
+    const { getMarketDataProgress, isMarketDataConfigured } = await import('../services/marketDataClient.js');
+    if (!isMarketDataConfigured()) {
+      return res.status(503).json({ error: 'RESEARCH_API_URL not configured' });
+    }
+    const { data, cache } = await cacheGetOrSet(
+      'dash:market-data:progress',
+      () => getMarketDataProgress(),
+      { ttlSec: 15, staleSec: 60 },
+    );
+    res.set('X-Cache', cache);
+    res.json(data);
+  } catch (err) {
+    res.status(502).json({ error: err.message });
+  }
+});
+
+/** Compact archive + live WS candle sync status for home dashboard. */
+router.get('/candles/sync-status', async (req, res) => {
+  try {
+    const { cacheGetOrSet } = await import('../services/cache.js');
+    const { getCandleSyncStatus } = await import('../services/candleSyncStatus.js');
+    const { data, cache } = await cacheGetOrSet(
+      'dash:candles:sync-status',
+      () => getCandleSyncStatus(),
+      { ttlSec: 15, staleSec: 60 },
+    );
+    res.set('X-Cache', cache);
+    res.json(data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/trades/open/audit', async (req, res) => {
+  try {
+    const { getOpenTradesAudit } = await import('../services/tradeAuditAnalytics.js');
+    const dbOnly = req.query.live !== '1' && req.query.live !== 'true';
+    res.json(await getOpenTradesAudit({ dbOnly }));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/trades/:id/lifecycle', async (req, res) => {
+  try {
+    const { getTradeLifecycle } = await import('../services/tradeAuditAnalytics.js');
+    res.json(await getTradeLifecycle(req.params.id));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/** Sync DB with exchange — close open DB records when Binance is flat. */
+router.post('/trades/reconcile-flat', async (req, res) => {
+  try {
+    const result = await reconcileAllFlatExchangeTrades({ skipNotify: req.body?.notify !== true });
+    res.json({ ok: true, ...result });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+/** Live Binance protection snapshot for a trade (SL/TP algo orders). */
+router.get('/trades/:id/protection', async (req, res) => {
+  try {
+    const trade = await loadActionTrade(req.params.id);
+    if (!trade) return res.status(404).json({ error: 'Trade not found' });
+    const verify = await verifyExchangeProtection(trade.symbol);
+    res.json({ trade_id: trade.id, symbol: trade.symbol, status: trade.status, verify });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/** Reconcile closed trade PnL from Binance realized income (fixes partial-close mismatches). */
+router.post('/trades/:id/sync-pnl', async (req, res) => {
+  try {
+    const db = getSupabase();
+    if (!db) return res.status(503).json({ error: 'DB unavailable' });
+    const { data: trade, error } = await db.from('trades').select('*').eq('id', req.params.id).single();
+    if (error || !trade) return res.status(404).json({ error: 'Trade not found' });
+
+    const { getRealizedPnlSince } = await import('../services/userBinance.js');
+    const sinceMs = trade.opened_at
+      ? new Date(trade.opened_at).getTime() - 120000
+      : undefined;
+    const exchange = await getRealizedPnlSince(trade.symbol, sinceMs);
+    if (exchange?.total == null) {
+      return res.status(400).json({ error: exchange?.error || 'Could not fetch Binance realized PnL' });
+    }
+
+    const entry = parseFloat(trade.entry_price);
+    const originalQty = parseFloat(trade.original_quantity || trade.quantity);
+    const risk = Math.abs(entry - parseFloat(trade.initial_stop_loss || trade.stop_loss));
+    const pnl = exchange.total;
+    const rMultiple = risk > 0 && originalQty > 0 ? pnl / (risk * originalQty) : 0;
+    const pnlPercent = entry && originalQty ? (pnl / (entry * originalQty)) * 100 : 0;
+    const outcome = pnl > 0 ? 'win' : pnl < 0 ? 'loss' : 'breakeven';
+
+    const { data: updated, error: updateError } = await updateTrade(trade.id, {
+      pnl,
+      pnl_percent: pnlPercent,
+      r_multiple: rMultiple,
+      exchange_realized_pnl: pnl,
+    });
+    if (updateError) return res.status(500).json({ error: updateError.message || updateError });
+
+    res.json({
+      success: true,
+      outcome,
+      pnl,
+      exchange_rows: exchange.rows,
+      trade: await enrichTrade(updated),
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 router.get('/trading/dashboard', async (req, res) => {
@@ -1331,9 +2124,15 @@ router.get('/paper/dashboard', async (req, res) => {
 
 router.post('/trades/:id/close', async (req, res) => {
   try {
-    const { trade, live, persisted } = await loadActionTrade(req.params.id);
+    let { trade, live, persisted } = await loadActionTrade(req.params.id);
     if (!trade) return res.status(404).json({ error: 'Trade not found' });
     if (!live || live.quantity <= 0) {
+      if (persisted && ['open', 'partial'].includes(trade.status)) {
+        const reconciled = await reconcileFlatExchangeTrade(trade, null, { skipNotify: false, force: true });
+        if (reconciled) {
+          return res.json({ success: true, trade: await enrichTrade(reconciled), reconciled: true });
+        }
+      }
       await logEvent('warn', 'trades.close', 'Close blocked: Binance position could not be verified', {
         tradeId: trade.id,
         symbol: trade.symbol,
@@ -1342,6 +2141,10 @@ router.post('/trades/:id/close', async (req, res) => {
         error: 'Close blocked: Binance did not return an open position for this symbol. Trade was NOT marked closed.',
         symbol: trade.symbol,
       });
+    }
+    if (persisted && !['open', 'partial'].includes(trade.status)) {
+      const reopened = await findDbTradeForLivePosition(trade.symbol, live.quantity);
+      if (reopened) trade = reopened;
     }
     const side = trade.direction === 'LONG' ? 'SELL' : 'BUY';
     const requestedQty = toNumber(req.body?.quantity || live.quantity);
@@ -1354,33 +2157,45 @@ router.post('/trades/:id/close', async (req, res) => {
       await placeMarketOrder(trade.symbol, side, qty, true);
       await cancelAllOrders(trade.symbol).catch(() => {});
     }
+    await new Promise((r) => setTimeout(r, 400));
     const exitPrice = await getMarkPrice(trade.symbol);
-    const pnl = toNumber(trade.pnl) + (trade.direction === 'LONG'
-      ? (exitPrice - toNumber(trade.entry_price)) * qty
-      : (toNumber(trade.entry_price) - exitPrice) * qty);
     const remainQty = roundApiQty(Math.max(0, live.quantity - qty));
     if (!persisted) {
       return res.json({
         success: true,
         closed: remainQty <= 0,
-        trade: { ...trade, quantity: remainQty, pnl, status: remainQty > 0 ? 'partial' : 'closed' },
+        trade: { ...trade, quantity: remainQty, status: remainQty > 0 ? 'partial' : 'closed' },
       });
     }
-    const updates = remainQty > 0
-      ? { quantity: remainQty, pnl, status: 'partial' }
-      : {
-          status: 'closed',
-          exit_price: exitPrice,
-          pnl,
-          pnl_percent: toNumber(trade.entry_price) && toNumber(trade.quantity)
-            ? (pnl / (toNumber(trade.entry_price) * toNumber(trade.quantity))) * 100
-            : 0,
-          close_reason: req.body?.reason || 'Manual close',
-          closed_at: new Date().toISOString(),
-        };
-    const { data: updated, error: updateError } = await updateTrade(trade.id, updates);
-    if (updateError) return res.status(500).json({ error: updateError.message || updateError });
-    res.json({ success: true, trade: await enrichTrade(updated) });
+    if (remainQty > 0) {
+      const exchPnl = await fetchExchangeRealizedPnl(trade).catch(() => null);
+      const updates = {
+        quantity: remainQty,
+        status: 'partial',
+        closed_at: null,
+        exit_price: null,
+        close_reason: null,
+      };
+      if (exchPnl?.total != null) {
+        updates.exchange_realized_pnl = exchPnl.total;
+        updates.pnl = exchPnl.total;
+      }
+      const { data: updated, error: updateError } = await updateTrade(trade.id, updates);
+      if (updateError) return res.status(500).json({ error: updateError.message || updateError });
+      return res.json({ success: true, trade: await enrichTrade(updated) });
+    }
+    const closed = await finalizeTradeClose(
+      trade,
+      {
+        exitPrice,
+        status: 'closed',
+        reason: req.body?.reason || 'Manual close — runner exited',
+        skipReview: false,
+        force: true,
+      },
+    );
+    if (!closed) return res.status(500).json({ error: 'Failed to persist trade close' });
+    return res.json({ success: true, trade: await enrichTrade(closed) });
   } catch (err) {
     await logEvent('error', 'trades.close', err.message, { tradeId: req.params.id });
     res.status(500).json({ error: err.message });
@@ -1497,6 +2312,7 @@ router.patch('/trades/:id/levels', async (req, res) => {
       stop_loss: stopLoss,
       tp1,
       tp2,
+      sl_updated_at: new Date().toISOString(),
     });
     if (updateError) return res.status(500).json({ error: updateError.message || updateError });
     res.json({ success: true, trade: await enrichTrade(updated) });
@@ -1523,13 +2339,17 @@ router.get('/performance', async (req, res) => {
 // Get balance (user keys from DB when signed in)
 router.get('/balance', optionalAuth, async (req, res) => {
   try {
-    if (req.user) {
-      await loadUserCredentials(req.user.id);
-      const balance = await getBalanceForUser(req.user.id);
-      return res.json(balance);
-    }
-    const balance = await getBalanceForUser(null);
-    res.json(balance);
+    const { cacheGetOrSet } = await import('../services/cache.js');
+    const userKey = req.user?.id || 'default';
+    const { data, cache } = await cacheGetOrSet(`dash:balance:${userKey}`, async () => {
+      if (req.user) {
+        await loadUserCredentials(req.user.id);
+        return getBalanceForUser(req.user.id);
+      }
+      return getBalanceForUser(null);
+    }, { ttlSec: 20, staleSec: 60 });
+    res.set('X-Cache', cache);
+    res.json(data);
   } catch (err) {
     const fallback = parseFloat(process.env.DEMO_BALANCE_FALLBACK || '5000');
     res.json({
@@ -1542,11 +2362,122 @@ router.get('/balance', optionalAuth, async (req, res) => {
   }
 });
 
+// Trade protection flow test (internal only)
+router.post('/test/trade-flow', requireInternalOrAuth, async (req, res) => {
+  try {
+    const symbol = (req.body?.symbol || 'DOGEUSDT').toUpperCase();
+    const shouldClose = req.body?.close === true;
+    const mark = await getMarkPrice(symbol);
+    const rules = await getSymbolRules(symbol);
+    const riskPct = 0.008;
+    const risk = mark * riskPct;
+    const stopLoss = roundPriceToTick(mark - risk, rules.tickSize);
+    const tp1 = roundPriceToTick(mark + risk, rules.tickSize);
+    const tp2 = roundPriceToTick(mark + risk * 2, rules.tickSize);
+
+    await sendAlert(`🧪 Trade flow test starting: ${symbol} LONG @ ${mark}`).catch(() => {});
+
+    const execRes = await fetch(internalApiUrl('/api/execute'), {
+      method: 'POST',
+      headers: internalApiHeaders(),
+      body: JSON.stringify({
+        symbol,
+        direction: 'BUY',
+        stop_loss: stopLoss,
+        tp1,
+        tp2,
+        use_risk_sizing: true,
+        manual_approved: true,
+        test_levels_refreshed: true,
+        source: 'api-test-trade-flow',
+      }),
+    });
+    const execBody = await execRes.json();
+    if (!execRes.ok || !execBody.success) {
+      return res.status(execRes.status || 500).json({ error: execBody.error || 'Execute failed', details: execBody });
+    }
+
+    await new Promise((r) => setTimeout(r, 1200));
+    const verify = await verifyExchangeProtection(symbol);
+
+    await sendTradeUpdate(execBody.trade, `Protection check: SL×${verify.slCount} TP×${verify.tpCount} · qty ${verify.positionQty}`).catch(() => {});
+
+    if (shouldClose) {
+      const credentials = await getActiveApiKeys();
+      const side = 'SELL';
+      if (credentials) {
+        await cancelAllOrdersWithCredentials(credentials, symbol).catch(() => {});
+        const rows = await getPositionRiskWithCredentials(credentials, symbol);
+        const qty = Math.abs(parseFloat(rows.find((r) => r.symbol === symbol)?.positionAmt || 0));
+        if (qty > 0) await placeMarketOrderWithCredentials(credentials, { symbol, side, quantity: qty, reduceOnly: true });
+      } else {
+        await cancelAllOrders(symbol).catch(() => {});
+        const rows = await getPositionRisk(symbol);
+        const row = Array.isArray(rows) ? rows.find((r) => r.symbol === symbol) : rows;
+        const qty = Math.abs(parseFloat(row?.positionAmt || 0));
+        if (qty > 0) await placeMarketOrder(symbol, side, qty, true);
+      }
+    }
+
+    res.json({
+      success: true,
+      trade: execBody.trade,
+      orders: { sl: execBody.slOrder, tp1: execBody.tp1Order, tp2: execBody.tp2Order },
+      verify,
+      protectionOk: verify.hasPosition && verify.slCount >= 1 && verify.tpCount >= 1,
+      closed: shouldClose,
+    });
+  } catch (err) {
+    await logEvent('error', 'test.tradeFlow', err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/test/sl-workflow-batch', requireInternalOrAuth, async (req, res) => {
+  try {
+    const symbols = (req.body?.symbols || ['DOGEUSDT', 'XRPUSDT', 'ADAUSDT']).map((s) => String(s).toUpperCase());
+    const tight = parseFloat(req.body?.tight || '0.0012');
+    const direction = String(req.body?.direction || 'SHORT').toUpperCase();
+    const { spawn } = await import('child_process');
+    const child = spawn('node', [
+      'scripts/test-sl-workflow-batch.js',
+      ...symbols,
+      '--direction', direction,
+      '--tight', String(tight),
+      '--cleanup',
+      '--max-wait', String(req.body?.max_wait_ms || 480000),
+    ], { cwd: process.cwd(), stdio: 'pipe' });
+    let out = '';
+    child.stdout.on('data', (d) => { out += d.toString(); });
+    child.stderr.on('data', (d) => { out += d.toString(); });
+    await new Promise((resolve, reject) => {
+      child.on('close', (code) => (code === 0 || code === 2 ? resolve() : reject(new Error(`exit ${code}`))));
+      child.on('error', reject);
+    });
+    res.json({ ok: true, output: out.slice(-8000) });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
 // Execute trade (called from n8n or Telegram BUY NOW)
 router.post('/execute', strictRateLimit(20), optionalAuth, requireInternalOrAuth, async (req, res) => {
+  let execLockKey = null;
   try {
     const signal = req.body;
     const requestedPositionSizeUsdt = parseFloat(signal.position_size_usdt || 0);
+
+    const lock = await acquireExecutionLock(signal, { source: signal.source || 'api' });
+    if (!lock.acquired) {
+      await logDuplicateBlocked(signal, lock, 'execute');
+      return res.status(409).json({
+        error: 'Duplicate execution blocked',
+        reason: lock.reason,
+        tradeId: lock.tradeId,
+        duplicate: true,
+      });
+    }
+    execLockKey = lock.key;
 
     const validation = await validateTradeExecution(signal);
     if (!validation.passed) {
@@ -1556,7 +2487,22 @@ router.post('/execute', strictRateLimit(20), optionalAuth, requireInternalOrAuth
       });
     }
 
+    const { validateExecutionGate } = await import('../services/tradeExecutionGate.js');
+    const gate = await validateExecutionGate(signal);
+    if (!gate.passed) {
+      return res.status(400).json({
+        error: gate.reason || 'Execution gate blocked',
+        checks: gate.checks,
+        blocked: true,
+      });
+    }
+
     const symbol = signal.symbol;
+    if (isBlockedTradeSymbol(symbol)) {
+      return res.status(400).json({
+        error: `Trade blocked: ${symbol} is a stablecoin pair with negligible price risk — not suitable for risk-based trading`,
+      });
+    }
     const direction = signal.direction === 'BUY' ? 'LONG' : 'SHORT';
     const side = signal.direction === 'BUY' ? 'BUY' : 'SELL';
     const markPrice = await getMarkPrice(symbol);
@@ -1591,6 +2537,9 @@ router.post('/execute', strictRateLimit(20), optionalAuth, requireInternalOrAuth
       availableBalance = parseFloat(bal.available) || accountEquity;
     } catch {
       /* use validation balance */
+    }
+    if (!accountEquity || accountEquity <= 0) {
+      return res.status(400).json({ error: 'Account equity unavailable — cannot size trade' });
     }
 
     const riskPercent = config.strategy.riskPerTrade || 0.01;
@@ -1646,17 +2595,15 @@ router.post('/execute', strictRateLimit(20), optionalAuth, requireInternalOrAuth
         stopLoss,
         leverage,
         skipLeverageSet: true,
+        skipProtection: true,
       });
       order = result.order;
-      slOrder = result.slOrder;
       leverage = result.leverage || leverage;
       if (result.qty) {
         qty = result.qty;
         notional = qty * markPrice;
         marginUsdt = notional / leverage;
       }
-      tp1Order = null;
-      tp2Order = null;
     } else {
       await setLeverageWithFallback(symbol, leverage, setLevFn);
       const placed = await placeMarketOrderResilient(symbol, side, qty, false, {
@@ -1671,12 +2618,17 @@ router.post('/execute', strictRateLimit(20), optionalAuth, requireInternalOrAuth
       marginUsdt = notional / leverage;
       const slSide = side === 'BUY' ? 'SELL' : 'BUY';
       try {
-        slOrder = await placeStopMarketOrder(symbol, slSide, stopLoss, qty, { closePosition: true });
+        slOrder = await placeStopMarketOrder(symbol, slSide, stopLoss, null, { closePosition: true });
       } catch (err) {
         await logEvent('error', 'execute', `SL order failed: ${err.message}`, { symbol });
       }
-      tp1Order = true;
-      tp2Order = true;
+    }
+
+    if (order) {
+      ({ slOrder, tp1Order } = await placeInitialTradeProtection(
+        { symbol, direction, quantity: qty, stopLoss, tp1 },
+        credentials,
+      ));
     }
 
     if (!slOrder) {
@@ -1711,14 +2663,31 @@ router.post('/execute', strictRateLimit(20), optionalAuth, requireInternalOrAuth
       tp2,
       tp3: signal.tp3,
       binance_order_id: order.orderId?.toString(),
-      binance_sl_order_id: slOrder?.orderId?.toString(),
+      binance_sl_order_id: slOrder?.algoId?.toString() || slOrder?.orderId?.toString() || null,
       risk_amount: resolved.riskAmount || validation.riskAmount,
       leverage,
       notional_usdt: notional,
       margin_usdt: marginUsdt,
       sizing_mode: resolved.sizing_mode || (useRiskSizing ? 'risk_percent' : 'fixed_notional'),
       status: 'open',
+      opened_at: new Date().toISOString(),
     };
+
+    if (signal.id) {
+      const db = getSupabase();
+      const { data: signalRow } = await db?.from('signals').select('*').eq('id', signal.id).maybeSingle() || {};
+      if (signalRow) {
+        const lineage = extractLineageFromSignal(signalRow);
+        const receivedAt = signalRow.created_at || new Date().toISOString();
+        const latencyMs = Date.now() - new Date(receivedAt).getTime();
+        trade.signal_received_at = receivedAt;
+        trade.execution_latency_ms = latencyMs >= 0 ? latencyMs : null;
+        trade.signal_source = signal.source || lineage.source;
+        trade.strategy_name = signalRow.strategy_name || lineage.strategy;
+      }
+    } else if (signal.source) {
+      trade.signal_source = signal.source;
+    }
 
     const { data: savedTrade, error: saveTradeError } = await saveTrade(trade);
     if (saveTradeError || !savedTrade) {
@@ -1742,6 +2711,7 @@ router.post('/execute', strictRateLimit(20), optionalAuth, requireInternalOrAuth
 
     if (signal.id) {
       await updateSignal(signal.id, { status: 'accepted', user_action: 'executed' });
+      scheduleSignalOutcomeCheck({ id: signal.id, symbol, direction: signal.direction });
     }
 
     await logEvent('trade', 'execute', `Trade opened: ${direction} ${symbol}`, {
@@ -1754,9 +2724,35 @@ router.post('/execute', strictRateLimit(20), optionalAuth, requireInternalOrAuth
 
     broadcastTradeEvent('opened', savedTrade, { margin_usdt: marginUsdt, leverage, notional_usdt: notional });
 
+    const { verify, plan, protectionOk } = await finalizeTradeOpen({
+      savedTrade,
+      signal,
+      sizing: {
+        marginUsdt,
+        leverage,
+        notional,
+        riskAmount: resolved.riskAmount || validation.riskAmount,
+      },
+      slOrder,
+      tp1Order,
+      tp2Order,
+    });
+
+    const { auditTradeOpen } = await import('../services/tradeEventAudit.js');
+    await auditTradeOpen(savedTrade, {
+      order,
+      slOrder,
+      tp1Order,
+      tp2Order,
+      riskPercentage: riskPercent,
+    }).catch((err) =>
+      logEvent('warn', 'execute', `Trade audit open failed: ${err.message}`, { tradeId: savedTrade?.id }),
+    );
+
     res.json({
       success: true,
       trade: savedTrade,
+      protection: { verify, plan, ok: protectionOk },
       sizing: {
         mode: resolved.sizing_mode || (useRiskSizing ? 'risk_percent' : 'fixed_notional'),
         riskAmount: resolved.riskAmount,
@@ -1774,6 +2770,8 @@ router.post('/execute', strictRateLimit(20), optionalAuth, requireInternalOrAuth
   } catch (err) {
     await logEvent('error', 'execute', err.message);
     res.status(500).json({ error: err.message });
+  } finally {
+    releaseExecutionLock(execLockKey);
   }
 });
 
@@ -1782,6 +2780,45 @@ router.post('/signal/:id/skip', async (req, res) => {
   await updateSignal(req.params.id, { status: 'skipped', user_action: 'skipped' });
   await logEvent('info', 'signal', `Signal skipped: ${req.params.id}`);
   res.json({ success: true });
+});
+
+// Signal performance analytics (Phase 2 → Phase 4)
+router.get('/analytics/signals', async (req, res) => {
+  try {
+    const report = await getSignalPerformanceReport({ days: req.query.days || 90 });
+    res.json(report);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/analytics/signals/feed', async (req, res) => {
+  try {
+    res.json(await getSignalPerformanceFeed({
+      days: req.query.days || 90,
+      limit: req.query.limit || 100,
+    }));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/analytics/lessons/recent', async (req, res) => {
+  try {
+    const lessons = await getRecentLessons(parseInt(req.query.limit || '30', 10));
+    res.json({ lessons });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/strategy/backtest-gate/:strategyId', async (req, res) => {
+  try {
+    const result = await validateBacktestGate(req.params.strategyId);
+    res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Trade lessons — skipped signals
@@ -1874,9 +2911,10 @@ router.get('/ai/lessons/:type', async (req, res) => {
 
 // AI health check
 router.get('/ai/health', async (req, res) => {
-  const [ollama, context] = await Promise.all([
+  const [ollama, context, openclaw] = await Promise.all([
     checkOllamaHealth(),
     buildTradingContext().catch(() => null),
+    checkOpenClawHealth(),
   ]);
 
   let gateway = { ok: false };
@@ -1889,7 +2927,7 @@ router.get('/ai/health', async (req, res) => {
     }
   }
 
-  res.json({ ollama, gateway, hasContext: !!context });
+  res.json({ ollama, gateway, openclaw, hasContext: !!context });
 });
 router.post('/telegram/callback', async (req, res) => {
   try {
@@ -1898,6 +2936,100 @@ router.post('/telegram/callback', async (req, res) => {
     res.json(result);
   } catch (err) {
     res.status(500).json({ ok: false, message: err.message });
+  }
+});
+
+router.post('/telegram/test-parse', async (req, res) => {
+  try {
+    const messages = Array.isArray(req.body?.messages)
+      ? req.body.messages
+      : req.body?.message
+        ? [req.body.message]
+        : [];
+    if (!messages.length) {
+      return res.status(400).json({ error: 'message or messages[] required' });
+    }
+    const {
+      inferSymbolFromInformalText,
+      inferDirectionFromText,
+      stripGroupRiskHints,
+      enrichTelegramSignalWithSmc,
+    } = await import('../services/telegramSignalEnrichment.js');
+    const { ingestExternalSignal } = await import('../services/externalSignalIngestion.js');
+    const { checkInstitutionalSmcHealth } = await import('../services/institutionalSmcClient.js');
+    const health = await checkInstitutionalSmcHealth();
+    const results = [];
+
+    for (const raw of messages) {
+      const text = stripGroupRiskHints(String(raw || ''));
+      const symbol = inferSymbolFromInformalText(text);
+      const direction = inferDirectionFromText(text);
+      const hint = {
+        provider: req.body?.group || 'Test VIP',
+        symbol,
+        side: direction === 'SELL' ? 'SHORT' : 'LONG',
+        raw_message: raw,
+        timestamp: new Date().toISOString(),
+        parser: 'informal-test',
+        metadata: { informal_signal: true, group_title: req.body?.group || 'Test VIP' },
+      };
+      if (!symbol || !direction) {
+        results.push({ raw, ok: false, reason: 'parse_failed', symbol, direction });
+        continue;
+      }
+      const enriched = await enrichTelegramSignalWithSmc(hint);
+      if (!enriched.enrichment?.ok) {
+        results.push({
+          raw,
+          ok: false,
+          symbol,
+          direction,
+          reason: enriched.enrichment.reason,
+          score: enriched.enrichment.smc_score ?? null,
+          mark_price: enriched.enrichment.mark_price ?? null,
+          engine: enriched.enrichment.engine,
+        });
+        continue;
+      }
+      const validation = await ingestExternalSignal(
+        {
+          ...hint,
+          symbol: enriched.symbol,
+          side: enriched.side,
+          direction: enriched.direction,
+          entry: enriched.entry_price,
+          entry_price: enriched.entry_price,
+          stop_loss: enriched.stop_loss,
+          tp1: enriched.tp1,
+          tp2: enriched.tp2,
+          tp3: enriched.tp3,
+          metadata: enriched.metadata,
+        },
+        { validateOnly: true, allowStale: true, telegram: true },
+      );
+      results.push({
+        raw,
+        ok: validation.passed,
+        symbol: enriched.symbol,
+        side: enriched.side,
+        direction: enriched.direction,
+        entry: enriched.entry_price,
+        stop_loss: enriched.stop_loss,
+        tp1: enriched.tp1,
+        tp2: enriched.tp2,
+        tp3: enriched.tp3,
+        score: validation.validation?.score,
+        mark_price: enriched.enrichment.mark_price,
+        engine: enriched.metadata?.smc_engine,
+        institutional: validation.validation?.institutional,
+        passed: validation.passed,
+        reason: validation.reason,
+        checks: validation.validation?.checks,
+      });
+    }
+    res.json({ ok: true, engine_health: health, results });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
@@ -1956,6 +3088,55 @@ router.get('/strategies', (req, res) => {
   res.json(listStrategies());
 });
 
+// Strategy catalog — real strategies + best backtest metrics from DB (replaces dashboard mock data)
+router.get('/strategies/catalog', async (req, res) => {
+  try {
+    const [catalog, rankings] = await Promise.all([
+      listCatalog(),
+      getBacktestRankings(200),
+    ]);
+
+    // Keep the single best (highest score) backtest run per strategy_id.
+    const bestByStrategy = new Map();
+    for (const run of rankings) {
+      const prev = bestByStrategy.get(run.strategy_id);
+      if (!prev || (Number(run.score) || 0) > (Number(prev.score) || 0)) {
+        bestByStrategy.set(run.strategy_id, run);
+      }
+    }
+
+    const strategies = catalog.map((s) => {
+      const run = bestByStrategy.get(s.id);
+      const metrics = run
+        ? {
+            win_rate: Number(run.win_rate) || 0,
+            profit_factor: Number(run.profit_factor) || 0,
+            sharpe_ratio: Number(run.sharpe) || 0,
+            max_drawdown_pct: Number(run.max_drawdown) || 0,
+            total_trades: Number(run.total_trades) || 0,
+            return_pct: run.return_pct != null ? Number(run.return_pct) : undefined,
+          }
+        : undefined;
+
+      return {
+        id: s.id,
+        name: s.name || s.id,
+        status: s.status || 'draft',
+        engine: s.engine || 'native',
+        source: s.source || 'native',
+        rules: Array.isArray(s.rules) ? s.rules : undefined,
+        deployment: s.status === 'production' ? 'live' : s.deployment || undefined,
+        metrics,
+        last_backtest_at: run?.created_at || null,
+      };
+    });
+
+    res.json({ strategies });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 router.get('/strategies/:id/chart-setups', async (req, res) => {
   try {
     const { symbol, interval = '5m', period = '1m' } = req.query;
@@ -1994,21 +3175,72 @@ router.get('/strategy/patterns', async (req, res) => {
 // Scanner state
 router.get('/scanner/status', async (req, res) => {
   const state = await getScannerState();
-  res.json(state);
+  const scanIntervalMs = parseInt(process.env.SCAN_INTERVAL_MS || '60000', 10);
+  const lastMs = state.lastScanAt ? new Date(state.lastScanAt).getTime() : 0;
+  const nextScanInSec = state.isRunning && lastMs
+    ? Math.max(0, Math.round((scanIntervalMs - (Date.now() - lastMs)) / 1000))
+    : null;
+
+  res.json({
+    isRunning: state.isRunning,
+    lastScanAt: state.lastScanAt,
+    pairsScanned: state.pairsScanned || 0,
+    lastSignalSymbol: state.lastSignalSymbol,
+    best_score_symbol: state.bestScoreSymbol,
+    best_score: state.bestScore ?? 0,
+    best_score_direction: state.bestScoreDirection,
+    best_score_status: state.bestScoreStatus,
+    engine: state.engineId || 'institutional-smc',
+    engine_label: state.engineId === 'institutional-smc' ? 'SMC v2 (Python)' : state.engineId,
+    universe_size: state.universeSize || 0,
+    signals_found: state.signalsFound || 0,
+    scanning: Boolean(state.scanning),
+    progress_pct: state.scanProgressPct || 0,
+    scan_started_at: state.scanStartedAt,
+    scan_meta: state.scanMeta,
+    scan_interval_sec: Math.round(scanIntervalMs / 1000),
+    next_scan_in_sec: nextScanInSec,
+  });
 });
 
 router.post('/scanner/start', async (req, res) => {
   await setScannerRunning(true);
   triggerScan();
-  res.json({ success: true, isRunning: true });
+  res.json({ success: true, isRunning: true, ok: true, answer: '🟢 Scanner started.' });
 });
 
 router.post('/scanner/stop', async (req, res) => {
   await setScannerRunning(false);
-  res.json({ success: true, isRunning: false });
+  res.json({ success: true, isRunning: false, ok: true, answer: '🔴 Scanner stopped.' });
 });
 
-// Backtest strategy (TradingView-style — supports period presets: 1y, 6m, 3m, 1m, 1w)
+router.post('/scanner/scan', async (req, res) => {
+  try {
+    const { runScannerOnce } = await import('../jobs/marketScanner.js');
+    const summary = await runScannerOnce();
+    res.json({
+      success: true,
+      notified: Boolean(summary.last_signal),
+      message: summary.signals_found
+        ? `Found ${summary.signals_found} signal(s); best: ${summary.last_signal}`
+        : `No signals in ${summary.pairs_scanned}/${summary.universe_size} pairs (engine: ${summary.engine})`,
+      ...summary,
+    });
+  } catch (err) {
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// In-memory backtest job progress (Python engine)
+const backtestJobs = new Map();
+
+router.get('/backtest/status/:jobId', (req, res) => {
+  const job = backtestJobs.get(req.params.jobId);
+  if (!job) return res.status(404).json({ error: 'Job not found' });
+  res.json(job);
+});
+
+// Backtest strategy — Python 3-phase pipeline (DB → SMC → simulate)
 router.post('/backtest', async (req, res) => {
   try {
     const {
@@ -2020,6 +3252,7 @@ router.post('/backtest', async (req, res) => {
       period,
       initialCapital,
       riskPerTrade,
+      async: runAsync,
     } = req.body;
 
     if (!symbol) {
@@ -2030,12 +3263,7 @@ router.post('/backtest', async (req, res) => {
       return res.status(400).json({ error: 'period (1y, 6m, 3m, 1m) or startDate+endDate required' });
     }
 
-    const tf = timeframe || '5m';
-    if ((tf === '5m' || tf === '3m') && ['3m', '6m', '1y'].includes(period)) {
-      return res.status(400).json({
-        error: 'For 3M+ backtests use 15m or 30m entry timeframe. 5m/3m entry creates too much data and may crash the server.',
-      });
-    }
+    const tf = timeframe || '15m';
 
     const strategy = getStrategy(strategyId);
     if (!strategy?.runBacktest && strategy?.engine === 'freqtrade') {
@@ -2047,43 +3275,152 @@ router.post('/backtest', async (req, res) => {
       return res.status(400).json({ error: `Strategy ${strategyId} not found or no backtest support` });
     }
 
-    const startMs = Date.now();
-    const result = await runBacktestIsolated({
-      symbol: symbol.toUpperCase(),
-      entryTimeframe: timeframe || '5m',
-      startDate,
-      endDate,
-      period,
-      initialCapital: initialCapital || 10000,
-      riskPerTrade: riskPerTrade || 0.01,
-    });
-
-    result.durationMs = Date.now() - startMs;
-
-    const db = getSupabase();
-    if (db) {
-      await db.from('backtest_runs').insert({
-        strategy_id: strategyId,
-        symbol: result.symbol,
-        timeframe: result.entryTimeframe,
-        start_date: result.startDate,
-        end_date: result.endDate,
-        total_trades: result.totalTrades,
-        wins: result.wins,
-        losses: result.losses,
-        win_rate: result.winRate,
-        profit_factor: result.profitFactor,
-        total_pnl: result.totalPnl,
-        avg_r_multiple: result.avgRMultiple,
-        max_drawdown: result.maxDrawdownPercent,
-        results: {
-          trades: result.trades?.slice(-50),
-          equityCurve: result.equityCurve?.slice(-100),
-        },
+    const { resolveDateRange, estimateBarCount, getWarmupMs } = await import('../strategies/backtestEngine.js');
+    const { startTime, endTime } = resolveDateRange({ period, startDate, endDate });
+    const estimatedBars = estimateBarCount(tf, startTime - getWarmupMs(tf), endTime);
+    const maxSafeBars = parseInt(process.env.BACKTEST_MAX_SAFE_BARS || '9000', 10);
+    if (estimatedBars > maxSafeBars) {
+      return res.status(400).json({
+        error: `Too many bars (~${estimatedBars.toLocaleString()}). Use 15m entry TF or shorter period (1W/1M).`,
+        estimatedBars,
+        hint: '5m/3m uses too much memory — switch entry TF to 15m',
+      });
+    }
+    if ((tf === '5m' || tf === '3m') && estimatedBars > 6500) {
+      return res.status(400).json({
+        error: `${tf} entry on ${period || 'this period'} exceeds memory limits (~${estimatedBars.toLocaleString()} bars). Use 15m entry TF.`,
+        estimatedBars,
       });
     }
 
+    const jobId = `bt-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    backtestJobs.set(jobId, { status: 'running', progress_pct: 0, phase: 'init', message: 'Starting…' });
+
+    const runJob = async () => {
+      const startMs = Date.now();
+      try {
+        let result;
+        try {
+          result = await runPythonBacktest(
+            {
+              symbol: symbol.toUpperCase(),
+              timeframe: tf,
+              entryTimeframe: tf,
+              period,
+              startDate,
+              endDate,
+              initialCapital: initialCapital || 10000,
+              riskPerTrade: riskPerTrade || 0.01,
+            },
+            (pct, phase, message) => {
+              backtestJobs.set(jobId, {
+                status: 'running',
+                progress_pct: pct,
+                phase,
+                message,
+              });
+            },
+          );
+        } catch (pyErr) {
+          await logEvent('warn', 'backtest', `Python engine skip: ${pyErr.message}`);
+          backtestJobs.set(jobId, {
+            status: 'running',
+            progress_pct: 25,
+            phase: 'backtest',
+            message: 'Running strategy simulation…',
+          });
+          const { runBacktest } = await import('../strategies/smc-mtf/backtester.js');
+          result = await runBacktest({
+            symbol: symbol.toUpperCase(),
+            entryTimeframe: tf,
+            startDate,
+            endDate,
+            period,
+            initialCapital: initialCapital || 10000,
+            riskPerTrade: riskPerTrade || 0.01,
+          });
+          result.dataSource = result.dataSource || 'database';
+        }
+
+        result.durationMs = Date.now() - startMs;
+        result.summary = result.summary || {
+          totalTrades: result.totalTrades,
+          winRate: result.winRate,
+          profitFactor: result.profitFactor,
+          maxDrawdown: result.maxDrawdownPercent,
+          netProfitPct: result.netProfitPercent,
+          averageRR: result.avgRMultiple,
+        };
+
+        const db = getSupabase();
+        if (db) {
+          await db.from('backtest_runs').insert({
+            strategy_id: strategyId,
+            symbol: result.symbol,
+            timeframe: result.entryTimeframe,
+            start_date: result.startDate,
+            end_date: result.endDate,
+            total_trades: result.totalTrades,
+            wins: result.wins,
+            losses: result.losses,
+            win_rate: result.winRate,
+            profit_factor: result.profitFactor,
+            total_pnl: result.totalPnl,
+            avg_r_multiple: result.avgRMultiple,
+            max_drawdown: result.maxDrawdownPercent,
+            results: {
+              trades: result.trades?.slice(-50),
+              equityCurve: result.equityCurve?.slice(-100),
+              summary: result.summary,
+            },
+          });
+        }
+
+        backtestJobs.set(jobId, {
+          status: 'completed',
+          progress_pct: 100,
+          phase: 'done',
+          message: 'Complete',
+          result,
+        });
+        return result;
+      } catch (err) {
+        backtestJobs.set(jobId, {
+          status: 'failed',
+          progress_pct: 0,
+          phase: 'error',
+          error: err.message,
+          message: err.message,
+        });
+        throw err;
+      }
+    };
+
+    if (runAsync) {
+      runJob().catch(() => {});
+      return res.json({ jobId, status: 'running', progress_pct: 0 });
+    }
+
+    // Poll until complete (same request — frontend can also poll /backtest/status)
+    const result = await runJob();
+    backtestJobs.delete(jobId);
     res.json(result);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Candle DB coverage for backtest (shows if sync needed)
+router.get('/backtest/coverage', async (req, res) => {
+  try {
+    const symbol = (req.query.symbol || 'BTCUSDT').toUpperCase();
+    const timeframe = req.query.timeframe || '15m';
+    const period = req.query.period || '3m';
+    const { resolveDateRange, getWarmupMs } = await import('../strategies/backtestEngine.js');
+    const { startTime, endTime } = resolveDateRange({ period });
+    const warmup = getWarmupMs(timeframe);
+    const coverage = await getCandleCoverage(symbol, timeframe, startTime - warmup, endTime);
+    res.json({ period, ...coverage, dataSource: 'database' });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -15,20 +15,25 @@ export function dashboardBroadcast(payload) {
   }
 }
 
-export function broadcastTelegramPipeline(message, stage) {
+export function broadcastTelegramPipeline(message, stage, extra = {}) {
   const sig = message?.parsed_signal || {};
   const group = message?.telegram_signal_sources?.title || message?.telegram_chat_id;
+  const api = message?.api_result || {};
   dashboardBroadcast({
     type: 'telegram_pipeline',
     stage,
     message_id: message?.id,
     group,
-    symbol: sig.symbol,
-    side: sig.side,
+    symbol: sig.symbol || api.signal?.symbol,
+    side: sig.side || api.signal?.side,
     parse_status: message?.parse_status,
-    passed: message?.api_result?.passed,
-    reason: message?.api_result?.reason,
+    passed: api.passed,
+    reason: api.reason || api.last_error || extra.reason,
+    live: api.live === true,
+    levels_adapted: api.levels_adapted === true,
+    auto_executed: api.auto_executed === true,
     ts: Date.now(),
+    ...extra,
   });
 }
 

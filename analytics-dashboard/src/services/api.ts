@@ -1,6 +1,87 @@
 import { RESEARCH_API, getTradingApi } from "@/lib/constants";
 import type { ResearchHealth } from "@/types";
 
+export type SignalFeedRow = {
+  id: string;
+  symbol: string;
+  direction: string;
+  confidence?: number;
+  source?: string;
+  source_group?: string | null;
+  strategy_name?: string;
+  execution_status?: string;
+  final_outcome?: string | null;
+  trade_id?: string | null;
+  pnl?: number | null;
+  stop_loss?: number;
+  tp1?: number;
+  tp2?: number;
+  created_at?: string;
+};
+
+export type StrategyCatalogRow = {
+  id: string;
+  name: string;
+  status: string;
+  engine?: string;
+  source?: string;
+  rules?: string[];
+  deployment?: string;
+  metrics?: import("@/types").BacktestMetrics;
+  last_backtest_at?: string | null;
+};
+
+export type MarketDataTimeframeProgress = {
+  timeframe: string;
+  total_months: number;
+  completed_months: number;
+  converted: number;
+  bars: number;
+  min_bars: number;
+  ready: boolean;
+  fresh: boolean;
+  status: string;
+  pct: number;
+  message?: string;
+};
+
+export type MarketDataSymbolProgress = {
+  symbol: string;
+  status: string;
+  overall_pct: number;
+  message?: string;
+  updated_at?: string;
+  timeframes: Record<string, MarketDataTimeframeProgress>;
+};
+
+export type MarketDataPhaseProgress = {
+  phase: number;
+  symbols: string[];
+  status: string;
+  overall_pct: number;
+  symbols_complete: number;
+  symbols_total: number;
+  started_at?: string | null;
+  finished_at?: string | null;
+  symbol_progress: Record<string, MarketDataSymbolProgress>;
+};
+
+export type MarketDataProgress = {
+  job_id: string;
+  auto_download: boolean;
+  auto_update: boolean;
+  paused: boolean;
+  phase_size: number;
+  total_phases: number;
+  current_phase: number;
+  global_status: string;
+  global_pct: number;
+  universe_size: number;
+  last_error?: string;
+  updated_at?: string;
+  phases: MarketDataPhaseProgress[];
+};
+
 async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(url, { ...init, headers: { "Content-Type": "application/json", ...init?.headers } });
   const text = await res.text();
@@ -28,7 +109,30 @@ export const researchApi = {
     }
   },
   backtestStart: (body: Record<string, unknown>) =>
-    fetchJson<{ backtest_id: string; status: string }>(`${RESEARCH_API}/backtest/start`, { method: "POST", body: JSON.stringify(body) }),
+    fetchJson<{ backtest_id: string; status: string; source?: string }>(`${RESEARCH_API}/backtest/start`, { method: "POST", body: JSON.stringify(body) }),
+  backtestEstimate: (body: Record<string, unknown>) =>
+    fetchJson<{
+      symbols: number;
+      total_bars: number;
+      estimated_minutes: number;
+      memory_warning: boolean;
+      heap_limit_mb: number;
+      recommendation: string;
+      source?: string;
+    }>(`${RESEARCH_API}/backtest/estimate`, { method: "POST", body: JSON.stringify(body) }),
+  topFuturesSymbols: (limit = 50) =>
+    fetchJson<{ symbols: string[]; count: number }>(`${RESEARCH_API}/symbols/futures/top?limit=${limit}`),
+  strategyRegistry: () =>
+    fetchJson<{ strategies: Array<{ id: string; name: string; version: string; engine: string; description: string }> }>(
+      `${RESEARCH_API}/strategies/registry`
+    ),
+  syncBatch: (body: { exchange?: string; symbols: string[]; timeframes?: string[]; full?: boolean }) =>
+    fetchJson<{ started: number; failed: number; symbols: string[]; timeframes: string[] }>(
+      `${RESEARCH_API}/sync/batch`,
+      { method: "POST", body: JSON.stringify(body) }
+    ),
+  syncStart: (body: { exchange: string; symbol: string; timeframe: string; full?: boolean }) =>
+    fetchJson<Record<string, unknown>>(`${RESEARCH_API}/sync/start`, { method: "POST", body: JSON.stringify(body) }),
   backtestStatus: (id: string) =>
     fetchJson<Record<string, unknown>>(`${RESEARCH_API}/backtest/status?backtest_id=${id}`),
   backtestResults: (id: string) =>
@@ -58,6 +162,23 @@ export const researchApi = {
       { method: "POST" }
     ),
   datasetStatus: () => fetchJson<unknown>(`${RESEARCH_API}/dataset/status`),
+  marketDataProgress: () => fetchJson<MarketDataProgress>(`${RESEARCH_API}/market-data/jobs/progress`),
+  marketDataStartPhase: (phase?: number) =>
+    fetchJson<MarketDataProgress>(`${RESEARCH_API}/market-data/jobs/start`, {
+      method: "POST",
+      body: JSON.stringify(phase != null ? { phase } : {}),
+    }),
+  marketDataAuto: (autoDownload: boolean, autoUpdate = true) =>
+    fetchJson<MarketDataProgress>(`${RESEARCH_API}/market-data/jobs/auto`, {
+      method: "POST",
+      body: JSON.stringify({ auto_download: autoDownload, auto_update: autoUpdate }),
+    }),
+  marketDataPause: () =>
+    fetchJson<MarketDataProgress>(`${RESEARCH_API}/market-data/jobs/pause`, { method: "POST", body: "{}" }),
+  marketDataResume: () =>
+    fetchJson<MarketDataProgress>(`${RESEARCH_API}/market-data/jobs/resume`, { method: "POST", body: "{}" }),
+  marketDataRefreshUniverse: () =>
+    fetchJson<MarketDataProgress>(`${RESEARCH_API}/market-data/jobs/refresh-universe`, { method: "POST", body: "{}" }),
   memoryDashboard: () =>
     fetchJson<{
       top_patterns: unknown[];
@@ -152,7 +273,10 @@ export const researchApi = {
 
 export const tradingApi = {
   balance: () => fetchJson<{ total?: number; available?: number; error?: string; exchange_unreachable?: boolean; source?: string }>(`${getTradingApi()}/balance`),
-  trades: (limit = 50) => fetchJson<unknown[]>(`${getTradingApi()}/trades?limit=${limit}`),
+  trades: (limit = 1000, status = "all") =>
+    fetchJson<unknown[]>(`${getTradingApi()}/trades?limit=${limit}&status=${status}`),
+  signalFeed: (limit = 100) =>
+    fetchJson<{ signals: SignalFeedRow[] }>(`${getTradingApi()}/analytics/signals/feed?limit=${limit}`),
   openTrades: () => fetchJson<unknown[]>(`${getTradingApi()}/trades/open`),
   dashboard: () => fetchJson<Record<string, unknown>>(`${getTradingApi()}/trading/dashboard`),
   paperDashboard: () => fetchJson<Record<string, unknown>>(`${getTradingApi()}/paper/dashboard`),
@@ -261,6 +385,8 @@ export const tradingApi = {
       test_mode?: boolean;
       live_listener?: boolean;
       source?: string;
+      last_live_at?: string | null;
+      control?: { auto_trading?: boolean; manual_approval?: boolean; mode?: string };
     }>(
       `${getTradingApi()}/telegram/inbox?limit=${limit}${status ? `&status=${encodeURIComponent(status)}` : ""}${chatId ? `&chat_id=${chatId}` : ""}&dedupe=false${revalidate ? "&revalidate=true" : ""}`
     ),
@@ -268,8 +394,78 @@ export const tradingApi = {
     fetchJson<{ messages: unknown[] }>(
       `${getTradingApi()}/telegram/messages?limit=${limit}${parseStatus ? `&parse_status=${encodeURIComponent(parseStatus)}` : ""}`
     ),
+  telegramRawMessages: (limit = 100, opts?: { sourceId?: string; status?: string; offset?: number }) => {
+    const q = new URLSearchParams({ limit: String(limit) });
+    if (opts?.sourceId) q.set("source_id", opts.sourceId);
+    if (opts?.status) q.set("status", opts.status);
+    if (opts?.offset) q.set("offset", String(opts.offset));
+    return fetchJson<{ messages: unknown[]; count: number }>(`${getTradingApi()}/telegram/raw?${q}`);
+  },
+  telegramRawMessage: (id: string) =>
+    fetchJson<{ message: Record<string, unknown> }>(`${getTradingApi()}/telegram/raw/${id}`),
+  telegramParsedSignals: (limit = 100, opts?: { sourceId?: string; offset?: number }) => {
+    const q = new URLSearchParams({ limit: String(limit) });
+    if (opts?.sourceId) q.set("source_id", opts.sourceId);
+    if (opts?.offset) q.set("offset", String(opts.offset));
+    return fetchJson<{ signals: unknown[]; count: number }>(`${getTradingApi()}/telegram/parsed?${q}`);
+  },
+  telegramRejectedSignals: (limit = 100, opts?: { sourceId?: string; stage?: string; offset?: number }) => {
+    const q = new URLSearchParams({ limit: String(limit) });
+    if (opts?.sourceId) q.set("source_id", opts.sourceId);
+    if (opts?.stage) q.set("stage", opts.stage);
+    if (opts?.offset) q.set("offset", String(opts.offset));
+    return fetchJson<{ rejections: unknown[]; count: number }>(`${getTradingApi()}/telegram/rejected?${q}`);
+  },
+  telegramGroupMemory: (sourceId?: string) =>
+    fetchJson<{ groups: unknown[] }>(
+      `${getTradingApi()}/telegram/group-memory${sourceId ? `?source_id=${encodeURIComponent(sourceId)}` : ""}`
+    ),
+  telegramArchiveRecent: (limit = 50, sourceId?: string) =>
+    fetchJson<{ ok: boolean; queued: number; message?: string }>(`${getTradingApi()}/telegram/archive/recent`, {
+      method: "POST",
+      body: JSON.stringify({ limit, source_id: sourceId }),
+    }),
   signals: (limit = 20) => fetchJson<unknown[]>(`${getTradingApi()}/signals?limit=${limit}`),
-  scannerStatus: () => fetchJson<{ isRunning: boolean }>(`${getTradingApi()}/scanner/status`),
+  signalAnalytics: (days = 90) =>
+    fetchJson<{
+      ok: boolean;
+      summary: {
+        total_signals: number;
+        executed_trades: number;
+        win_rate: number;
+        avg_r: number;
+        avg_latency_ms: number;
+        avg_latency_sec: number;
+        lessons: Record<string, { wins: number; losses: number }>;
+      };
+      by_source: Array<Record<string, unknown>>;
+      by_strategy: Array<Record<string, unknown>>;
+      by_group: Array<Record<string, unknown>>;
+      phase4_ready?: Record<string, unknown>;
+    }>(`${getTradingApi()}/analytics/signals?days=${days}`),
+  recentLessons: (limit = 30) =>
+    fetchJson<{ lessons: Array<Record<string, unknown>> }>(`${getTradingApi()}/analytics/lessons/recent?limit=${limit}`),
+  backtestGate: (strategyId: string) =>
+    fetchJson<Record<string, unknown>>(`${getTradingApi()}/strategy/backtest-gate/${encodeURIComponent(strategyId)}`),
+  scannerStatus: () => fetchJson<{
+    isRunning: boolean;
+    scanning?: boolean;
+    progress_pct?: number;
+    pairs_scanned?: number;
+    universe_size?: number;
+    engine?: string;
+    engine_label?: string;
+    signals_found?: number;
+    lastScanAt?: string;
+    next_scan_in_sec?: number | null;
+  }>(`${getTradingApi()}/scanner/status`),
+  signalEngineStatus: () => fetchJson<Record<string, unknown>>(`${getTradingApi()}/signal-engine/status`),
+  setSignalEngine: (signal_engine: string) =>
+    fetchJson<Record<string, unknown>>(`${getTradingApi()}/signal-engine`, {
+      method: "POST",
+      body: JSON.stringify({ signal_engine, actor: "risk-dashboard" }),
+    }),
   apiKeyStatus: () => fetchJson<Record<string, unknown>>(`${getTradingApi()}/settings/api-keys`),
   pairs: () => fetchJson<string[]>(`${getTradingApi()}/pairs`),
+  strategyCatalog: () => fetchJson<{ strategies: StrategyCatalogRow[] }>(`${getTradingApi()}/strategies/catalog`),
 };

@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LineChart, Brain, Shield, BarChart3, Globe } from "lucide-react";
+import { LineChart, Brain, Shield, BarChart3, Globe, Radio, BookOpen } from "lucide-react";
 
 const sections = [
+  { href: "/analytics/signals", label: "Signal Analytics", icon: Radio, desc: "Win rate, avg R, latency by source/strategy/group (Phase 2)" },
+  { href: "/analytics/lessons", label: "Trade Lessons", icon: BookOpen, desc: "AI post-trade reviews on every close (Phase 3)" },
   { href: "/analytics/equity", label: "Equity Analytics", icon: LineChart, desc: "Portfolio equity, drawdown, rolling Sharpe" },
   { href: "/analytics/sessions", label: "Session Analytics", icon: Globe, desc: "Asian, London, New York performance" },
   { href: "/analytics/symbols", label: "Symbol Analytics", icon: BarChart3, desc: "Per-symbol ranking and metrics" },

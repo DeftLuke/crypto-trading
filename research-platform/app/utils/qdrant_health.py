@@ -11,10 +11,16 @@ def ping_qdrant() -> bool:
     if not settings.memory_enabled:
         return True
     try:
-        from app.memory.qdrant.client import get_qdrant_store
+        from qdrant_client import QdrantClient
 
-        store = get_qdrant_store()
-        store.client.get_collections()
+        if settings.qdrant_url == ":memory:":
+            client = QdrantClient(":memory:")
+        else:
+            client = QdrantClient(
+                url=settings.qdrant_url,
+                api_key=settings.qdrant_api_key or None,
+            )
+        client.get_collections()
         return True
     except Exception as e:
         logger.warning("Qdrant ping failed", extra={"error": str(e)})

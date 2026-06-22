@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import get_settings
 from app.database.session import get_db
 from app.models.tables import FeatureDataset, Symbol, SyncJob, SystemHealth
 from app.schemas.api import (
@@ -26,24 +27,50 @@ router = APIRouter()
 
 
 @router.get("/health", response_model=HealthResponse)
-async def health(db: AsyncSession = Depends(get_db)) -> HealthResponse:
+async def health() -> HealthResponse:
+    settings = get_settings()
     checks: dict = {}
+
+    # Trading path — local Parquet OHLCV (required for institutional SMC)
     try:
-        await db.execute(select(Symbol).limit(1))
-        checks["database"] = "ok"
+        from app.market_data.manager import MarketDataManager
+
+        md_stats = MarketDataManager().storage_stats()
+        checks["market_data"] = md_stats
+        market_ok = int(md_stats.get("parquet_files") or 0) > 0
     except Exception as e:
-        checks["database"] = f"error: {e}"
+        checks["market_data"] = f"error: {e}"
+        market_ok = False
+
+    if settings.database_required:
+        try:
+            from app.database.session import AsyncSessionLocal
+
+            async with AsyncSessionLocal() as db:
+                await db.execute(select(Symbol).limit(1))
+            checks["database"] = "ok"
+        except Exception as e:
+            checks["database"] = f"error: {e}"
+    else:
+        checks["database"] = "skipped (trading uses Parquet)"
 
     try:
         stats = ParquetStorage().storage_stats()
-        checks["parquet"] = stats
+        checks["legacy_parquet"] = stats
     except Exception as e:
-        checks["parquet"] = f"error: {e}"
+        checks["legacy_parquet"] = f"error: {e}"
 
     checks["redis"] = "ok" if await ping_redis() else "degraded"
-    checks["qdrant"] = "ok" if ping_qdrant() else "degraded"
+    if settings.memory_enabled:
+        checks["qdrant"] = "ok" if ping_qdrant() else "degraded"
+    else:
+        checks["qdrant"] = "disabled"
 
-    status = "healthy" if checks.get("database") == "ok" else "degraded"
+    checks["scheduler"] = "enabled" if settings.scheduler_enabled else "disabled"
+    checks["memory"] = "enabled" if settings.memory_enabled else "disabled"
+    checks["agent"] = "enabled" if settings.agent_enabled else "disabled"
+
+    status = "healthy" if market_ok else "degraded"
     return HealthResponse(
         status=status,
         service="research-platform",

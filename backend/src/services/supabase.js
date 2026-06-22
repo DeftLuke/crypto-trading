@@ -41,6 +41,7 @@ export async function logEvent(level, source, message, metadata = {}) {
 const SIGNAL_COLUMNS = [
   'symbol', 'direction', 'confidence', 'entry_price', 'stop_loss',
   'tp1', 'tp2', 'tp3', 'reasons', 'mtf_status', 'timeframe_entry', 'status', 'expires_at',
+  'signal_source', 'strategy_name', 'source_group', 'validation_score',
 ];
 
 function toSignalRow(signal) {
@@ -88,13 +89,17 @@ export async function saveTrade(trade) {
   return result;
 }
 
-const TRADE_COLUMNS = [
+export const TRADE_COLUMNS = [
   'signal_id', 'symbol', 'direction', 'entry_price', 'quantity', 'original_quantity',
   'stop_loss', 'initial_stop_loss', 'tp1', 'tp2', 'tp3',
   'tp1_hit', 'tp2_hit', 'tp3_hit', 'sl_moved_breakeven', 'sl_locked_1r',
   'exit_price', 'pnl', 'pnl_percent', 'r_multiple', 'status', 'close_reason',
   'binance_order_id', 'binance_sl_order_id', 'risk_amount', 'leverage',
   'notional_usdt', 'margin_usdt', 'sizing_mode', 'lesson', 'opened_at', 'closed_at',
+  'tp1_hit_at', 'tp2_hit_at', 'sl_updated_at', 'exchange_realized_pnl',
+  'last_mark_price', 'last_mark_at',
+  'signal_received_at', 'execution_latency_ms', 'signal_source', 'strategy_name', 'close_factors',
+  'exchange', 'risk_percentage', 'lifecycle_stage', 'exchange_qty', 'db_exchange_sync_ok', 'protection_verified_at',
 ];
 
 function toTradeRow(trade) {
@@ -146,10 +151,44 @@ export async function getSignals(limit = 50) {
   return db.from('signals').select('*').order('created_at', { ascending: false }).limit(limit);
 }
 
-export async function getTrades(limit = 50) {
+export async function getTrades(limit = 500, options = {}) {
   const db = getSupabase();
   if (!db) return { data: [], error: null };
-  return db.from('trades').select('*').order('opened_at', { ascending: false }).limit(limit);
+
+  const status = options.status || 'all';
+  if (status === 'closed') {
+    return getClosedTrades(limit);
+  }
+  if (status === 'open') {
+    return getOpenTrades();
+  }
+
+  const [closedRes, recentRes] = await Promise.all([
+    getClosedTrades(Math.min(limit, 500)),
+    db.from('trades').select('*').order('opened_at', { ascending: false }).limit(limit),
+  ]);
+
+  const byId = new Map();
+  for (const t of [...(recentRes.data || []), ...(closedRes.data || [])]) {
+    byId.set(t.id, t);
+  }
+  const merged = [...byId.values()].sort((a, b) => {
+    const ta = new Date(a.closed_at || a.opened_at || 0).getTime();
+    const tb = new Date(b.closed_at || b.opened_at || 0).getTime();
+    return tb - ta;
+  });
+  return { data: merged.slice(0, limit), error: closedRes.error || recentRes.error };
+}
+
+export async function getClosedTrades(limit = 500) {
+  const db = getSupabase();
+  if (!db) return { data: [], error: null };
+  return db
+    .from('trades')
+    .select('*')
+    .in('status', ['closed', 'stopped'])
+    .order('closed_at', { ascending: false, nullsFirst: false })
+    .limit(limit);
 }
 
 export async function getPairStats() {
@@ -187,8 +226,8 @@ export async function updatePairStats(symbol, outcome, rMultiple) {
 
 export async function saveTradeLesson(lesson) {
   const db = getSupabase();
-  if (!db) return;
-  return db.from('trade_lessons').insert(lesson);
+  if (!db) return { data: null, error: null };
+  return db.from('trade_lessons').insert(lesson).select().single();
 }
 
 export async function getPerformanceMetrics(days = 30) {
@@ -308,7 +347,15 @@ export async function getTelegramSignalMessages({ limit = 100, chatId = null, pa
   else query = query.neq('parse_status', 'superseded');
   const result = await query;
   if (followedOnly && result.data) {
-    result.data = result.data.filter((row) => row.telegram_signal_sources?.is_followed === true);
+    const { data: followedSources } = await getTelegramSignalSources({ followed: true, limit: 500 });
+    const followedChatIds = new Set(
+      (followedSources || []).map((s) => Number(s.telegram_chat_id)),
+    );
+    result.data = result.data.filter(
+      (row) =>
+        row.telegram_signal_sources?.is_followed === true
+        || followedChatIds.has(Number(row.telegram_chat_id)),
+    );
   }
   return result;
 }
@@ -361,6 +408,8 @@ export async function updateTelegramSignalMessage(id, patch) {
   const allowed = {};
   if (patch.api_result !== undefined) allowed.api_result = patch.api_result;
   if (patch.parse_status !== undefined) allowed.parse_status = patch.parse_status;
+  if (patch.parsed_signal !== undefined) allowed.parsed_signal = patch.parsed_signal;
+  if (patch.signal_id !== undefined) allowed.signal_id = patch.signal_id;
   return db.from('telegram_signal_messages').update(allowed).eq('id', id).select('*').single();
 }
 

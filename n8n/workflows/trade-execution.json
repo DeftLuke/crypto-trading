@@ -21,7 +21,7 @@
         "url": "={{ ($env.BACKEND_URL || 'https://api.deftluke.online') + '/api/control/signal' }}",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ ...( $json.body || $json ), source: ($json.body || $json).source || 'n8n', mode: $env.CONTROL_TRADING_MODE || 'demo', demo_unlimited: ($env.CONTROL_TRADING_MODE || 'demo') !== 'live' }) }}",
+        "jsonBody": "={{ JSON.stringify({ ...( $json.body || $json ), source: ($json.body || $json).source || 'n8n', mode: $env.CONTROL_TRADING_MODE || 'demo', demo_unlimited: ($env.CONTROL_TRADING_MODE || 'demo') !== 'live', skip_execute: Boolean(($json.body || $json).already_executed || ($json.body || $json).result?.success) }) }}",
         "options": { "timeout": 60000 }
       },
       "id": "control-signal",

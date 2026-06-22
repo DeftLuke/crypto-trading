@@ -1,45 +1,31 @@
+/**
+ * Binance public WebSocket — single multiplexed connection (SUBSCRIBE) for mark prices + klines.
+ * Avoids opening one socket per symbol (was causing hundreds of connections).
+ */
 import WebSocket from 'ws';
 import { config } from '../config/index.js';
 
+const MAX_STREAMS = 120;
+
 class BinanceWebSocket {
   constructor() {
-    this.connections = new Map();
     this.subscribers = new Map();
     this.prices = new Map();
+    this.streams = new Set();
+    this.ws = null;
+    this.reconnectTimer = null;
+    this.msgId = 1;
+    this.connecting = false;
   }
 
   subscribeKline(symbol, interval, callback) {
-    const stream = `${symbol.toLowerCase()}@kline_${interval}`;
-    const key = `kline:${symbol}:${interval}`;
+    const sym = symbol.toUpperCase();
+    const stream = `${sym.toLowerCase()}@kline_${interval}`;
+    const key = `kline:${sym}:${interval}`;
 
-    if (!this.subscribers.has(key)) {
-      this.subscribers.set(key, new Set());
-    }
+    if (!this.subscribers.has(key)) this.subscribers.set(key, new Set());
     this.subscribers.get(key).add(callback);
-
-    if (!this.connections.has(stream)) {
-      this._connectStream(stream, (data) => {
-        if (data.e !== 'kline') return;
-        const k = data.k;
-        const candle = {
-          symbol: data.s,
-          interval: k.i,
-          time: Math.floor(k.t / 1000),
-          open: parseFloat(k.o),
-          high: parseFloat(k.h),
-          low: parseFloat(k.l),
-          close: parseFloat(k.c),
-          volume: parseFloat(k.v),
-          isClosed: k.x,
-        };
-
-        const subKey = `kline:${data.s}:${k.i}`;
-        const subs = this.subscribers.get(subKey);
-        if (subs) {
-          subs.forEach((cb) => cb(candle));
-        }
-      });
-    }
+    this._ensureStream(stream);
 
     return () => {
       const subs = this.subscribers.get(key);
@@ -48,25 +34,13 @@ class BinanceWebSocket {
   }
 
   subscribeMarkPrice(symbol, callback) {
-    const stream = `${symbol.toLowerCase()}@markPrice@1s`;
-    const key = `mark:${symbol}`;
+    const sym = symbol.toUpperCase();
+    const stream = `${sym.toLowerCase()}@markPrice@1s`;
+    const key = `mark:${sym}`;
 
-    if (!this.subscribers.has(key)) {
-      this.subscribers.set(key, new Set());
-    }
+    if (!this.subscribers.has(key)) this.subscribers.set(key, new Set());
     this.subscribers.get(key).add(callback);
-
-    if (!this.connections.has(stream)) {
-      this._connectStream(stream, (data) => {
-        const price = parseFloat(data.p);
-        this.prices.set(data.s, price);
-
-        const subs = this.subscribers.get(`mark:${data.s}`);
-        if (subs) {
-          subs.forEach((cb) => cb({ symbol: data.s, price }));
-        }
-      });
-    }
+    this._ensureStream(stream);
 
     return () => {
       const subs = this.subscribers.get(key);
@@ -75,49 +49,114 @@ class BinanceWebSocket {
   }
 
   getPrice(symbol) {
-    return this.prices.get(symbol);
+    return this.prices.get(String(symbol || '').toUpperCase());
   }
 
-  _connectStream(stream, onMessage) {
-    const wsUrl = `${config.binance.wsUrl}/ws/${stream}`;
-    const ws = new WebSocket(wsUrl);
+  _ensureStream(stream) {
+    if (this.streams.has(stream)) return;
+    if (this.streams.size >= MAX_STREAMS) return;
+    this.streams.add(stream);
+    if (this.ws?.readyState === WebSocket.OPEN) {
+      this.ws.send(JSON.stringify({ method: 'SUBSCRIBE', params: [stream], id: this.msgId++ }));
+    } else {
+      this._connect();
+    }
+  }
+
+  _connect() {
+    if (this.connecting || this.ws?.readyState === WebSocket.OPEN) return;
+    this.connecting = true;
+
+    const base = config.binance.wsUrl || 'wss://fstream.binance.com';
+    const url = `${base}/ws`;
+    const ws = new WebSocket(url);
 
     ws.on('open', () => {
-      console.log(`[WS] Connected: ${stream}`);
+      this.connecting = false;
+      console.log(`[WS] Multiplex connected — ${this.streams.size} streams`);
+      if (this.streams.size > 0) {
+        ws.send(JSON.stringify({
+          method: 'SUBSCRIBE',
+          params: [...this.streams],
+          id: this.msgId++,
+        }));
+      }
     });
 
     ws.on('message', (raw) => {
       try {
-        const data = JSON.parse(raw.toString());
-        onMessage(data);
+        const envelope = JSON.parse(raw.toString());
+        const data = envelope.data || envelope;
+        if (data.e === 'markPriceUpdate' || data.e === 'markPrice') {
+          const price = parseFloat(data.p);
+          const sym = data.s;
+          if (sym && price > 0) {
+            this.prices.set(sym, price);
+            const subs = this.subscribers.get(`mark:${sym}`);
+            if (subs) subs.forEach((cb) => cb({ symbol: sym, price }));
+          }
+        }
+        if (data.e === 'kline') {
+          const k = data.k;
+          const candle = {
+            symbol: data.s,
+            interval: k.i,
+            time: Math.floor(k.t / 1000),
+            open: parseFloat(k.o),
+            high: parseFloat(k.h),
+            low: parseFloat(k.l),
+            close: parseFloat(k.c),
+            volume: parseFloat(k.v),
+            isClosed: k.x,
+          };
+          const subs = this.subscribers.get(`kline:${data.s}:${k.i}`);
+          if (subs) subs.forEach((cb) => cb(candle));
+        }
       } catch (err) {
-        console.error(`[WS] Parse error on ${stream}:`, err.message);
+        console.error('[WS] Parse error:', err.message);
       }
     });
 
     ws.on('close', () => {
-      console.log(`[WS] Disconnected: ${stream}, reconnecting...`);
-      this.connections.delete(stream);
-      setTimeout(() => {
-        if (this.subscribers.size > 0) {
-          this._connectStream(stream, onMessage);
-        }
-      }, 3000);
+      this.connecting = false;
+      this.ws = null;
+      console.log('[WS] Multiplex disconnected — reconnecting…');
+      if (!this.reconnectTimer) {
+        this.reconnectTimer = setTimeout(() => {
+          this.reconnectTimer = null;
+          if (this.streams.size > 0) this._connect();
+        }, 3000);
+      }
     });
 
     ws.on('error', (err) => {
-      console.error(`[WS] Error on ${stream}:`, err.message);
+      this.connecting = false;
+      console.error('[WS] Multiplex error:', err.message);
     });
 
-    this.connections.set(stream, ws);
+    this.ws = ws;
   }
 
   closeAll() {
-    for (const ws of this.connections.values()) {
-      ws.close();
+    if (this.reconnectTimer) clearTimeout(this.reconnectTimer);
+    this.reconnectTimer = null;
+    if (this.ws) {
+      try { this.ws.close(); } catch { /* */ }
+      this.ws = null;
     }
-    this.connections.clear();
+    this.streams.clear();
     this.subscribers.clear();
+    this.connecting = false;
+  }
+
+  getStatus() {
+    return {
+      connected: this.ws?.readyState === WebSocket.OPEN,
+      streams: this.streams.size,
+      max_streams: MAX_STREAMS,
+      prices_cached: this.prices.size,
+      subscribers: this.subscribers.size,
+    };
   }
 }
 

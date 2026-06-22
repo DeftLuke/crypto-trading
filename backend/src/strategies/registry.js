@@ -1,8 +1,10 @@
 import smcMtf from './smc-mtf/index.js';
+import institutionalSmc from './institutional-smc/index.js';
 import freqtrade from './freqtrade/index.js';
 
 const strategies = {
   'smc-mtf': smcMtf,
+  'institutional-smc': institutionalSmc,
   freqtrade,
 };
 

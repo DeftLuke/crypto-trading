@@ -15,12 +15,33 @@ export function isTimeSyncStale(maxAgeMs = 5 * 60 * 1000) {
 
 export async function syncBinanceTime(restUrl) {
   const base = restUrl.replace(/\/$/, '');
-  const res = await fetchWithTimeout(`${base}/fapi/v1/time`, {}, 8000);
-  const data = await res.json();
-  if (!res.ok || !data.serverTime) {
-    throw new Error(data.msg || 'Failed to sync Binance server time');
+
+  const parseServerTime = async (url) => {
+    const res = await fetchWithTimeout(url, {}, 8000);
+    const text = await res.text();
+    const data = text ? JSON.parse(text) : {};
+    return data.time || data.serverTime || null;
+  };
+
+  let serverTime = null;
+  try {
+    serverTime = await parseServerTime(`${base}/fapi/v2/ticker/price?symbol=BTCUSDT`);
+  } catch {
+    /* demo v1 /time returns plain "ok" */
   }
-  timeOffsetMs = data.serverTime - Date.now();
+  if (!serverTime) {
+    try {
+      serverTime = await parseServerTime(`${base}/fapi/v1/time`);
+    } catch { /* ignore */ }
+  }
+  if (!serverTime) {
+    serverTime = await parseServerTime(`${base}/fapi/v1/exchangeInfo`);
+  }
+  if (!serverTime) {
+    throw new Error('Failed to sync Binance server time');
+  }
+
+  timeOffsetMs = serverTime - Date.now();
   lastSyncAt = Date.now();
   return timeOffsetMs;
 }

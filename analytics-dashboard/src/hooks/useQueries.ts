@@ -40,15 +40,15 @@ export function useOpenTrades() {
   return useQuery({
     queryKey: ["openTrades"],
     queryFn: () => tradingApi.openTrades() as Promise<Trade[]>,
-    refetchInterval: 3_000,
+    refetchInterval: 10_000,
   });
 }
 
 export function useTradingDashboard() {
   return useQuery({
     queryKey: ["tradingDashboard"],
-    queryFn: () => tradingApi.dashboard(),
-    refetchInterval: 3_000,
+    queryFn: () => tradingApi.dashboard() as Promise<import("@/types").TradingDashboard>,
+    refetchInterval: 10_000,
   });
 }
 
@@ -64,6 +64,17 @@ export function useSignals(limit = 50) {
       }
     },
     refetchInterval: 15_000,
+  });
+}
+
+export function useSignalFeed(limit = 100) {
+  return useQuery({
+    queryKey: ["signalFeed", limit],
+    queryFn: async () => {
+      const r = await tradingApi.signalFeed(limit);
+      return r.signals || [];
+    },
+    refetchInterval: 10_000,
   });
 }
 
@@ -87,7 +98,7 @@ export function useScannerStatus() {
   return useQuery({
     queryKey: ["scannerStatus"],
     queryFn: () => tradingApi.scannerStatus(),
-    refetchInterval: 15_000,
+    refetchInterval: (query) => (query.state.data?.scanning ? 2000 : 8000),
   });
 }
 
@@ -174,4 +185,15 @@ export function pushRecentBacktest(summary: BacktestSummary) {
   if (typeof window === "undefined") return;
   const existing = getRecentBacktests().filter((b) => b.backtest_id !== summary.backtest_id);
   localStorage.setItem("recent_backtests", JSON.stringify([summary, ...existing].slice(0, 20)));
+}
+
+export function useStrategyCatalog() {
+  return useQuery({
+    queryKey: ["strategyCatalog"],
+    queryFn: async () => {
+      const r = await tradingApi.strategyCatalog();
+      return r.strategies || [];
+    },
+    refetchInterval: 30_000,
+  });
 }

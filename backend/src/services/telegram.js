@@ -21,8 +21,13 @@ function escapeHtml(text) {
 }
 
 export function formatTelegramSignal(signal) {
-  const dir = signal.direction === 'BUY' ? '🟢 LONG' : '🔴 SHORT';
+  const isLong = signal.direction === 'BUY' || signal.direction === 'LONG';
+  const dir = isLong ? '🟢 LONG' : '🔴 SHORT';
   const reasons = signal.reasons || {};
+  const strategyLabel = signal.strategy_name || signal.strategy_id || 'SMC-MTF';
+  if (strategyLabel === 'institutional-smc') {
+    return formatInstitutionalTelegramSignal(signal, dir, strategyLabel);
+  }
 
   let breakdown = '';
   for (const [key, val] of Object.entries(reasons)) {
@@ -33,7 +38,7 @@ export function formatTelegramSignal(signal) {
   return `<b>🎯 SIGNAL — ${escapeHtml(signal.symbol)}</b>
 Direction: ${dir}
 Confidence: <b>${signal.confidence}/100</b>
-Strategy: SMC-MTF
+Strategy: ${escapeHtml(strategyLabel)}
 
 📊 <b>Breakdown:</b>
 ${breakdown}
@@ -46,8 +51,36 @@ ${breakdown}
 ⏰ Expires in 15 min`;
 }
 
+function formatInstitutionalTelegramSignal(signal, dir, strategyLabel) {
+  const reasons = signal.reasons || {};
+  let breakdown = '';
+  for (const [key, val] of Object.entries(reasons)) {
+    if (key === 'lineage') continue;
+    const icon = val.status === 'pass' ? '✅' : val.status === 'fail' ? '❌' : '⚠️';
+    breakdown += `${icon} <b>${escapeHtml(key.replace(/_/g, ' ').toUpperCase())}</b>: ${escapeHtml(val.detail)}\n`;
+  }
+  const summary = signal.explanation?.human_summary || reasons.engine?.detail || '';
+
+  return `<b>🎯 INSTITUTIONAL SIGNAL — ${escapeHtml(signal.symbol)}</b>
+Direction: ${dir}
+Confluence: <b>${signal.confidence}/100</b> (gate ≥80)
+Engine: ${escapeHtml(strategyLabel)} v2
+
+📊 <b>Confluence:</b>
+${breakdown}
+${summary ? `\n<i>${escapeHtml(summary)}</i>\n` : ''}
+💰 Entry: <code>${signal.entry_price}</code>
+🛑 SL: <code>${signal.stop_loss}</code>
+🎯 TP1: <code>${signal.tp1}</code> (1R — 30%)
+🎯 TP2: <code>${signal.tp2}</code> (2R — 40%)
+🎯 TP3: Trailing (30%)
+
+⏰ Expires in 15 min`;
+}
+
 export function buildSignalKeyboard(signal, signalId) {
-  const dirLabel = signal.direction === 'BUY' ? 'LONG' : 'SHORT';
+  const isLong = signal.direction === 'BUY' || signal.direction === 'LONG';
+  const dirLabel = isLong ? 'LONG' : 'SHORT';
   return {
     inline_keyboard: [[
       { text: `✅ ${dirLabel} — Set Size`, callback_data: `execute:${signalId}` },
@@ -103,26 +136,77 @@ export async function sendTelegramMessage(chatId, text, options = {}) {
   }
 }
 
+/** Telegram "typing…" indicator (expires ~5s — use with startTelegramTypingLoop). */
+export async function sendTelegramChatAction(chatId, action = 'typing') {
+  const telegram = await getBot();
+  if (!telegram || !chatId) return;
+  try {
+    await telegram.sendChatAction(chatId, action);
+  } catch { /* optional UX */ }
+}
+
+/** Keep typing indicator alive while OpenClaw / gateway runs. */
+export function startTelegramTypingLoop(chatId, intervalMs = 4000) {
+  if (!chatId) return { stop() {} };
+  let timer = null;
+  const tick = () => { sendTelegramChatAction(chatId, 'typing'); };
+  tick();
+  timer = setInterval(tick, intervalMs);
+  return {
+    stop() {
+      if (timer) {
+        clearInterval(timer);
+        timer = null;
+      }
+    },
+  };
+}
+
+export async function sendTelegramLoader(chatId, text = '⏳ Processing your request…') {
+  return sendTelegramMessage(chatId, text);
+}
+
+function formatUtc(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toISOString().replace('T', ' ').slice(0, 19) + ' UTC';
+}
+
 export async function sendTradeLifecycle(eventType, payload = {}) {
-  const { trade, signal, message, margin_usdt, leverage, notional_usdt } = payload;
+  const { trade, signal, message, margin_usdt, leverage, notional_usdt, plan, verify, protectionOk, orders } = payload;
   let text = '';
 
   if (eventType === 'trade.activated') {
+    const dir = signal?.direction === 'BUY' ? 'LONG' : signal?.direction === 'SELL' ? 'SHORT' : (trade?.direction || '');
+    const riskAmt = trade?.risk_amount;
+
     text =
       `🟢 <b>Trade Activated</b>\n\n` +
-      `${signal?.symbol || trade?.symbol} ${signal?.direction || trade?.direction}\n` +
+      `<b>${signal?.symbol || trade?.symbol}</b> ${dir}\n` +
       `Entry: <code>${trade?.entry_price || signal?.entry_price}</code>\n` +
-      (margin_usdt ? `Size: $${margin_usdt} margin · ${leverage}x · ~$${notional_usdt} pos\n` : '') +
+      (margin_usdt != null && Number.isFinite(Number(margin_usdt))
+        ? `Size: $${Number(margin_usdt).toFixed(2)} margin · ${leverage || trade?.leverage || '—'}x · ~$${Number(notional_usdt || 0).toFixed(0)} pos\n`
+        : (notional_usdt != null && Number.isFinite(Number(notional_usdt))
+          ? `Size: ~$${Number(notional_usdt).toFixed(0)} pos · ${leverage || trade?.leverage || '—'}x\n`
+          : '')) +
+      (riskAmt ? `Risk: $${Number(riskAmt).toFixed(2)}\n` : '') +
+      (trade?.quantity ? `Qty: <code>${trade.quantity}</code>\n` : '') +
       `SL: <code>${signal?.stop_loss || trade?.stop_loss}</code>\n` +
-      `TP1: <code>${signal?.tp1 || trade?.tp1 || '—'}</code> (30%)\n` +
-      `TP2: <code>${signal?.tp2 || trade?.tp2 || '—'}</code> (40%)\n` +
-      `TP3: trailing runner (30%)`;
+      `TP1: <code>${signal?.tp1 || trade?.tp1 || '—'}</code> (30% · ${plan?.tp1Qty ?? '—'}) — placed on exchange\n` +
+      `TP2: <code>${signal?.tp2 || trade?.tp2 || '—'}</code> (40% · ${plan?.tp2Qty ?? '—'}) — placed after TP1\n` +
+      `Runner: 30% (~${plan?.runnerQty ?? '—'}) trailing after TP2\n` +
+      (trade?.opened_at ? `Opened: ${formatUtc(trade.opened_at)}\n` : '') +
+      (verify
+        ? `\n${protectionOk ? '✅' : '⚠️'} Binance: SL×${verify.slCount} TP×${verify.tpCount} · pos ${verify.positionQty}\n` +
+          `<i>View orders: Futures → Open Orders → Conditional</i>`
+        : '');
   } else if (eventType === 'trade.closed') {
     const pnl = trade?.pnl ?? 0;
     const emoji = pnl >= 0 ? '🟢' : '🔴';
     text =
       `${emoji} <b>Trade Closed</b>\n\n` +
       `${trade?.symbol} ${trade?.direction}\n` +
+      (trade?.opened_at ? `Opened: ${formatUtc(trade.opened_at)}\n` : '') +
+      (trade?.closed_at ? `Closed: ${formatUtc(trade.closed_at)}\n` : '') +
       `${message || ''}\n` +
       `PnL: <b>${pnl >= 0 ? '+' : ''}${Number(pnl).toFixed(2)} USDT</b>`;
   } else if (eventType === 'trade.update') {
@@ -258,10 +342,15 @@ export async function handleTelegramInboundMessage(msg) {
   const cmd = text.split(/\s+/)[0]?.toLowerCase();
   if (cmd === '/start') {
     await sendTelegramMessage(chatId,
-      '🤖 <b>TradeGPT</b>\n\n' +
-      '📷 <b>Send a chart screenshot</b> (TradingView/Binance) — I will scan trend, levels & setups.\n' +
-      'Add a caption like "scan this" or "is this a long?"\n\n' +
-      'Tap signal buttons: LONG/SHORT → Default or Manual size.\n' +
+      '🤖 <b>TradeGPT Assistant</b> (OpenClaw)\n\n' +
+      'Ask anything — trades, risk, strategies, prices.\n\n' +
+      '<b>Tasks</b> (owner):\n' +
+      '• "start scanner" / "stop scanner"\n' +
+      '• "demo signal BTC" / "open positions"\n' +
+      '• "risk status" / "dashboard"\n' +
+      '• "enable auto trading"\n\n' +
+      '📷 Chart screenshot → vision scan\n' +
+      'Signal buttons → LONG/SHORT → size\n\n' +
       '/stats · /demo BTCUSDT · /stop');
     return;
   }

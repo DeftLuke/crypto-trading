@@ -3,6 +3,7 @@ import fs from 'fs';
 import { config } from '../config/index.js';
 import { ensureBinanceTime } from './binanceTime.js';
 import { fetchWithTimeout } from '../utils/fetchTimeout.js';
+import { isExchangeBlocked, noteExchangeRateLimit, getExchangeBlockInfo } from './exchangeRateLimit.js';
 
 function sign(queryString) {
   const keyPath = config.binance.privateKeyPath;
@@ -26,13 +27,17 @@ function sign(queryString) {
 }
 
 async function binanceRequest(method, endpoint, params = {}, signed = false) {
+  if (signed && isExchangeBlocked()) {
+    const info = getExchangeBlockInfo();
+    throw new Error(`Binance REST paused until ${info.blocked_until || 'cooldown'}`);
+  }
   const url = new URL(`${config.binance.restUrl}${endpoint}`);
   const searchParams = new URLSearchParams(params);
 
   if (signed) {
     const timestamp = await ensureBinanceTime(config.binance.restUrl);
     searchParams.set('timestamp', timestamp.toString());
-    searchParams.set('recvWindow', '10000');
+    searchParams.set('recvWindow', '60000');
     searchParams.set('signature', sign(searchParams.toString()));
   }
 
@@ -41,13 +46,23 @@ async function binanceRequest(method, endpoint, params = {}, signed = false) {
   const headers = { 'X-MBX-APIKEY': config.binance.apiKey };
 
   const res = await fetchWithTimeout(url.toString(), { method, headers }, 15000);
-  const data = await res.json();
+  const text = await res.text();
+  let data = {};
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    throw new Error(`Binance non-JSON response (${res.status}): ${text.slice(0, 80)}`);
+  }
 
   if (!res.ok) {
-    throw new Error(data.msg || `Binance API error: ${res.status}`);
+    const msg = data.msg || `Binance API error: ${res.status}`;
+    if (signed) noteExchangeRateLimit(msg);
+    throw new Error(msg);
   }
   return data;
 }
+
+export { isExchangeBlocked, getExchangeBlockInfo, noteExchangeRateLimit } from './exchangeRateLimit.js';
 
 export async function getKlines(symbol, interval, limit = 500, startTime = null) {
   const params = { symbol, interval, limit };
@@ -125,7 +140,7 @@ export function isExchangeUnreachable() {
 }
 
 function balanceFallback(reason) {
-  exchangeDownUntil = Date.now() + 30_000;
+  noteExchangeRateLimit(reason);
   const fallback = parseFloat(process.env.DEMO_BALANCE_FALLBACK || '5000');
   return {
     total: fallback,
@@ -133,6 +148,7 @@ function balanceFallback(reason) {
     source: 'fallback',
     error: reason,
     exchange_unreachable: true,
+    ...getExchangeBlockInfo(),
   };
 }
 
@@ -140,8 +156,9 @@ export async function getUsdtBalance() {
   if (balanceCache && Date.now() - balanceCacheAt < BALANCE_CACHE_MS) {
     return balanceCache;
   }
-  if (Date.now() < exchangeDownUntil) {
-    return balanceFallback('exchange_unreachable_cached');
+  if (isExchangeBlocked()) {
+    if (balanceCache) return balanceCache;
+    return balanceFallback('exchange_rate_limit_cooldown');
   }
 
   let balances = [];
@@ -156,7 +173,7 @@ export async function getUsdtBalance() {
 
   if (total > 0 || available > 0) {
     exchangeDownUntil = 0;
-    balanceCache = { total, available, source: 'balance' };
+    balanceCache = { total, available, source: 'balance', tradingMode: config.binance.tradingMode };
     balanceCacheAt = Date.now();
     return balanceCache;
   }
@@ -264,10 +281,22 @@ export async function getMarkPrice(symbol) {
     if (wsPrice && wsPrice > 0) return wsPrice;
   } catch { /* fall through */ }
 
-  const ticker = await binanceRequest('GET', '/fapi/v1/ticker/price', { symbol });
-  const price = parseFloat(ticker.price);
-  if (!price || price <= 0) throw new Error(`No mark price for ${symbol}`);
-  return price;
+  // Demo testnet: /fapi/v1/ticker/price often returns plain "ok" — v2 works reliably.
+  const endpoints = [
+    { path: '/fapi/v2/ticker/price', field: 'price' },
+    { path: '/fapi/v1/premiumIndex', field: 'markPrice' },
+    { path: '/fapi/v1/ticker/price', field: 'price' },
+  ];
+  for (const { path, field } of endpoints) {
+    try {
+      const ticker = await binanceRequest('GET', path, { symbol });
+      const price = parseFloat(ticker[field]);
+      if (price > 0) return price;
+    } catch {
+      /* try next endpoint */
+    }
+  }
+  throw new Error(`No mark price for ${symbol}`);
 }
 
 let symbolRulesCache = null;
@@ -360,6 +389,20 @@ export async function calculateOrderQty(symbol, marginUsdt, leverage, priceHint 
 const LEVERAGE_LADDER = [50, 40, 25, 20, 15, 10, 5];
 
 export { LEVERAGE_LADDER };
+
+/** Pairs with negligible price risk — unsuitable for risk-based sizing. */
+export const BLOCKED_TRADE_SYMBOLS = new Set([
+  'USDCUSDT',
+  'BUSDUSDT',
+  'FDUSDUSDT',
+  'TUSDUSDT',
+  'USDPUSDT',
+  'DAIUSDT',
+]);
+
+export function isBlockedTradeSymbol(symbol) {
+  return BLOCKED_TRADE_SYMBOLS.has(String(symbol || '').toUpperCase());
+}
 
 let leverageBracketCache = null;
 
@@ -513,8 +556,10 @@ export function calculatePositionSize(balance, riskPercent, entryPrice, stopLoss
 }
 
 /**
- * Risk-based position sizing (1% default):
- * qty = (equity × risk%) / |entry − SL|; notional = qty × entry; margin = notional / leverage
+ * Position sizing:
+ * - Loss at SL ≤ equity × risk% (stop-distance sizing)
+ * - Margin ≤ equity × risk% at preferred leverage → max notional = equity × risk% × leverage
+ *   (prevents tight-SL trades from maxing Binance bracket at ~2× intended size)
  */
 export function computeRiskBasedSizing({
   accountEquity,
@@ -538,17 +583,24 @@ export function computeRiskBasedSizing({
   }
 
   const riskAmount = equity * riskPercent;
-  const qty = riskAmount / priceRisk;
+  const qtyFromStopRisk = riskAmount / priceRisk;
+  const maxNotionalFromMargin = equity * riskPercent * preferredLeverage;
+  const maxQtyFromMargin = maxNotionalFromMargin / entry;
+  const qty = Math.min(qtyFromStopRisk, maxQtyFromMargin);
   const positionValue = qty * entry;
   const requiredMargin = positionValue / preferredLeverage;
+  const marginCapped = qtyFromStopRisk > maxQtyFromMargin * 1.001;
 
   return {
     ok: true,
-    riskAmount,
+    riskAmount: qty * priceRisk,
+    targetRiskAmount: riskAmount,
     priceRisk,
     qty,
     positionValue,
     requiredMargin,
+    maxNotionalFromMargin,
+    marginCapped,
     riskPercent,
     accountEquity: equity,
     availableBalance: available,
@@ -590,13 +642,22 @@ export async function resolveRiskBasedOrderSizing(symbol, {
   }
 
   const priceRisk = core.priceRisk;
-  const riskAmount = qty * priceRisk;
+  const equity = core.accountEquity;
+  const targetRiskAmount = core.targetRiskAmount ?? equity * riskPercent;
   const available = parseFloat(availableBalance ?? accountEquity) || 0;
   const ladder = [preferredLeverage, ...LEVERAGE_LADDER.filter((l) => l !== preferredLeverage)];
   let lastError = null;
+  let bestFallback = null;
 
-  for (const lev of ladder) {
-    const marginUsdt = notional / lev;
+  for (let levIdx = 0; levIdx < ladder.length; levIdx += 1) {
+    const lev = ladder[levIdx];
+    const marginBudget = equity * riskPercent * (levIdx + 1);
+    const maxNotional = marginBudget * lev;
+    const maxQty = roundToStep(maxNotional / price, rules.stepSize);
+    let candidateQty = Math.min(qty, maxQty);
+    candidateQty = Math.max(candidateQty, rules.minQty);
+
+    const marginUsdt = (candidateQty * price) / lev;
     if (marginUsdt > available) {
       lastError = new Error(
         `Insufficient margin: need $${marginUsdt.toFixed(2)} at ${lev}x, available $${available.toFixed(2)}`,
@@ -605,7 +666,7 @@ export async function resolveRiskBasedOrderSizing(symbol, {
     }
     try {
       await setLeverageFn(symbol, lev);
-      const cappedQty = await capQtyToPositionLimit(symbol, qty, price, lev);
+      const cappedQty = await capQtyToPositionLimit(symbol, candidateQty, price, lev);
       const cappedNotional = cappedQty * price;
       const cappedMargin = cappedNotional / lev;
       if (cappedMargin > available) {
@@ -614,24 +675,43 @@ export async function resolveRiskBasedOrderSizing(symbol, {
         );
         continue;
       }
-      return {
+      const uncappedTarget = Math.min(
+        roundToStep(targetRiskAmount / priceRisk, rules.stepSize),
+        maxQty,
+      );
+      const fillRatio = uncappedTarget > 0 ? cappedQty / uncappedTarget : 1;
+      const candidate = {
         leverage: lev,
         marginUsdt: cappedMargin,
         qty: cappedQty,
         price,
         notional: cappedNotional,
         riskAmount: cappedQty * priceRisk,
+        targetRiskAmount,
         priceRisk,
         riskPercent,
-        accountEquity: core.accountEquity,
+        accountEquity: equity,
         sizing_mode: 'risk_percent',
+        marginCapped: core.marginCapped || cappedQty < candidateQty * 0.98,
+        fillRatio,
+        marginBudget,
       };
+      if (fillRatio >= 0.98) {
+        return candidate;
+      }
+      if (!bestFallback || fillRatio > bestFallback.fillRatio) {
+        bestFallback = candidate;
+      }
     } catch (err) {
       lastError = err;
       const msg = String(err.message || '').toLowerCase();
       const leverageIssue = msg.includes('leverage') || msg.includes('not valid') || msg.includes('invalid');
       if (!leverageIssue) throw err;
     }
+  }
+
+  if (bestFallback) {
+    return bestFallback;
   }
   throw lastError || new Error(`Cannot open ${symbol}: insufficient margin or leverage unavailable`);
 }

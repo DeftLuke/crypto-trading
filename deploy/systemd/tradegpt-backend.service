@@ -1,0 +1,15 @@
+[Unit]
+Description=TradeGPT backend (Docker backend-recovery on :3002)
+After=docker.service network-online.target
+Wants=docker.service network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+User=kali
+WorkingDirectory=/home/kali/crypto-trading
+ExecStart=/bin/bash /home/kali/crypto-trading/scripts/run-backend-recovery.sh
+TimeoutStartSec=300
+
+[Install]
+WantedBy=multi-user.target

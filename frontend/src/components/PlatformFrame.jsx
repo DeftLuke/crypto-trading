@@ -1,6 +1,9 @@
 export default function PlatformFrame({ path, title }) {
   const base = (import.meta.env.VITE_PLATFORM_URL || '').replace(/\/$/, '');
-  const src = base ? `${base}${path}` : (import.meta.env.DEV ? `http://localhost:3000${path}` : '');
+  const target = base ? `${base}${path}` : (import.meta.env.DEV ? `http://localhost:3000${path}` : '');
+  // Tell the terminal it is embedded so it drops its own sidebar / top nav and
+  // we render a single shell + single scroll container.
+  const src = target ? `${target}${target.includes('?') ? '&' : '?'}embed=1` : '';
 
   if (!src) {
     return (

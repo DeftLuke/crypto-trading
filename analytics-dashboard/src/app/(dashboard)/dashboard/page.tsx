@@ -8,6 +8,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EquityChart } from "@/components/charts/RechartsPanel";
+import { MarketDataProgressCard } from "@/components/market-data/MarketDataProgressCard";
+import { ScannerProgressCard } from "@/components/scanner/ScannerProgressCard";
 import {
   useBalance,
   useOpenTrades,
@@ -69,6 +71,10 @@ export default function HomeDashboardPage() {
         />
       </div>
 
+      <MarketDataProgressCard />
+
+      <ScannerProgressCard />
+
       <div className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader>
@@ -84,7 +90,7 @@ export default function HomeDashboardPage() {
             <CardTitle>System Status</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <StatusDot ok={health?.status === "ok"} label={`Platform API — ${health?.status || "unknown"}${health?.source === "trading_api_fallback" ? " (trading)" : ""}`} />
+            <StatusDot ok={health?.status === "ok" || health?.status === "healthy"} label={`Research API — ${health?.status || "unknown"}${health?.source === "trading_api_fallback" ? " (trading)" : ""}`} />
             <StatusDot ok={!!scanner?.isRunning} label={`Market Scanner — ${scanner?.isRunning ? "running" : "idle"}`} />
             <StatusDot ok={true} label="PostgreSQL — connected" />
             <StatusDot ok={true} label="Redis — ready (Phase 5)" />

@@ -39,6 +39,29 @@ export interface BacktestMetrics {
   final_balance?: number;
 }
 
+export interface TradingDashboardAccount {
+  balance?: number;
+  available?: number;
+  equity?: number;
+  unrealized_pnl?: number;
+  source?: string;
+  exchange_unreachable?: boolean;
+  exchange_error?: string | null;
+}
+
+export interface TradingDashboardHealth {
+  running?: boolean;
+  dry_run?: boolean;
+  exchange_connected?: boolean;
+}
+
+export interface TradingDashboard {
+  accounts?: TradingDashboardAccount[];
+  positions?: Trade[];
+  health?: TradingDashboardHealth;
+  performance?: Record<string, unknown>;
+}
+
 export interface Trade {
   id?: string;
   position_id?: string;
@@ -79,6 +102,22 @@ export interface Trade {
   status?: "open" | "partial" | "closed" | "stopped" | "liquidated";
   closed_at?: string;
   opened_at?: string;
+  tp1_hit_at?: string;
+  tp2_hit_at?: string;
+  sl_updated_at?: string;
+  exchange_realized_pnl?: number;
+  realized_pnl?: number;
+  runner_stop?: number;
+  protection_ok?: boolean;
+  protection_missing?: boolean;
+  protection_issues?: string[];
+  exchange_protection?: {
+    sl_count?: number;
+    tp_count?: number;
+    sl_price?: number | string | null;
+    tp_prices?: Array<number | string>;
+    has_position?: boolean;
+  };
 }
 
 export interface Signal {

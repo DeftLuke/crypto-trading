@@ -32,8 +32,9 @@ try {
 } catch { /* optional */ }
 
 const backendEnv = loadEnvFile(path.join(root, 'backend/.env'));
-const N8N_URL = (backendEnv.N8N_BASE_URL || prodEnv.N8N_BASE_URL || 'https://n8n.deftluke.online').replace(/\/$/, '');
-const API_KEY = backendEnv.N8N_API_KEY || prodEnv.N8N_API_KEY || '';
+const deployEnv = loadEnvFile(path.join(root, 'deploy/.env'));
+const N8N_URL = (backendEnv.N8N_BASE_URL || deployEnv.N8N_BASE_URL || prodEnv.N8N_BASE_URL || 'https://n8n.deftluke.online').replace(/\/$/, '');
+const API_KEY = backendEnv.N8N_API_KEY || deployEnv.N8N_API_KEY || prodEnv.N8N_API_KEY || '';
 
 if (!API_KEY) {
   console.error('Missing N8N_API_KEY in backend/.env or n8n/workflows/production.env.json');

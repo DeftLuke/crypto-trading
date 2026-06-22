@@ -1,0 +1,32 @@
+[
+  {
+    "Trader": "AMRsSeU5JpqwQWJGNLMpZzRCZSFEwYQYbMnms3dD4311",
+    "# of memecoins": 38,
+    "Avg ROI per token": 175.77,
+    "# of trades": 437,
+    "Spent": 50365,
+    "Received": 149332,
+    "Profit": 98967,
+    "win_rate": 0.9474
+  },
+  {
+    "Trader": "7ufmve7ZSFCzuNcKRunYrGtyb2Ka1MXzkWwf7jZhVsmL",
+    "# of memecoins": 44,
+    "Avg ROI per token": 235.35,
+    "# of trades": 465,
+    "Spent": 38028,
+    "Received": 129630,
+    "Profit": 91602,
+    "win_rate": 1.0
+  },
+  {
+    "Trader": "CkAD9SmDiy8k3BnzrzZUFtbQxsa3AEkrqhsrWYj92aXG",
+    "# of memecoins": 104,
+    "Avg ROI per token": 167.06,
+    "# of trades": 744,
+    "Spent": 21025,
+    "Received": 57176,
+    "Profit": 36151,
+    "win_rate": 0.9904
+  }
+]

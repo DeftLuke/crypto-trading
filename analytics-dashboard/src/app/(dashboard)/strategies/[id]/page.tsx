@@ -1,19 +1,27 @@
 "use client";
 
-import { use } from "react";
+import { use, useEffect } from "react";
 import { PageHeader } from "@/components/shared/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MetricCard } from "@/components/ui/badge";
-import { useStrategyStore } from "@/store/strategyStore";
+import { useStrategyStore, type StrategyRecord } from "@/store/strategyStore";
+import { useStrategyCatalog } from "@/hooks/useQueries";
 import { formatNumber, formatPct } from "@/lib/utils";
 
 export default function StrategyDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
+  // Self-hydrate the store so deep links / direct visits work without the list page.
+  const { data: catalog, isLoading } = useStrategyCatalog();
+  const setStrategies = useStrategyStore((s) => s.setStrategies);
   const strategy = useStrategyStore((s) => s.strategies.find((x) => x.id === id));
 
+  useEffect(() => {
+    if (catalog) setStrategies(catalog as StrategyRecord[]);
+  }, [catalog, setStrategies]);
+
   if (!strategy) {
-    return <p className="p-6 text-zinc-500">Strategy not found</p>;
+    return <p className="p-6 text-zinc-500">{isLoading ? "Loading strategy…" : "Strategy not found"}</p>;
   }
 
   const m = strategy.metrics;

@@ -12,4 +12,8 @@ n8n/workflows/production.env.json
 .cursor/
 Thumbs.db
 .vite/
+.venv/
+**/.venv-linux/
+research-platform/data/
+data/market_data/
 deploy/.env

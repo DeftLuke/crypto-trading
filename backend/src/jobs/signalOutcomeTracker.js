@@ -76,7 +76,8 @@ export async function evaluateSignalOutcome(signalId, checkMinutes) {
         const lessonType = signal.user_action === 'executed' ? 'executed'
           : signal.user_action === 'skipped' ? 'skipped' : 'hypothetical';
 
-        const aiLesson = await generateTradeLesson(signal, result.outcome, {
+        if (signal.user_action !== 'executed') {
+          const aiLesson = await generateTradeLesson(signal, result.outcome, {
           checkMinutes,
           priceAtCheck: currentPrice,
           hitTp1: result.hitTp1,
@@ -106,6 +107,7 @@ export async function evaluateSignalOutcome(signalId, checkMinutes) {
           id: signalId,
           mtf_status: signal.mtf_status,
         });
+        }
 
         if (signal.user_action !== 'executed') {
           await updatePairStats(signal.symbol, result.outcome, result.rMultiple || 0);

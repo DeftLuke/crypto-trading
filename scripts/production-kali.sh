@@ -40,22 +40,8 @@ docker compose rm -f backend 2>/dev/null || true
 docker compose build analytics-dashboard frontend 2>&1 | tail -5
 docker compose --profile legacy build backend 2>&1 | tail -3
 
-# Recovery backend on :3002 (keys + DNS)
-docker stop backend-recovery 2>/dev/null || true
-docker rm backend-recovery 2>/dev/null || true
-docker run -d --name backend-recovery \
-  --restart unless-stopped \
-  --network crypto-trading_trading \
-  -p 127.0.0.1:3002:3001 \
-  --env-file "$ENV_FILE" \
-  -e PORT=3001 \
-  -e NODE_ENV=production \
-  -e CONTROL_AUTO_TRADING=true \
-  -e CONTROL_MANUAL_APPROVAL=false \
-  -e AI_GATEWAY_URL=https://ai.deftluke.online \
-  --dns 8.8.8.8 --dns 1.1.1.1 \
-  -v "$DEPLOY/keys:/app/keys:ro" \
-  crypto-trading-backend:latest
+# Recovery backend on :3002 (keys + DNS + auto-restart)
+bash "$ROOT/scripts/run-backend-recovery.sh"
 
 docker compose up -d frontend analytics-dashboard redis qdrant telegram-signal-service --no-deps 2>/dev/null || \
   docker compose up -d frontend analytics-dashboard redis qdrant --no-deps
@@ -90,6 +76,10 @@ for url in \
   echo "  $code  $url"
 done
 
+echo ""
+echo "=== 24/7 resilience ==="
+echo "Run once: bash $ROOT/scripts/install-kali-24x7.sh"
+echo "  → Docker --restart always + systemd watchdog every 2 min + PM2 on boot"
 echo ""
 echo "=== Done ==="
 echo "No nginx required — Cloudflare Tunnel handles HTTPS."

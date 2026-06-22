@@ -112,15 +112,12 @@ export async function executeSignalTrade(signalId, { marginUsdt, leverage = 50, 
 
   const trade = result.trade || {};
   const sizing = result.sizing || {};
-  const lev = trade.leverage || leverage;
-  const notional = sizing.notional || trade.notional_usdt || (marginUsdt || 0);
-  const margin = trade.margin_usdt || sizing.marginUsdt || (lev > 0 ? notional / lev : 0);
 
   await logEvent('trade', 'telegram', `Trade opened via Telegram: ${signal.symbol}`, {
     tradeId: trade.id,
-    marginUsdt: margin,
-    notional,
-    leverage: lev,
+    marginUsdt: trade.margin_usdt || sizing.marginUsdt,
+    notional: sizing.notional || trade.notional_usdt,
+    leverage: trade.leverage || leverage,
     riskAmount: sizing.riskAmount,
     chatId,
   });
@@ -131,19 +128,7 @@ export async function executeSignalTrade(signalId, { marginUsdt, leverage = 50, 
 
   return {
     ok: true,
-    message:
-      `✅ <b>Trade Activated</b> (Demo Futures)\n\n` +
-      `<b>Pair:</b> ${signal.symbol}\n` +
-      `<b>Direction:</b> ${signal.direction === 'BUY' ? 'LONG' : 'SHORT'}\n` +
-      `<b>Entry:</b> <code>${trade.entry_price || signal.entry_price}</code>\n` +
-      `<b>Risk:</b> $${(sizing.riskAmount || 0).toFixed(2)} (1% equity)\n` +
-      `<b>Position:</b> ~$${notional.toFixed(2)} notional · <b>${lev}x</b> · margin ~$${margin.toFixed(2)}\n` +
-      `<b>Qty:</b> ${trade.quantity || '—'}\n` +
-      `<b>SL:</b> <code>${signal.stop_loss}</code>\n` +
-      `<b>TP1:</b> <code>${signal.tp1}</code> (30% close)\n` +
-      `<b>TP2:</b> <code>${signal.tp2}</code> (40% close)\n` +
-      `<b>TP3:</b> trailing runner (30%)\n\n` +
-      `Monitor: https://trade.deftluke.online/trades`,
+    message: `✅ Trade opened — ${signal.symbol} ${signal.direction === 'BUY' ? 'LONG' : 'SHORT'}. Updates sent automatically.`,
     trade: result.trade,
     answer: 'Trade activated',
   };

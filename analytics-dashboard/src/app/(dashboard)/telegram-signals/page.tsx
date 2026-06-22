@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { tradingApi } from "@/services/api";
 import { getTradingApi } from "@/lib/constants";
 import { TelegramInbox } from "@/components/telegram/TelegramInbox";
+import { TelegramAuditPanel } from "@/components/telegram/TelegramAuditPanel";
 import { cn } from "@/lib/utils";
 
 type FormatProfile = {
@@ -59,7 +60,7 @@ function formatTime(value?: string) {
 export default function TelegramSignalsPage() {
   const qc = useQueryClient();
   const [search, setSearch] = useState("");
-  const [tab, setTab] = useState<"inbox" | "groups">("inbox");
+  const [tab, setTab] = useState<"inbox" | "groups" | "audit">("inbox");
 
   const {
     data: sourcesData,
@@ -76,7 +77,7 @@ export default function TelegramSignalsPage() {
 
   const { data: inboxStatsData, error: messagesError, refetch: refetchMessages } = useQuery({
     queryKey: ["telegramInboxStats"],
-    queryFn: () => tradingApi.telegramInbox(1),
+    queryFn: () => tradingApi.telegramInbox(500, "all"),
     refetchInterval: 15_000,
     enabled: !sourcesIsError,
   });
@@ -149,10 +150,11 @@ export default function TelegramSignalsPage() {
         </div>
       )}
 
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
         <MetricCard title="Discovered Groups" value={sourcesLoading ? "…" : sources.length} />
         <MetricCard title="Following" value={sourcesLoading ? "…" : followedCount} tone="emerald" />
-        <MetricCard title="Parsed Signals" value={Number(inboxStats.parsed ?? 0)} />
+        <MetricCard title="Parsed Signals" value={Number(inboxStats.parsed ?? inboxStats.total ?? 0)} />
+        <MetricCard title="Opened / Failed" value={`${inboxStats.executed ?? 0} / ${inboxStats.failed ?? 0}`} tone="emerald" />
         <Card>
           <CardHeader><CardTitle>Signal Rules</CardTitle></CardHeader>
           <CardContent className="space-y-1 text-xs text-zinc-500">
@@ -170,10 +172,15 @@ export default function TelegramSignalsPage() {
         <Button variant={tab === "groups" ? "default" : "secondary"} onClick={() => setTab("groups")}>
           Groups ({sources.length})
         </Button>
+        <Button variant={tab === "audit" ? "default" : "secondary"} onClick={() => setTab("audit")}>
+          Intelligence Audit
+        </Button>
       </div>
 
       {tab === "inbox" ? (
         <TelegramInbox onScrapeQueued={() => qc.invalidateQueries({ queryKey: ["telegramSources"] })} />
+      ) : tab === "audit" ? (
+        <TelegramAuditPanel />
       ) : (
         <Card>
           <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

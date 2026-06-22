@@ -37,7 +37,10 @@
         {
             "root": "research-platform",
             "venvPath": "research-platform",
-            "venv": ".venv"
+            "venv": ".venv",
+            "extraPaths": [
+                "research-platform/typings"
+            ]
         }
     ]
 }

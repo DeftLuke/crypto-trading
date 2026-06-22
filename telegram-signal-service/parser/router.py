@@ -44,17 +44,52 @@ class SignalParserRouter:
         return None
 
     def parse(self, context: ParseContext, provider: ProviderConfig) -> NormalizedSignal | None:
+        signal, _audit = self.parse_with_audit(context, provider)
+        return signal
+
+    def parse_with_audit(self, context: ParseContext, provider: ProviderConfig) -> tuple[NormalizedSignal | None, dict]:
+        audit: dict = {
+            "parse_stage": "none",
+            "parser_used": None,
+            "model_used": None,
+            "ai_output": None,
+            "has_image": context.has_image,
+            "original_text": context.text or "",
+            "reject_reason": None,
+            "failed_rules": [],
+        }
+
         rule_signal = self._try_rule(context, provider)
         if rule_signal:
-            rule_signal.parser = rule_signal.parser or "rule"
-            return rule_signal
+            audit["parse_stage"] = "rule"
+            audit["parser_used"] = "rule"
+            audit["ai_output"] = rule_signal.to_main_api_payload()
+            audit["model_used"] = "regex"
+            return rule_signal, audit
 
         if self.ai_parser:
-            try:
-                parsed = self.ai_parser.parse(context, provider)
-                if parsed and acceptable_parsed_signal(parsed, context):
-                    return parsed
-            except SignalValidationError:
-                pass
+            raw = self.ai_parser.extract_raw(context)
+            audit["ai_output"] = raw
+            audit["model_used"] = self.ai_parser.vision_model if context.has_image else self.ai_parser.model
+            audit["parse_stage"] = "vision" if context.has_image else "ai"
 
-        return None
+            if raw and raw.get("is_signal"):
+                try:
+                    parsed = self.ai_parser.signal_from_extracted(raw, context, provider)
+                    if parsed and acceptable_parsed_signal(parsed, context):
+                        audit["parser_used"] = "ai"
+                        audit["ai_output"] = {**(raw or {}), **parsed.to_main_api_payload()}
+                        return parsed, audit
+                    audit["reject_reason"] = "quality_check_failed"
+                    audit["failed_rules"] = ["acceptable_parsed_signal"]
+                except SignalValidationError as exc:
+                    audit["reject_reason"] = str(exc)
+                    audit["failed_rules"] = [str(exc)]
+            elif raw:
+                audit["reject_reason"] = "ai_not_signal"
+            else:
+                audit["reject_reason"] = "ai_unavailable"
+
+        if not audit["reject_reason"]:
+            audit["reject_reason"] = "no_parser_match"
+        return None, audit

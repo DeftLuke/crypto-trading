@@ -251,6 +251,34 @@ class MarketStructure(Base):
     )
 
 
+class StructureEvent(Base):
+    """Unified BOS / MSS / CHOCH events — migration 022."""
+
+    __tablename__ = "structure_events"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    exchange: Mapped[str] = mapped_column(String(32), nullable=False, default="binance")
+    symbol: Mapped[str] = mapped_column(String(32), nullable=False)
+    timeframe: Mapped[str] = mapped_column(String(8), nullable=False)
+    ts: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    event_type: Mapped[str] = mapped_column(String(16), nullable=False)
+    direction: Mapped[str] = mapped_column(String(16), nullable=False)
+    price: Mapped[float] = mapped_column(Float, nullable=False)
+    strength: Mapped[float] = mapped_column(Float, default=0)
+    structure_state: Mapped[str | None] = mapped_column(String(16))
+    details_json: Mapped[dict | None] = mapped_column(JSONB)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    __table_args__ = (
+        UniqueConstraint(
+            "exchange", "symbol", "timeframe", "ts", "event_type", "direction",
+            name="uq_structure_events_key",
+        ),
+        Index("ix_structure_events_lookup", "exchange", "symbol", "timeframe", "ts"),
+        Index("ix_structure_events_symbol_created", "symbol", "created_at"),
+    )
+
+
 class OrderBlock(Base):
     __tablename__ = "order_blocks"
 
@@ -263,6 +291,14 @@ class OrderBlock(Base):
     high: Mapped[float] = mapped_column(Float, nullable=False)
     low: Mapped[float] = mapped_column(Float, nullable=False)
     status: Mapped[str] = mapped_column(String(16), default="active")
+    strength_score: Mapped[float | None] = mapped_column(Float, default=0)
+    mitigated: Mapped[bool | None] = mapped_column(Boolean, default=False)
+    mitigated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    has_displacement: Mapped[bool | None] = mapped_column(Boolean, default=False)
+    has_bos_after: Mapped[bool | None] = mapped_column(Boolean, default=False)
+    volume_confirmed: Mapped[bool | None] = mapped_column(Boolean, default=False)
+    retest_confirmed: Mapped[bool | None] = mapped_column(Boolean, default=False)
+    details_json: Mapped[dict | None] = mapped_column(JSONB)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     __table_args__ = (
@@ -282,6 +318,11 @@ class FairValueGap(Base):
     top: Mapped[float] = mapped_column(Float, nullable=False)
     bottom: Mapped[float] = mapped_column(Float, nullable=False)
     status: Mapped[str] = mapped_column(String(16), default="active")
+    gap_size: Mapped[float | None] = mapped_column(Float)
+    fill_percentage: Mapped[float | None] = mapped_column(Float, default=0)
+    filled_status: Mapped[bool | None] = mapped_column(Boolean, default=False)
+    filled_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    details_json: Mapped[dict | None] = mapped_column(JSONB)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     __table_args__ = (
@@ -300,6 +341,11 @@ class LiquidityLevel(Base):
     liquidity_type: Mapped[str] = mapped_column(String(32), nullable=False)
     price: Mapped[float] = mapped_column(Float, nullable=False)
     status: Mapped[str] = mapped_column(String(16), default="active")
+    strength_score: Mapped[float | None] = mapped_column(Float, default=0)
+    taken_status: Mapped[bool | None] = mapped_column(Boolean, default=False)
+    taken_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    session_tag: Mapped[str | None] = mapped_column(String(32))
+    details_json: Mapped[dict | None] = mapped_column(JSONB)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     __table_args__ = (
@@ -317,10 +363,37 @@ class LiquiditySweep(Base):
     ts: Mapped[int] = mapped_column(BigInteger, nullable=False)
     sweep_direction: Mapped[str] = mapped_column(String(16), nullable=False)
     swept_price: Mapped[float | None] = mapped_column(Float)
+    sweep_type: Mapped[str | None] = mapped_column(String(16))
+    liquidity_source: Mapped[str | None] = mapped_column(String(64))
+    liquidity_level_id: Mapped[int | None] = mapped_column(BigInteger)
+    score: Mapped[float | None] = mapped_column(Float, default=0)
+    details_json: Mapped[dict | None] = mapped_column(JSONB)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     __table_args__ = (
         Index("ix_liquidity_sweeps_lookup", "exchange", "symbol", "timeframe", "ts"),
+    )
+
+
+class Displacement(Base):
+    __tablename__ = "displacements"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
+    exchange: Mapped[str] = mapped_column(String(32), nullable=False)
+    symbol: Mapped[str] = mapped_column(String(32), nullable=False)
+    timeframe: Mapped[str] = mapped_column(String(8), nullable=False)
+    ts: Mapped[int] = mapped_column(BigInteger, nullable=False)
+    direction: Mapped[str] = mapped_column(String(16), nullable=False)
+    strength_score: Mapped[float] = mapped_column(Float, nullable=False, default=0)
+    atr_expansion: Mapped[bool | None] = mapped_column(Boolean, default=False)
+    volume_expansion: Mapped[bool | None] = mapped_column(Boolean, default=False)
+    oi_expansion: Mapped[bool | None] = mapped_column(Boolean, default=False)
+    body_pct: Mapped[float | None] = mapped_column(Float)
+    details_json: Mapped[dict | None] = mapped_column(JSONB)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+    __table_args__ = (
+        Index("ix_displacements_lookup", "exchange", "symbol", "timeframe", "ts"),
     )
 
 

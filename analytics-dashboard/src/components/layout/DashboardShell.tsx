@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -11,10 +11,38 @@ import { TopNav } from "./TopNav";
 import { useAuthInit } from "@/hooks/useAuthInit";
 import { useWebSocket } from "@/hooks/useWebSocket";
 
+// When the terminal is rendered inside the trade.deftluke.online iframe we must
+// drop our own sidebar / top nav / mobile navs — otherwise the host frame's nav
+// is duplicated and the nested scroll containers freeze on mobile. Direct visits
+// to terminal.deftluke.online keep the full chrome.
+function useEmbedded() {
+  const [embedded, setEmbedded] = useState(false);
+  useEffect(() => {
+    try {
+      const inIframe = window.self !== window.top;
+      const param = new URLSearchParams(window.location.search).get("embed") === "1";
+      setEmbedded(inIframe || param);
+    } catch {
+      // Cross-origin access to window.top throws => we are inside a frame.
+      setEmbedded(true);
+    }
+  }, []);
+  return embedded;
+}
+
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const embedded = useEmbedded();
   useAuthInit();
   useWebSocket();
+
+  if (embedded) {
+    return (
+      <div className="flex h-screen flex-col overflow-hidden bg-zinc-950 text-zinc-100">
+        <main className="min-h-0 flex-1 overflow-y-auto px-3 py-4 sm:px-4 md:p-6">{children}</main>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen overflow-hidden bg-zinc-950 pb-16 text-zinc-100 md:pb-0">

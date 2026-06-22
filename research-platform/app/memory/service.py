@@ -47,6 +47,7 @@ COLLECTION_MAP = {
 class MemoryService:
     def __init__(self, store: QdrantMemoryStore | None = None):
         self.memory_store = store or get_qdrant_store()
+        self.memory_store.ensure_collections()
         self.embedder = get_embedding_service()
         self.retrieval = RetrievalEngine(self.memory_store)
         self.trade_recall = TradeRecallEngine(self.retrieval)

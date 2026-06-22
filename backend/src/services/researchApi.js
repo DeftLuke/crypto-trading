@@ -11,6 +11,7 @@ import {
   updateLocalControlSettings,
   listPendingApprovals,
 } from './controlCenter.js';
+import { handleResearchFallback } from './researchFallback.js';
 
 const baseUrl = () => (config.researchApiUrl || '').replace(/\/$/, '');
 
@@ -45,12 +46,20 @@ async function request(method, path, body) {
   return data;
 }
 
+async function localControlFallback(path, method, body) {
+  if (path.startsWith('/control/dashboard')) return getLocalControlDashboard();
+  if (path.startsWith('/control/settings')) {
+    return method === 'GET' ? getLocalControlSettings() : updateLocalControlSettings(body || {});
+  }
+  throw new Error(`Local control center does not proxy ${method} ${path}`);
+}
+
 async function withFallback(path, remoteFn, localFn) {
   if (!baseUrl()) return localFn();
   try {
     return await remoteFn();
   } catch (err) {
-    console.warn(`[ResearchAPI] ${path} unavailable (${err.message}) — using local control center`);
+    console.warn(`[ResearchAPI] ${path} unavailable (${err.message}) — using local fallback`);
     return localFn();
   }
 }
@@ -112,11 +121,22 @@ export async function getPendingApprovals() {
 }
 
 export async function proxyResearch(method, path, body) {
-  return withFallback(path, () => request(method, path, body), async () => {
-    if (path.startsWith('/control/dashboard')) return getLocalControlDashboard();
-    if (path.startsWith('/control/settings')) {
-      return method === 'GET' ? getLocalControlSettings() : updateLocalControlSettings(body || {});
+  const researchPath = path.startsWith('/') ? path : `/${path}`;
+
+  if (!baseUrl()) {
+    if (researchPath.startsWith('/control/')) {
+      return localControlFallback(researchPath, method, body);
     }
-    throw new Error(`Local control center does not proxy ${method} ${path}`);
-  });
+    return handleResearchFallback(method, researchPath, body);
+  }
+
+  try {
+    return await request(method, researchPath, body);
+  } catch (err) {
+    console.warn(`[ResearchAPI] ${researchPath} failed (${err.message}) — offline fallback`);
+    if (researchPath.startsWith('/control/')) {
+      return localControlFallback(researchPath, method, body);
+    }
+    return handleResearchFallback(method, researchPath, body);
+  }
 }

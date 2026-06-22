@@ -1,0 +1,22 @@
+"""Top Binance USDT perpetual pairs for institutional batch backtests."""
+
+TOP_FUTURES_USDT: tuple[str, ...] = (
+    "BTCUSDT", "ETHUSDT", "BNBUSDT", "SOLUSDT", "XRPUSDT",
+    "DOGEUSDT", "ADAUSDT", "AVAXUSDT", "LINKUSDT", "SUIUSDT",
+    "DOTUSDT", "MATICUSDT", "LTCUSDT", "BCHUSDT", "UNIUSDT",
+    "ATOMUSDT", "ETCUSDT", "FILUSDT", "APTUSDT", "ARBUSDT",
+    "OPUSDT", "NEARUSDT", "INJUSDT", "TIAUSDT", "SEIUSDT",
+    "WIFUSDT", "PEPEUSDT", "FETUSDT", "RNDRUSDT", "STXUSDT",
+    "IMXUSDT", "GRTUSDT", "AAVEUSDT", "MKRUSDT", "RUNEUSDT",
+    "ALGOUSDT", "FTMUSDT", "SANDUSDT", "MANAUSDT", "AXSUSDT",
+    "EGLDUSDT", "THETAUSDT", "XLMUSDT", "VETUSDT", "ICPUSDT",
+    "HBARUSDT", "FLOWUSDT", "CRVUSDT", "SNXUSDT", "COMPUSDT",
+)
+
+E5_TIMEFRAMES = {
+    "htf_trend": ("4h", "1h"),
+    "signal": "15m",
+    "entry": "5m",
+}
+
+SCORE_THRESHOLD = 85

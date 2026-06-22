@@ -23,15 +23,20 @@ router = APIRouter(tags=["backtest"])
 
 
 def _build_config(req: BacktestStartRequest) -> BacktestConfig:
+    mode = BacktestMode(req.mode)
+    if req.strategy_name == "E5_INSTITUTIONAL_V1" and req.mode == "single" and len(req.symbols) > 1:
+        mode = BacktestMode.MULTI
     base = BacktestConfig(
         strategy_name=req.strategy_name,
         exchange=req.exchange,
         timeframe=req.timeframe,
         symbols=req.symbols,
-        mode=BacktestMode(req.mode),
+        mode=mode,
         start_ts=req.start_ts,
         end_ts=req.end_ts,
+        min_confidence=req.score_threshold,
     )
+    base.risk.leverage = req.leverage
     if req.config:
         merged = base.to_dict()
         merged.update(req.config)

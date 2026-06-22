@@ -2,21 +2,20 @@ import {
   getOpenTrades,
   updateTrade,
   logEvent,
-  updatePairStats,
-  saveTradeLesson,
 } from '../services/supabase.js';
 import {
   placeStopMarketOrder,
   placeMarketOrder,
   cancelAllOrders,
-  getMarkPrice,
   getPositionRisk,
 } from '../services/binance.js';
+import { getFreshMarkPrice } from '../services/markPrice.js';
 import { binanceWs } from '../services/binanceWs.js';
 import {
   calculateTPQuantities,
   getBreakevenSL,
-  getLocked1RSL,
+  getRunnerStopAfterTP2,
+  computeTrailingStop,
 } from '../strategy/riskManager.js';
 import {
   getActiveApiKeys,
@@ -25,9 +24,26 @@ import {
   cancelAllOrdersWithCredentials,
   getPositionRiskWithCredentials,
 } from '../services/userBinance.js';
-import { sendTradeUpdate } from '../services/telegram.js';
+import { notifyTradePhase } from '../services/tradeExecution.js';
 import { config } from '../config/index.js';
 import { broadcastTradeEvent } from '../services/wsBroadcast.js';
+import {
+  repositionAfterTP1,
+  repositionAfterTP2,
+  repositionProtectiveStop,
+  verifyExchangeProtection,
+  getLivePositionQty,
+  ensureTradeProtection,
+  isRunnerDust,
+  positionNotional,
+  DUST_NOTIONAL_USDT,
+} from '../services/tradeProtection.js';
+import { finalizeTradeClose, reconcileFlatExchangeTrade, recordTradePhasePnl } from '../services/tradeClose.js';
+import { markDesync, reopenDesyncedTrade } from '../services/tradeEventAudit.js';
+import { getSupabase } from '../services/supabase.js';
+import { reconcileLivePosition } from '../services/tradeReconcile.js';
+import { fetchExchangeRealizedPnl } from '../services/tradePnl.js';
+import { isExchangeBlocked } from '../services/exchangeRateLimit.js';
 
 class PositionMonitor {
   constructor() {
@@ -39,8 +55,9 @@ class PositionMonitor {
   start() {
     if (this.running) return;
     this.running = true;
-    this.interval = setInterval(() => this.checkPositions(), 5000);
-    console.log('[PositionMonitor] Started — checking every 5s');
+    this.interval = setInterval(() => this.checkPositions(), 15_000);
+    this.orphanTick = 0;
+    console.log('[PositionMonitor] Started — checking every 15s');
   }
 
   stop() {
@@ -49,11 +66,21 @@ class PositionMonitor {
   }
 
   async checkPositions() {
-    const { data: trades } = await getOpenTrades();
-    if (!trades?.length) return;
+    if (isExchangeBlocked()) return;
 
-    for (const trade of trades) {
+    if (this.orphanTick % 2 === 0) {
+      await this.syncDesyncedClosedTrades().catch(() => {});
+    }
+
+    const { data: trades } = await getOpenTrades();
+    const openSymbols = new Set((trades || []).map((t) => t.symbol));
+
+    for (const trade of trades || []) {
+      binanceWs.subscribeMarkPrice(trade.symbol, () => {});
       try {
+        await ensureTradeProtection(trade).catch((err) =>
+          logEvent('warn', 'positionMonitor', `Protection ensure failed: ${err.message}`, { tradeId: trade.id }),
+        );
         await this.syncExchangeClosed(trade);
         const synced = await this.syncTradeFromExchange(trade);
         await this.manageTrade(synced || trade);
@@ -61,17 +88,85 @@ class PositionMonitor {
         await logEvent('error', 'positionMonitor', err.message, { tradeId: trade.id });
       }
     }
+
+    this.orphanTick += 1;
+    if (this.orphanTick % 4 === 0) {
+      await this.reconcileOrphanExchangePositions(openSymbols);
+    }
+  }
+
+  async reconcileOrphanExchangePositions(openSymbols) {
+    try {
+      const { getCachedPositions, isUserStreamLive } = await import('../services/binanceUserStream.js');
+      let positions = [];
+      if (isUserStreamLive()) {
+        positions = getCachedPositions();
+      } else {
+        const credentials = await getActiveApiKeys();
+        const rows = credentials
+          ? await getPositionRiskWithCredentials(credentials)
+          : await getPositionRisk();
+        positions = (rows || []).map((row) => ({
+          symbol: row.symbol,
+          quantity: Math.abs(parseFloat(row.positionAmt || 0)),
+          notional: Math.abs(parseFloat(row.notional || 0)),
+          entry_price: parseFloat(row.entryPrice || 0),
+          current_price: parseFloat(row.markPrice || row.entryPrice || 0),
+        }));
+      }
+      for (const row of positions) {
+        const symbol = row.symbol;
+        if (openSymbols.has(symbol)) continue;
+        const qty = row.quantity ?? Math.abs(parseFloat(row.positionAmt || 0));
+        if (qty <= 0) continue;
+        const notional = positionNotional(row);
+        if (notional < DUST_NOTIONAL_USDT && notional < 1) {
+          await reconcileLivePosition(symbol);
+          continue;
+        }
+        if (notional < 1) continue;
+        await reconcileLivePosition(symbol);
+      }
+    } catch (err) {
+      await logEvent('warn', 'positionMonitor', `Orphan reconcile failed: ${err.message}`);
+    }
+  }
+
+  /** Re-open trades wrongly marked closed while exchange still has qty. */
+  async syncDesyncedClosedTrades() {
+    const db = getSupabase();
+    if (!db) return;
+    const since = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    const { data: closed } = await db
+      .from('trades')
+      .select('*')
+      .in('status', ['closed', 'stopped'])
+      .gte('closed_at', since)
+      .order('closed_at', { ascending: false })
+      .limit(30);
+    for (const trade of closed || []) {
+      const liveQty = await getLivePositionQty(trade.symbol).catch(() => null);
+      if (liveQty == null || liveQty <= 0) continue;
+      await markDesync(trade, 'db_closed_exchange_open', liveQty);
+      await reopenDesyncedTrade(trade, liveQty);
+      await logEvent('warn', 'positionMonitor', 'Reopened desynced closed trade', {
+        tradeId: trade.id,
+        symbol: trade.symbol,
+        liveQty,
+      });
+    }
   }
 
   /** If exchange has no position but DB still open — sync closed state to dashboard. */
   async syncExchangeClosed(trade) {
     if (!['open', 'partial'].includes(trade.status)) return;
     const liveQty = await getLivePositionQty(trade.symbol);
-    if (liveQty && liveQty > 0) return;
-    const price = binanceWs.getPrice(trade.symbol) || await getMarkPrice(trade.symbol).catch(() => null);
+    if (liveQty == null) return;
+    if (liveQty > 0) return;
+    const price = await getFreshMarkPrice(trade.symbol);
     if (!price) return;
     await logEvent('info', 'positionMonitor', 'Exchange flat — closing DB trade', { tradeId: trade.id, symbol: trade.symbol });
-    await this.closeTrade(trade, price, 'closed', 'Exchange position closed (sync)');
+    await reconcileFlatExchangeTrade(trade, price);
   }
 
   /** Infer TP hits from live exchange quantity vs original size. */
@@ -94,32 +189,105 @@ class PositionMonitor {
 
     if (!trade.tp1_hit && pctRemain <= 0.71) {
       updates.tp1_hit = true;
+      updates.tp1_hit_at = new Date().toISOString();
       updates.sl_moved_breakeven = true;
       updates.stop_loss = getBreakevenSL(entry, trade.direction);
       updates.status = 'partial';
     }
 
     if (!trade.tp2_hit && pctRemain <= 0.31) {
+      const mark = await getFreshMarkPrice(trade.symbol) || entry;
       updates.tp2_hit = true;
+      updates.tp2_hit_at = new Date().toISOString();
       updates.sl_locked_1r = true;
-      updates.stop_loss = getLocked1RSL(entry, risk, trade.direction);
-      updates.status = pctRemain > originalQty * 0.01 ? 'partial' : 'closed';
-      if (pctRemain <= originalQty * 0.01) {
-        updates.closed_at = new Date().toISOString();
-        updates.close_reason = 'TP2 hit — runner closed on exchange';
+      updates.stop_loss = getRunnerStopAfterTP2(trade.tp1, trade.direction, {
+        markPrice: mark,
+        entryPrice: entry,
+      });
+      updates.status = 'partial';
+    }
+
+    if (Object.keys(updates).length && (updates.tp1_hit || updates.tp2_hit)) {
+      const exchPnl = await fetchExchangeRealizedPnl({ ...trade, ...updates }).catch(() => null);
+      if (exchPnl?.total != null) {
+        updates.exchange_realized_pnl = exchPnl.total;
+        updates.pnl = exchPnl.total;
       }
     }
 
     if (!Object.keys(updates).length) return trade;
 
+    if (updates.tp1_hit && !trade.tp1_hit) {
+      const { slOk } = await repositionAfterTP1({
+        symbol: trade.symbol,
+        direction: trade.direction,
+        originalQty,
+        remainQty: liveQty,
+        stopPrice: updates.stop_loss,
+        tp2: trade.tp2,
+      });
+      if (!slOk) {
+        delete updates.tp1_hit;
+        delete updates.tp1_hit_at;
+        delete updates.sl_moved_breakeven;
+        delete updates.stop_loss;
+        delete updates.status;
+        delete updates.pnl;
+      }
+    }
+    if (updates.tp2_hit && !trade.tp2_hit) {
+      await repositionAfterTP2({
+        symbol: trade.symbol,
+        direction: trade.direction,
+        remainQty: liveQty,
+        stopPrice: updates.stop_loss,
+        tp1: trade.tp1,
+        entryPrice: entry,
+      });
+    }
+
     await updateTrade(trade.id, updates);
-    return { ...trade, ...updates };
+    const merged = { ...trade, ...updates };
+
+    const stillOpen = await getLivePositionQty(trade.symbol);
+    if (stillOpen != null && stillOpen <= 0 && !trade.closed_at) {
+      const exitPrice = await getFreshMarkPrice(trade.symbol) || entry;
+      await finalizeTradeClose(merged, {
+        exitPrice,
+        status: 'closed',
+        reason: 'Exchange flat — synced close',
+      });
+    } else if (updates.tp1_hit && !trade.tp1_hit) {
+      await recordTradePhasePnl(merged, 'tp1');
+    } else if (updates.tp2_hit && !trade.tp2_hit) {
+      await recordTradePhasePnl(merged, 'tp2');
+    }
+
+    if (updates.tp1_hit && !trade.tp1_hit) {
+      await notifyTradePhase('tp1', merged, {
+        quantity: liveQty,
+        stopLoss: updates.stop_loss,
+        hitAt: updates.tp1_hit_at,
+      });
+      broadcastTradeEvent('tp1_partial', merged);
+    }
+    if (updates.tp2_hit && !trade.tp2_hit) {
+      if (updates.status !== 'closed') {
+        await notifyTradePhase('tp2', merged, {
+          quantity: liveQty,
+          stopLoss: updates.stop_loss,
+          hitAt: updates.tp2_hit_at,
+        });
+      }
+      broadcastTradeEvent(updates.status === 'closed' ? 'tp2_closed' : 'tp2_partial', merged);
+    }
+    return merged;
   }
 
   async manageTrade(trade) {
     if (this.inFlight.has(trade.id)) return;
 
-    const price = binanceWs.getPrice(trade.symbol) || await getMarkPrice(trade.symbol).catch(() => null);
+    const price = await getFreshMarkPrice(trade.symbol);
     if (!price) return;
 
     const entry = parseFloat(trade.entry_price);
@@ -129,10 +297,32 @@ class PositionMonitor {
     const originalQty = parseFloat(trade.original_quantity || trade.quantity);
     const risk = Math.abs(entry - parseFloat(trade.initial_stop_loss || trade.stop_loss));
     const isLong = trade.direction === 'LONG';
+    const liveQty = await getLivePositionQty(trade.symbol);
+    if (!liveQty || liveQty <= 0) return;
 
-    if ((isLong && price <= sl) || (!isLong && price >= sl)) {
-      await this.withLock(trade.id, () => this.closeTrade(trade, price, 'stopped', 'Stop loss hit'));
+    if (trade.tp2_hit && isRunnerDust(liveQty, price, originalQty)) {
+      await this.withLock(trade.id, () => this.closeTrade(
+        trade,
+        price,
+        'closed',
+        'Runner dust closed — below min notional after TP2',
+      ));
       return;
+    }
+
+    if (!trade.tp2_hit) {
+      if ((isLong && price <= sl) || (!isLong && price >= sl)) {
+        const reason = trade.tp1_hit ? 'Stop loss hit' : 'Stop loss hit';
+        await this.withLock(trade.id, () => this.closeTrade(trade, price, 'stopped', reason));
+        return;
+      }
+    }
+
+    if (trade.tp2_hit && !trade.tp3_hit) {
+      if ((isLong && price <= sl) || (!isLong && price >= sl)) {
+        await this.withLock(trade.id, () => this.closeTrade(trade, price, 'closed', 'Runner trailing SL hit'));
+        return;
+      }
     }
 
     if (!trade.tp1_hit) {
@@ -161,10 +351,24 @@ class PositionMonitor {
     const remainQty = roundQty(originalQty - tp1Qty);
     const side = trade.direction === 'LONG' ? 'SELL' : 'BUY';
     const realizedPnl = calculatePnl(trade, price, tp1Qty);
-    const liveQty = await getLivePositionQty(trade.symbol);
+    let liveQty = await getLivePositionQty(trade.symbol);
     const expectedAfter = remainQty;
+    const alreadyPartial = liveQty && liveQty <= expectedAfter * 1.02;
 
-    if (liveQty && liveQty > expectedAfter * 1.02) {
+    const verify = await verifyExchangeProtection(trade.symbol);
+    const hasExchangeTp = (verify?.tpCount ?? 0) >= 1;
+
+    if (hasExchangeTp && !alreadyPartial) {
+      await logEvent('info', 'positionMonitor', 'TP1 price reached — awaiting exchange TP fill', {
+        tradeId: trade.id,
+        symbol: trade.symbol,
+        liveQty,
+        expectedAfter,
+      });
+      return;
+    }
+
+    if (!alreadyPartial && !hasExchangeTp && liveQty && liveQty > expectedAfter * 1.02) {
       try {
         const credentials = await getActiveApiKeys();
         const closeQty = roundQty(Math.min(tp1Qty, liveQty - expectedAfter));
@@ -180,48 +384,57 @@ class PositionMonitor {
             await placeMarketOrder(trade.symbol, side, closeQty, true);
           }
         }
+        liveQty = await getLivePositionQty(trade.symbol);
       } catch (err) {
-        await logEvent('warn', 'positionMonitor', `TP1 partial close failed: ${err.message}`, { tradeId: trade.id });
-        return;
+        liveQty = await getLivePositionQty(trade.symbol);
+        if (liveQty && liveQty > expectedAfter * 1.02) {
+          await logEvent('warn', 'positionMonitor', `TP1 partial close failed: ${err.message}`, { tradeId: trade.id });
+          return;
+        }
+        await logEvent('warn', 'positionMonitor', `TP1 partial close failed but exchange qty reduced: ${err.message}`, { tradeId: trade.id });
       }
     }
 
-    const breakevenSL = getBreakevenSL(parseFloat(trade.entry_price), trade.direction);
-    const actualRemain = await getLivePositionQty(trade.symbol) || remainQty;
+    liveQty = await getLivePositionQty(trade.symbol);
+    if (liveQty && liveQty > expectedAfter * 1.02) {
+      return;
+    }
 
-    try {
-      const credentials = await getActiveApiKeys();
-      if (credentials) {
-        await cancelAllOrdersWithCredentials(credentials, trade.symbol);
-        if (actualRemain > 0) {
-          await placeStopMarketOrderWithCredentials(credentials, {
-            symbol: trade.symbol,
-            side,
-            stopPrice: breakevenSL,
-            quantity: actualRemain,
-          });
-        }
-      } else {
-        await cancelAllOrders(trade.symbol);
-        if (actualRemain > 0) await placeStopMarketOrder(trade.symbol, side, breakevenSL, actualRemain);
-      }
-    } catch (err) {
-      await logEvent('warn', 'positionMonitor', `Breakeven SL failed: ${err.message}`);
+    const breakevenSL = getBreakevenSL(parseFloat(trade.entry_price), trade.direction);
+    const actualRemain = liveQty || remainQty;
+
+    const { slOk } = await repositionAfterTP1({
+      symbol: trade.symbol,
+      direction: trade.direction,
+      originalQty,
+      remainQty: actualRemain,
+      stopPrice: breakevenSL,
+      tp2: trade.tp2,
+    });
+    if (!slOk) {
+      await logEvent('warn', 'positionMonitor', 'Breakeven SL failed — TP1 not recorded', { tradeId: trade.id });
       return;
     }
 
     await updateTrade(trade.id, {
       tp1_hit: true,
+      tp1_hit_at: new Date().toISOString(),
       sl_moved_breakeven: true,
       stop_loss: breakevenSL,
       quantity: actualRemain,
-      pnl: (parseFloat(trade.pnl) || 0) + realizedPnl,
       status: 'partial',
     });
 
-    await sendTradeUpdate({ ...trade, tp1_hit: true, quantity: actualRemain }, `TP1 hit at ${price}. 30% closed. SL moved to breakeven.`);
+    const merged = { ...trade, quantity: actualRemain, stop_loss: breakevenSL, tp1_hit: true, status: 'partial' };
+    await recordTradePhasePnl(merged, 'tp1');
+
+    await notifyTradePhase('tp1', merged, {
+      quantity: actualRemain,
+      stopLoss: breakevenSL,
+      hitAt: new Date().toISOString(),
+    });
     await logEvent('trade', 'positionMonitor', 'TP1 hit — breakeven SL', { tradeId: trade.id, price });
-    broadcastTradeEvent('tp1_partial', { ...trade, quantity: actualRemain, pnl: (parseFloat(trade.pnl) || 0) + realizedPnl });
+    broadcastTradeEvent('tp1_partial', merged);
   }
 
   async handleTP2(trade, price, risk, originalQty) {
@@ -229,10 +442,24 @@ class PositionMonitor {
     const remainQty = roundQty(originalQty - tp1QtyFromOriginal(originalQty) - tp2Qty);
     const side = trade.direction === 'LONG' ? 'SELL' : 'BUY';
     const realizedPnl = calculatePnl(trade, price, tp2Qty);
-    const liveQty = await getLivePositionQty(trade.symbol);
+    let liveQty = await getLivePositionQty(trade.symbol);
     const expectedAfter = remainQty;
+    const alreadyPartial = liveQty && liveQty <= expectedAfter * 1.02;
 
-    if (liveQty && liveQty > expectedAfter * 1.02) {
+    const verify = await verifyExchangeProtection(trade.symbol);
+    const hasExchangeTp = (verify?.tpCount ?? 0) >= 1;
+
+    if (hasExchangeTp && !alreadyPartial) {
+      await logEvent('info', 'positionMonitor', 'TP2 price reached — awaiting exchange TP fill', {
+        tradeId: trade.id,
+        symbol: trade.symbol,
+        liveQty,
+        expectedAfter,
+      });
+      return;
+    }
+
+    if (!alreadyPartial && !hasExchangeTp && liveQty && liveQty > expectedAfter * 1.02) {
       try {
         const credentials = await getActiveApiKeys();
         const closeQty = roundQty(Math.min(tp2Qty, liveQty - expectedAfter));
@@ -248,85 +475,123 @@ class PositionMonitor {
             await placeMarketOrder(trade.symbol, side, closeQty, true);
           }
         }
+        liveQty = await getLivePositionQty(trade.symbol);
       } catch (err) {
-        await logEvent('warn', 'positionMonitor', `TP2 partial close failed: ${err.message}`, { tradeId: trade.id });
-        return;
+        liveQty = await getLivePositionQty(trade.symbol);
+        if (liveQty && liveQty > expectedAfter * 1.02) {
+          await logEvent('warn', 'positionMonitor', `TP2 partial close failed: ${err.message}`, { tradeId: trade.id });
+          return;
+        }
+        await logEvent('warn', 'positionMonitor', `TP2 partial close failed but exchange qty reduced: ${err.message}`, { tradeId: trade.id });
       }
     }
 
-    const lockedSL = getLocked1RSL(parseFloat(trade.entry_price), risk, trade.direction);
-    const actualRemain = await getLivePositionQty(trade.symbol) || remainQty;
-
-    try {
-      const credentials = await getActiveApiKeys();
-      if (credentials) {
-        await cancelAllOrdersWithCredentials(credentials, trade.symbol);
-        if (actualRemain > 0) {
-          await placeStopMarketOrderWithCredentials(credentials, {
-            symbol: trade.symbol,
-            side,
-            stopPrice: lockedSL,
-            quantity: actualRemain,
-          });
-        }
-      } else {
-        await cancelAllOrders(trade.symbol);
-        if (actualRemain > 0) await placeStopMarketOrder(trade.symbol, side, lockedSL, actualRemain);
-      }
-    } catch (err) {
-      await logEvent('warn', 'positionMonitor', `Lock 1R SL failed: ${err.message}`);
+    liveQty = await getLivePositionQty(trade.symbol);
+    if (liveQty && liveQty > expectedAfter * 1.02) {
       return;
     }
 
-    await updateTrade(trade.id, {
-      tp2_hit: true,
-      sl_locked_1r: true,
-      stop_loss: lockedSL,
-      quantity: actualRemain,
-      pnl: (parseFloat(trade.pnl) || 0) + realizedPnl,
-      status: actualRemain > 0 ? 'partial' : 'closed',
-      ...(actualRemain <= 0 ? {
-        exit_price: price,
-        closed_at: new Date().toISOString(),
-        close_reason: 'TP2 hit — position fully closed',
-      } : {}),
+    const lockedSL = getRunnerStopAfterTP2(trade.tp1, trade.direction, {
+      markPrice: price,
+      entryPrice: parseFloat(trade.entry_price),
     });
+    const actualRemain = liveQty || remainQty;
 
-    await sendTradeUpdate({ ...trade, tp2_hit: true, quantity: actualRemain }, `TP2 hit at ${price}. 40% closed. SL locked at +1R. Runner ${actualRemain > 0 ? '30%' : '0%'}.`);
-    await logEvent('trade', 'positionMonitor', 'TP2 hit — SL at +1R', { tradeId: trade.id, price, remainQty: actualRemain });
-    broadcastTradeEvent(actualRemain > 0 ? 'tp2_partial' : 'tp2_closed', { ...trade, quantity: actualRemain, pnl: (parseFloat(trade.pnl) || 0) + realizedPnl });
+    const slOk = await repositionAfterTP2({
+      symbol: trade.symbol,
+      direction: trade.direction,
+      remainQty: actualRemain,
+      stopPrice: lockedSL,
+      tp1: trade.tp1,
+      entryPrice: parseFloat(trade.entry_price),
+    });
+    if (!slOk) {
+      await logEvent('warn', 'positionMonitor', 'Lock 1R SL failed — TP2 not recorded', { tradeId: trade.id });
+      return;
+    }
+
+    if (actualRemain <= 0) {
+      await updateTrade(trade.id, {
+        tp2_hit: true,
+        tp2_hit_at: new Date().toISOString(),
+        sl_locked_1r: true,
+        stop_loss: lockedSL,
+        quantity: 0,
+        status: 'partial',
+      });
+      await finalizeTradeClose(
+        { ...trade, tp2_hit: true, sl_locked_1r: true, stop_loss: lockedSL },
+        { exitPrice: price, status: 'closed', reason: 'TP2 hit — position fully closed', force: true },
+      );
+    } else {
+      await updateTrade(trade.id, {
+        tp2_hit: true,
+        tp2_hit_at: new Date().toISOString(),
+        sl_locked_1r: true,
+        stop_loss: lockedSL,
+        quantity: actualRemain,
+        status: 'partial',
+      });
+      const merged = { ...trade, tp2_hit: true, quantity: actualRemain, stop_loss: lockedSL, status: 'partial' };
+      await recordTradePhasePnl(merged, 'tp2');
+      await notifyTradePhase('tp2', merged, {
+        quantity: actualRemain,
+        stopLoss: lockedSL,
+        hitAt: new Date().toISOString(),
+      });
+      await logEvent('trade', 'positionMonitor', 'TP2 hit — SL at TP1, trailing runner', { tradeId: trade.id, price, remainQty: actualRemain });
+      broadcastTradeEvent('tp2_partial', merged);
+    }
   }
 
   async handleTrailing(trade, price, risk) {
     const isLong = trade.direction === 'LONG';
-    const trailDistance = risk * 0.5;
-    const newSL = isLong ? price - trailDistance : price + trailDistance;
+    const floorSL = getRunnerStopAfterTP2(trade.tp1, trade.direction, {
+      markPrice: price,
+      entryPrice: parseFloat(trade.entry_price),
+    });
+    const prevPeak = parseFloat(trade.peak_price || trade.entry_price);
+    const peak = isLong ? Math.max(prevPeak, price) : Math.min(prevPeak, price);
     const currentSL = parseFloat(trade.stop_loss);
+    const newSL = computeTrailingStop({
+      direction: trade.direction,
+      peakPrice: peak,
+      currentSL,
+      risk,
+      floorSL,
+      trailFraction: 0.4,
+    });
 
-    const shouldUpdate = isLong ? newSL > currentSL : newSL < currentSL;
+    const shouldUpdate = isLong
+      ? newSL > currentSL + currentSL * 0.001
+      : newSL < currentSL - currentSL * 0.001;
+    const peakChanged = peak !== prevPeak;
+
+    if (!shouldUpdate && !peakChanged) return;
+
+    const runnerQty = parseFloat(trade.quantity);
+
+    if (isRunnerDust(runnerQty, price, trade.original_quantity || trade.quantity)) {
+      await this.closeTrade(trade, price, 'closed', 'Runner dust closed — trailing skipped');
+      return;
+    }
 
     if (shouldUpdate) {
-      const side = isLong ? 'SELL' : 'BUY';
-      const runnerQty = parseFloat(trade.quantity);
-
       try {
-        const credentials = await getActiveApiKeys();
-        if (credentials) {
-          await cancelAllOrdersWithCredentials(credentials, trade.symbol);
-          await placeStopMarketOrderWithCredentials(credentials, {
-            symbol: trade.symbol,
-            side,
-            stopPrice: newSL,
-            quantity: runnerQty,
-          });
-        } else {
-          await cancelAllOrders(trade.symbol);
-          await placeStopMarketOrder(trade.symbol, side, newSL, runnerQty);
-        }
-        await updateTrade(trade.id, { stop_loss: newSL });
+        const slOk = await repositionProtectiveStop({
+          symbol: trade.symbol,
+          direction: trade.direction,
+          stopPrice: newSL,
+          quantity: runnerQty,
+        });
+        if (!slOk) throw new Error('Trail SL reposition failed');
+        await updateTrade(trade.id, { stop_loss: newSL, peak_price: peak, sl_updated_at: new Date().toISOString() });
+        await logEvent('info', 'positionMonitor', `Trail SL → ${newSL}`, { tradeId: trade.id, peak });
       } catch (err) {
         await logEvent('warn', 'positionMonitor', `Trail SL failed: ${err.message}`);
       }
+    } else if (peakChanged) {
+      await updateTrade(trade.id, { peak_price: peak });
     }
   }
 
@@ -335,7 +600,7 @@ class PositionMonitor {
     const qty = parseFloat(trade.quantity);
     const isLong = trade.direction === 'LONG';
     const side = isLong ? 'SELL' : 'BUY';
-    const liveQty = await getLivePositionQty(trade.symbol);
+    let liveQty = await getLivePositionQty(trade.symbol);
 
     if (liveQty && liveQty > 0) {
       try {
@@ -353,77 +618,30 @@ class PositionMonitor {
           await placeMarketOrder(trade.symbol, side, liveQty, true);
         }
 
-        const remainingQty = await getLivePositionQty(trade.symbol);
-        if (remainingQty && remainingQty > liveQty * 0.001) {
-          await logEvent('warn', 'positionMonitor', `Close verification failed: ${remainingQty} ${trade.symbol} still open`, {
+        liveQty = await getLivePositionQty(trade.symbol);
+        if (liveQty && liveQty > qty * 0.001) {
+          await logEvent('warn', 'positionMonitor', `Close verification: ${liveQty} ${trade.symbol} still open after close attempt`, {
             tradeId: trade.id,
             symbol: trade.symbol,
-            attemptedQty: liveQty,
-            remainingQty,
+            attemptedQty: qty,
+            remainingQty: liveQty,
           });
           return;
         }
       } catch (err) {
-        await logEvent('warn', 'positionMonitor', `Exchange close failed: ${err.message}`, {
-          tradeId: trade.id,
-          symbol: trade.symbol,
-          qty: liveQty,
-        });
-        return;
+        liveQty = await getLivePositionQty(trade.symbol);
+        if (liveQty && liveQty > qty * 0.001) {
+          await logEvent('warn', 'positionMonitor', `Exchange close failed: ${err.message}`, {
+            tradeId: trade.id,
+            symbol: trade.symbol,
+            qty,
+          });
+          return;
+        }
       }
     }
 
-    const closePnl = isLong
-      ? (exitPrice - entry) * qty
-      : (entry - exitPrice) * qty;
-    const pnl = (parseFloat(trade.pnl) || 0) + closePnl;
-    const risk = Math.abs(entry - parseFloat(trade.initial_stop_loss || trade.stop_loss));
-    const rMultiple = risk > 0 ? pnl / (risk * qty) : 0;
-    const outcome = pnl > 0 ? 'win' : pnl < 0 ? 'loss' : 'breakeven';
-
-    await updateTrade(trade.id, {
-      status,
-      exit_price: exitPrice,
-      pnl,
-      pnl_percent: (pnl / (entry * qty)) * 100,
-      r_multiple: rMultiple,
-      close_reason: reason,
-      closed_at: new Date().toISOString(),
-    });
-
-    await updatePairStats(trade.symbol, outcome, rMultiple);
-
-    const lesson = buildTradeLesson(trade, exitPrice, pnl, outcome, reason);
-    const lessonData = {
-      trade_id: trade.id,
-      symbol: trade.symbol,
-      direction: trade.direction,
-      outcome,
-      lesson_type: 'executed',
-      setup_description: `${trade.direction} on ${trade.symbol} — entry ${entry}, SL ${trade.stop_loss}`,
-      lesson_text: lesson,
-      tags: [trade.symbol, trade.direction, outcome, reason],
-      pnl,
-      r_multiple: rMultiple,
-    };
-    await saveTradeLesson(lessonData);
-
-    const { learnFromTrade } = await import('../services/tradeLearner.js');
-    await learnFromTrade({ ...trade, pnl, exit_price: exitPrice, r_multiple: rMultiple }, lesson);
-
-    const { sendTradeLifecycle } = await import('../services/telegram.js');
-    await sendTradeLifecycle('trade.closed', {
-      trade: { ...trade, pnl, status, exit_price: exitPrice },
-      message: `Closed: ${reason}. ${rMultiple.toFixed(2)}R`,
-    });
-
-    await logEvent('trade', 'positionMonitor', `Trade closed: ${reason}`, {
-      tradeId: trade.id,
-      pnl,
-      rMultiple,
-      outcome,
-    });
-    broadcastTradeEvent('closed', { ...trade, pnl, status, exit_price: exitPrice, close_reason: reason });
+    await finalizeTradeClose(trade, { exitPrice, status, reason, force: true });
   }
 
   async withLock(tradeId, fn) {
@@ -441,6 +659,10 @@ function tp1QtyFromOriginal(originalQty) {
   return parseFloat((originalQty * 0.30).toFixed(8));
 }
 
+function tp2QtyFromOriginal(originalQty) {
+  return parseFloat((originalQty * 0.40).toFixed(8));
+}
+
 function roundQty(qty) {
   return parseFloat(Number(qty).toFixed(8));
 }
@@ -449,29 +671,6 @@ function calculatePnl(trade, price, qty) {
   const entry = parseFloat(trade.entry_price);
   const isLong = trade.direction === 'LONG';
   return isLong ? (price - entry) * qty : (entry - price) * qty;
-}
-
-async function getLivePositionQty(symbol) {
-  try {
-    const credentials = await getActiveApiKeys();
-    const rows = credentials
-      ? await getPositionRiskWithCredentials(credentials, symbol)
-      : await getPositionRisk(symbol);
-    const row = Array.isArray(rows) ? rows.find((p) => p.symbol === symbol) : rows;
-    return Math.abs(parseFloat(row?.positionAmt || 0));
-  } catch {
-    return null;
-  }
-}
-
-function buildTradeLesson(trade, exitPrice, pnl, outcome, reason) {
-  return `Trade on ${trade.symbol} ${trade.direction}: ${outcome.toUpperCase()}.
-Entry: ${trade.entry_price}, Exit: ${exitPrice}, PnL: ${pnl.toFixed(2)} USDT.
-Close reason: ${reason}.
-TP1: ${trade.tp1_hit ? 'hit' : 'missed'}, TP2: ${trade.tp2_hit ? 'hit' : 'missed'}.
-Lesson: ${outcome === 'win'
-    ? 'Setup validated — similar conditions may repeat on this pair.'
-    : 'Review OB retest quality and MTF alignment before re-entering this pair.'}`;
 }
 
 export const positionMonitor = new PositionMonitor();

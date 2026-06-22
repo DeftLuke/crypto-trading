@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { config } from '../config/index.js';
 import { ollamaGenerate } from './ollama.js';
+import { isOpenClawConfigured } from './openclaw.js';
 import { get24hrTicker } from './binance.js';
 import { getPairStats, getSignals } from './supabase.js';
 import { getMTFBias, formatMTFBias } from '../strategy/mtfAnalysis.js';
@@ -17,6 +18,10 @@ import {
   createTask,
   cancelWatchTask,
 } from './agentMemory.js';
+import { tryOwnerTasks } from './telegramTaskExecutor.js';
+import { isTelegramAllowed, denyTelegramMessage } from './telegramPermissions.js';
+import { askTradingAgent } from './aiAgent.js';
+import { startTelegramTypingLoop } from './telegram.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -39,12 +44,42 @@ function loadPersonalPrompt() {
   return 'You are TradeGPT. Reply briefly — answer ONLY what was asked.';
 }
 
+const NON_SYMBOL_WORDS = new Set([
+  'your', 'my', 'the', 'name', 'who', 'what', 'how', 'when', 'where', 'why',
+  'this', 'that', 'our', 'their', 'his', 'her', 'its', 'me', 'you', 'we', 'they',
+  'a', 'an', 'is', 'are', 'was', 'were', 'be', 'been', 'bot', 'assistant',
+  'tradegpt', 'openclaw', 'hello', 'hi', 'hey', 'please', 'thanks', 'thank',
+  'do', 'does', 'did', 'can', 'could', 'would', 'should', 'will', 'tell',
+]);
+
+function isConversationalMessage(text) {
+  const t = text.trim().toLowerCase();
+  return (
+    /^(who|what) are you\b/.test(t) ||
+    /what('s| is) (your|my) (name|job|role|purpose)/.test(t) ||
+    /what do you (do|call yourself)/.test(t) ||
+    /^what can you do/.test(t) ||
+    /^how do you work/.test(t) ||
+    /^help\b/.test(t)
+  );
+}
+
+function isLikelySymbolWord(word) {
+  if (!word) return false;
+  const w = word.toLowerCase();
+  if (NON_SYMBOL_WORDS.has(w)) return false;
+  if (SYMBOL_ALIASES[w]) return true;
+  // Explicit tickers only (2–6 letters), not arbitrary English words
+  return /^[A-Z]{2,6}$/i.test(w);
+}
+
 export function normalizeSymbol(text) {
   const lower = text.toLowerCase().trim();
+  if (NON_SYMBOL_WORDS.has(lower)) return null;
   if (SYMBOL_ALIASES[lower]) return SYMBOL_ALIASES[lower];
   const upper = text.toUpperCase().replace(/[^A-Z]/g, '');
   if (upper.endsWith('USDT')) return upper;
-  if (upper.length >= 2 && upper.length <= 10) return `${upper}USDT`;
+  if (upper.length >= 2 && upper.length <= 6) return `${upper}USDT`;
   return null;
 }
 
@@ -68,8 +103,8 @@ function classifyIntent(text) {
   if (/watch|unwatch|stop watching|my watchlist/.test(t)) return 'watch';
   if (/timer|remind me|alert me in/.test(t)) return 'timer';
   if (/bullish|bearish|trend|structure|mtf|multi.?timeframe|bos|choch/.test(t)) return 'mtf';
-  if (/tell me about|how is|what about|info on|analysis|price|how much/.test(t)) return 'coin_data';
-  if (/show.*data|give me.*data|full stats|my stats|win rate|portfolio/.test(t)) return 'data';
+  if (/price of|how much is|\b\w+\s+price\b|tell me about|how is \w+|what about \w+|info on/.test(t)) return 'coin_data';
+  if (/show.*data|give me.*data|full stats|my stats|win rate|portfolio|my trades|recent trades|pnl|performance/.test(t)) return 'data';
   if (extractSymbolsFromText(text).length) return 'coin_chat';
   return 'general';
 }
@@ -123,6 +158,8 @@ function formatCoinFull(focus) {
 /** Built-in handlers — no AI dump. */
 export async function tryQuickActions(chatId, text) {
   const t = text.trim();
+  if (isConversationalMessage(t)) return null;
+
   const intent = classifyIntent(t);
 
   if (intent === 'greeting') {
@@ -200,13 +237,16 @@ export async function tryQuickActions(chatId, text) {
     return formatMTFBias(bias);
   }
 
-  // Coin price — brief by default
-  const priceMatch = t.match(/(?:price of|how much is|what is|what's)\s+(\w+)/i)
-    || t.match(/\b(\w+)\s+price\b/i);
+  // Coin price — only when a real ticker is named (never "what is your …")
+  const priceMatch = t.match(/(?:price of|how much is)\s+(\w+)/i)
+    || t.match(/\b(\w{2,6})\s+price\b/i);
   if (priceMatch || intent === 'coin_data') {
-    const word = priceMatch?.[1] || t.match(/(?:about|on|for)\s+(\w+)/i)?.[1] || extractSymbolsFromText(t)[0]?.replace('USDT', '') || 'btc';
+    const word = priceMatch?.[1]
+      || t.match(/(?:about|on|for)\s+(\w{2,6})\b/i)?.[1]
+      || extractSymbolsFromText(t)[0]?.replace('USDT', '');
+    if (!isLikelySymbolWord(word)) return null;
     const symbol = normalizeSymbol(word);
-    if (!symbol) return 'Which coin? e.g. BTC, ETH, SOL';
+    if (!symbol) return null;
     const wantsFull = /full|detail|data|stats|analysis|everything/.test(t);
     const focus = await getSymbolFocus(symbol, wantsFull);
     if (wantsFull) return formatCoinFull(focus);
@@ -215,6 +255,9 @@ export async function tryQuickActions(chatId, text) {
 
   if (intent === 'data') {
     const symbols = extractSymbolsFromText(t);
+    if (/win rate|recent trades|my trades|pnl|performance|lesson/.test(t) && !symbols.length) {
+      return null;
+    }
     if (symbols.length) {
       const focus = await getSymbolFocus(symbols[0], true);
       return formatCoinFull(focus);
@@ -258,7 +301,21 @@ function trimReply(text, maxLen = 600) {
 }
 
 export async function askPersonalAssistant(chatId, question) {
+  if (config.telegram?.assistantEnabled === false) {
+    return { answer: 'Assistant is disabled.', source: 'disabled', model: 'none' };
+  }
+  if (!isTelegramAllowed(chatId)) {
+    return { answer: denyTelegramMessage(chatId), source: 'denied', model: 'none' };
+  }
+
   const intent = classifyIntent(question);
+  const ownerTask = await tryOwnerTasks(chatId, question);
+  if (ownerTask) {
+    await saveChatMessage(chatId, 'user', question);
+    await saveChatMessage(chatId, 'assistant', ownerTask);
+    return { answer: ownerTask, source: 'task', model: 'builtin' };
+  }
+
   const quick = await tryQuickActions(chatId, question);
   if (quick) {
     await saveChatMessage(chatId, 'user', question);
@@ -279,33 +336,52 @@ Rules: Answer ONLY what they asked. ${wantsDetail ? 'They want detail — use bu
 
   await saveChatMessage(chatId, 'user', question);
 
-  const gatewayUrl = config.ai?.gatewayUrl;
+  const typing = startTelegramTypingLoop(chatId);
   try {
-    if (gatewayUrl) {
-      const res = await fetch(`${gatewayUrl}/chat`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          ...(config.ai?.apiKey ? { 'X-API-Key': config.ai.apiKey } : {}),
-        },
-        body: JSON.stringify({ question, context, systemPrompt }),
-        signal: AbortSignal.timeout(120000),
-      });
-      if (res.ok) {
-        const data = await res.json();
-        const answer = trimReply(data.answer, wantsDetail ? 1200 : 500);
+    if (config.openclaw?.enabled !== false && isOpenClawConfigured()) {
+      try {
+        const result = await askTradingAgent(question, {
+          conversationId: `telegram:${chatId}`,
+          channel: 'telegram',
+        });
+        const answer = trimReply(result.answer, wantsDetail ? 1200 : 800);
         await saveChatMessage(chatId, 'assistant', answer);
-        return { answer, model: data.model, source: 'gateway' };
+        return { answer, model: result.model, source: result.source };
+      } catch (err) {
+        console.warn('[PersonalAssistant] OpenClaw trading agent:', err.message);
       }
     }
-  } catch (err) {
-    console.warn('[PersonalAssistant] Gateway:', err.message);
-  }
 
-  const { text, model } = await ollamaGenerate(prompt, systemPrompt);
-  const answer = trimReply(text, wantsDetail ? 1200 : 500);
-  await saveChatMessage(chatId, 'assistant', answer);
-  return { answer, model, source: 'ollama' };
+    const gatewayUrl = config.ai?.gatewayUrl;
+    try {
+      if (gatewayUrl) {
+        const res = await fetch(`${gatewayUrl}/chat`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(config.ai?.apiKey ? { 'X-API-Key': config.ai.apiKey } : {}),
+          },
+          body: JSON.stringify({ question, context, systemPrompt }),
+          signal: AbortSignal.timeout(120000),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const answer = trimReply(data.answer, wantsDetail ? 1200 : 500);
+          await saveChatMessage(chatId, 'assistant', answer);
+          return { answer, model: data.model, source: 'gateway' };
+        }
+      }
+    } catch (err) {
+      console.warn('[PersonalAssistant] Gateway:', err.message);
+    }
+
+    const { text, model } = await ollamaGenerate(prompt, systemPrompt);
+    const answer = trimReply(text, wantsDetail ? 1200 : 500);
+    await saveChatMessage(chatId, 'assistant', answer);
+    return { answer, model, source: 'ollama' };
+  } finally {
+    typing.stop();
+  }
 }
 
 export async function buildPersonalContext(chatId, userMessage) {

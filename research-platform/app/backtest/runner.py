@@ -10,6 +10,9 @@ from app.backtest.export import ExportEngine
 from app.backtest.types import BacktestResult
 from app.core.logging import get_logger
 from app.signals.rules_engine import StrategyRule, StrategyRulesEngine
+from app.strategies.registry import is_e5_strategy
+from app.strategies.e5_institutional.engine import E5InstitutionalEngine
+from app.strategies.e5_institutional.reports import export_e5_reports
 
 logger = get_logger("backtest.runner")
 
@@ -55,16 +58,26 @@ class BacktestRunner:
     ) -> BacktestResult | None:
         _job_status[backtest_id] = {"status": "running", "progress_pct": 5, "backtest_id": backtest_id}
         try:
-            engine = BacktestEngine(config, rules or StrategyRulesEngine.default_short_rules())
+            use_e5 = is_e5_strategy(config.strategy_name) or config.mode == BacktestMode.E5
             loop = asyncio.get_event_loop()
-            result: BacktestResult = await loop.run_in_executor(None, lambda: engine.run(backtest_id))
+            if use_e5:
+                if config.min_confidence <= 1:
+                    config.min_confidence = 85.0
+                engine = E5InstitutionalEngine(config)
+                result: BacktestResult = await loop.run_in_executor(None, lambda: engine.run(backtest_id))
+            else:
+                engine = BacktestEngine(config, rules or StrategyRulesEngine.default_short_rules())
+                result = await loop.run_in_executor(None, lambda: engine.run(backtest_id))
 
             if backtest_id in _stop_flags:
                 _job_status[backtest_id] = {"status": "stopped", "progress_pct": 100, "backtest_id": backtest_id}
                 return result
 
             run_id = str(uuid4())
-            export_paths = self.export.export_all(result, run_id)
+            if use_e5:
+                export_paths = export_e5_reports(result, run_id)
+            else:
+                export_paths = self.export.export_all(result, run_id)
 
             if persist_fn:
                 await persist_fn(result, run_id, export_paths)

@@ -43,7 +43,13 @@ export function AIChatPanel() {
     setInput("");
   };
 
-  const status = dash?.status as { llm_configured?: boolean; n8n_configured?: boolean } | undefined;
+  const status = dash?.status as {
+    llm_configured?: boolean;
+    openclaw_configured?: boolean;
+    openclaw_ok?: boolean;
+    n8n_configured?: boolean;
+  } | undefined;
+  const openclaw = dash?.openclaw as { ok?: boolean; default_model?: string } | undefined;
   const recentActions = (dash?.recent_actions || []) as { action_type?: string; ts?: string }[];
 
   return (
@@ -52,6 +58,9 @@ export function AIChatPanel() {
         <div className="flex items-center justify-between">
           <CardTitle className="text-base">AI Assistant</CardTitle>
           <div className="flex gap-1">
+            <Badge variant={status?.openclaw_ok || status?.openclaw_configured ? "success" : "secondary"}>
+              OpenClaw
+            </Badge>
             <Badge variant={status?.llm_configured ? "success" : "secondary"}>LLM</Badge>
             <Badge variant={status?.n8n_configured ? "success" : "secondary"}>n8n</Badge>
           </div>
@@ -60,7 +69,10 @@ export function AIChatPanel() {
       <CardContent className="flex flex-1 flex-col gap-2 overflow-hidden">
         <div className="flex-1 space-y-2 overflow-y-auto rounded-lg border border-zinc-800 p-3 text-sm">
           {messages.length === 0 ? (
-            <p className="text-zinc-500">Ask about strategies, trades, risk, or system health.</p>
+            <p className="text-zinc-500">
+              Ask about strategies, trades, risk, or system health.
+              {openclaw?.default_model ? ` Model: ${openclaw.default_model}` : ""}
+            </p>
           ) : (
             messages.map((m, i) => (
               <div key={i} className={m.role === "user" ? "text-right" : "text-left"}>

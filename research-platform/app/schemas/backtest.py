@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field
 
 class BacktestStartRequest(BaseModel):
     name: str = "backtest_run"
-    mode: str = Field(default="single", pattern="^(single|multi|portfolio|walkforward|monte_carlo)$")
+    mode: str = Field(default="single", pattern="^(single|multi|portfolio|walkforward|monte_carlo|e5)$")
     exchange: str = "binance"
     timeframe: str = "15m"
     symbols: list[str] = Field(default_factory=lambda: ["BTCUSDT"])
@@ -16,6 +16,8 @@ class BacktestStartRequest(BaseModel):
     end_ts: int | None = None
     config: dict[str, Any] = Field(default_factory=dict)
     strategy_name: str = "smc-mtf"
+    score_threshold: float = 85.0
+    leverage: int = 10
 
 
 class BacktestStatusResponse(BaseModel):

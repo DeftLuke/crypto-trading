@@ -1,8 +1,6 @@
 import { config } from '../config/index.js';
 import { runMTFAnalysis } from './mtfAnalysis.js';
-import { getStrategy } from '../strategies/registry.js';
-
-const strategy = getStrategy('smc-mtf');
+import { getActiveSignalStrategy } from '../services/signalEngineSelector.js';
 
 export function calculateConfidence(analysis) {
   if (!analysis.valid) {
@@ -135,6 +133,7 @@ export function calculateLevels(direction, entryPrice, obBlock) {
 }
 
 export async function generateSignal(symbol) {
+  const strategy = await getActiveSignalStrategy();
   if (strategy?.generateSignal) {
     return strategy.generateSignal(symbol);
   }

@@ -7,6 +7,9 @@ import { getControlSettings } from './researchApi.js';
 import { internalApiHeaders, internalApiUrl } from '../lib/internalFetch.js';
 import { prepareTelegramSignalForExecution } from './telegramSignalLevels.js';
 
+/** Prevent concurrent approve/execute for the same inbox message. */
+const inboxExecuting = new Set();
+
 function sideToDirection(side) {
   const s = String(side || '').toUpperCase();
   return s === 'SHORT' || s === 'SELL' ? 'SELL' : 'BUY';
@@ -106,7 +109,10 @@ export function parsedSignalToPayload(message) {
     timestamp: ps.timestamp || message.message_date || message.received_at,
     provider_message_id: ps.provider_message_id || message.message_id,
     source_chat_id: ps.source_chat_id || message.telegram_chat_id,
-    metadata: ps.metadata || {},
+    metadata: {
+      ...(ps.metadata || {}),
+      group_title: ps.metadata?.group_title || source.title || null,
+    },
   };
 }
 
@@ -182,7 +188,25 @@ export async function revalidateTelegramMessages(messages = []) {
   return results;
 }
 
-export async function approveTelegramInboxMessage(messageId, { marginUsdt = 0, leverage, autoMode = false } = {}) {
+export async function markTelegramPipelineStage(messageId, stage, patch = {}) {
+  const { data: message, error } = await getTelegramMessageById(messageId);
+  if (error || !message) return null;
+  const apiResult = {
+    ...(message.api_result || {}),
+    pipeline_stage: stage,
+    ...patch,
+  };
+  await updateTelegramSignalMessage(messageId, { api_result: apiResult });
+  broadcastTelegramPipeline({ ...message, api_result: apiResult }, stage);
+  return { ...message, api_result: apiResult };
+}
+
+export async function approveTelegramInboxMessage(messageId, { marginUsdt = 0, leverage, autoMode = false, useRiskSizing = false } = {}) {
+  if (inboxExecuting.has(messageId)) {
+    return { ok: false, error: 'Execution already in progress for this message' };
+  }
+  inboxExecuting.add(messageId);
+  try {
   const { data: message, error } = await getTelegramMessageById(messageId);
   if (error || !message) {
     return { ok: false, error: 'Message not found' };
@@ -190,14 +214,19 @@ export async function approveTelegramInboxMessage(messageId, { marginUsdt = 0, l
   if (message.parse_status !== 'parsed' || !message.parsed_signal) {
     return { ok: false, error: 'Message is not a parsed trading signal' };
   }
-  if (message.api_result?.executed || message.api_result?.approved) {
-    return { ok: false, error: 'Signal already approved or executed' };
+  if (message.api_result?.executed) {
+    return { ok: false, error: 'Signal already executed' };
   }
 
   const symbolCheck = await assertSymbolAvailableForApprove(message);
   if (!symbolCheck.ok) {
     return { ok: false, error: symbolCheck.error };
   }
+
+  await markTelegramPipelineStage(messageId, 'executing', {
+    auto_executed: autoMode,
+    last_error: null,
+  });
 
   const prepared = await prepareTelegramSignalForExecution(message.parsed_signal);
   if (!prepared.ok) {
@@ -256,7 +285,9 @@ export async function approveTelegramInboxMessage(messageId, { marginUsdt = 0, l
     symbol: payload.symbol,
   });
   const useLeverage = parseInt(leverage || defaults.leverage || config.telegram.defaultLeverage || 50, 10);
-  const customNotional = parseFloat(marginUsdt) > 0 ? parseFloat(marginUsdt) : 0;
+  const customNotional = !useRiskSizing && !autoMode && parseFloat(marginUsdt) > 0
+    ? parseFloat(marginUsdt)
+    : 0;
 
   const execBody = {
     ...ingested.signal,
@@ -300,6 +331,8 @@ export async function approveTelegramInboxMessage(messageId, { marginUsdt = 0, l
     approved_at: execution.success ? new Date().toISOString() : workingMessage.api_result?.approved_at,
     executed: Boolean(execution.success),
     execution,
+    protection: execution.protection || null,
+    trade_id: execution.trade?.id || null,
     signal_id: ingested.signal.id,
     margin_usdt: tradeMargin,
     leverage: execution.trade?.leverage || useLeverage,
@@ -309,7 +342,11 @@ export async function approveTelegramInboxMessage(messageId, { marginUsdt = 0, l
     pipeline_stage: execution.success ? 'executed' : 'approve_failed',
   };
 
-  await updateTelegramSignalMessage(messageId, { api_result: apiResult, parsed_signal: workingMessage.parsed_signal });
+  await updateTelegramSignalMessage(messageId, {
+    api_result: apiResult,
+    parsed_signal: workingMessage.parsed_signal,
+    signal_id: ingested.signal.id,
+  });
   broadcastTelegramPipeline(
     { ...workingMessage, api_result: apiResult, parsed_signal: workingMessage.parsed_signal },
     execution.success ? 'executed' : 'approve_failed',
@@ -349,6 +386,9 @@ export async function approveTelegramInboxMessage(messageId, { marginUsdt = 0, l
     margin_usdt: tradeMargin,
     leverage: execution.trade?.leverage || useLeverage,
   };
+  } finally {
+    inboxExecuting.delete(messageId);
+  }
 }
 
 /** Auto-execute when control auto_trading is on and signal validation passed. */
@@ -376,6 +416,7 @@ export async function tryAutoExecuteTelegramMessage(messageId) {
       allowStale: freshEnough,
       testMode: false,
       skipScoreGate: false,
+      telegram: true,
     });
     if (!validation.passed) {
       await updateTelegramSignalMessage(messageId, {
@@ -406,12 +447,18 @@ export async function tryAutoExecuteTelegramMessage(messageId) {
   }
 
   if (!freshEnough) {
+    await markTelegramPipelineStage(messageId, 'stale', {
+      last_error: `Signal ${ageMinutes}m old — max ${maxAgeMinutes}m for auto-trade`,
+      auto_skip_reason: 'signal_too_old',
+    });
     await logEvent('info', 'telegramInbox', `Auto-trade skipped — signal ${ageMinutes}m old`, {
       messageId,
       symbol: message.parsed_signal?.symbol,
     });
     return { ok: false, reason: 'signal_too_old', ageMinutes, ready_to_approve: true };
   }
+
+  await markTelegramPipelineStage(messageId, 'executing', { auto_executed: true });
 
   const symbolCheck = await assertSymbolAvailableForApprove(message);
   if (!symbolCheck.ok) {
@@ -428,9 +475,9 @@ export async function tryAutoExecuteTelegramMessage(messageId) {
     symbol: message.parsed_signal?.symbol,
   });
   const result = await approveTelegramInboxMessage(messageId, {
-    marginUsdt: defaults.margin_usdt,
     leverage: defaults.leverage,
     autoMode: true,
+    useRiskSizing: true,
   });
 
   if (!result.ok) {

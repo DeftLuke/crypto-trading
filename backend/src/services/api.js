@@ -48,6 +48,8 @@ import {
   getSymbolRules,
   roundPriceToTick,
 } from '../services/binance.js';
+import { getFreshMarkPrice } from '../services/markPrice.js';
+import { findDbTradeForLivePosition } from '../services/tradeReconcile.js';
 import { attachIndicators } from '../strategy/indicators.js';
 import { analyzeSMC } from '../strategy/smc.js';
 import { runMTFAnalysis, getMTFBias } from '../strategy/mtfAnalysis.js';
@@ -69,6 +71,7 @@ import { getChartSetups } from '../services/chartSetups.js';
 import { getScannerState, setScannerRunning } from '../services/scannerState.js';
 import { triggerScan } from '../jobs/marketScanner.js';
 import { getStrategyStats, getLearnedPatterns } from '../services/tradeLearner.js';
+import { getStrategy } from '../strategies/registry.js';
 import {
   saveUserApiKeys,
   saveUserTradingMode,
@@ -350,26 +353,64 @@ async function enrichTrades(trades = []) {
 }
 
 async function getMergedOpenTrades(rawOpen = []) {
-  const livePositions = await listExchangePositions();
-  const dbSymbols = new Set((rawOpen || []).map((trade) => trade.symbol));
-  const dbEnriched = (await Promise.all((rawOpen || []).map(async (trade) => {
-    const live = livePositions.find((position) => position.symbol === trade.symbol);
-    if (!live || live.quantity <= 0) return null;
+  const LIST_MIN_NOTIONAL_USDT = 0.05;
+  const allLive = await listExchangePositions();
+  const openBySymbol = new Map((rawOpen || []).map((trade) => [trade.symbol, trade]));
+  const db = getSupabase();
+
+  const livePositions = allLive.filter((position) => {
+    if (position.quantity <= 0) return false;
+    if (openBySymbol.has(position.symbol)) return true;
+    const notional = position.notional || (position.quantity * (position.current_price || position.entry_price));
+    return notional >= LIST_MIN_NOTIONAL_USDT;
+  });
+
+  for (const position of allLive) {
+    if (openBySymbol.has(position.symbol) || !db) continue;
+    const data = await findDbTradeForLivePosition(position.symbol, position.quantity);
+    if (data) openBySymbol.set(position.symbol, data);
+  }
+
+  const dbEnriched = (await Promise.all([...openBySymbol.entries()].map(async ([symbol, trade]) => {
+    let live = livePositions.find((position) => position.symbol === symbol)
+      || allLive.find((position) => position.symbol === symbol && position.quantity > 0);
+    if (!live || live.quantity <= 0) {
+      const { getLivePositionQty } = await import('./tradeProtection.js');
+      const qty = await getLivePositionQty(symbol);
+      if (!qty || qty <= 0) return null;
+      const mark = await getFreshMarkPrice(symbol).catch(() => null)
+        || await getMarkPrice(symbol).catch(() => parseFloat(trade.entry_price));
+      live = {
+        symbol,
+        quantity: qty,
+        entry_price: parseFloat(trade.entry_price),
+        current_price: mark,
+        notional: qty * (mark || 0),
+      };
+    }
     return enrichTrade(trade, live);
   }))).filter(Boolean);
+
+  const mergedSymbols = new Set([...openBySymbol.keys()]);
   const exchangeOnly = await Promise.all(livePositions
-    .filter((position) => !dbSymbols.has(position.symbol))
+    .filter((position) => !mergedSymbols.has(position.symbol))
     .map((position) => enrichTrade(exchangePositionToTrade(position), position)));
+
   return [...dbEnriched, ...exchangeOnly];
 }
 
 function computeTradePerformance(trades = []) {
   const closed = trades.filter((t) => !['open', 'partial'].includes(t.status));
+  const partial = trades.filter((t) => t.status === 'partial');
   const wins = closed.filter((t) => toNumber(t.pnl ?? t.profit_usd) > 0).length;
   const losses = closed.filter((t) => toNumber(t.pnl ?? t.profit_usd) < 0).length;
   const grossProfit = closed.reduce((sum, t) => sum + Math.max(0, toNumber(t.pnl ?? t.profit_usd)), 0);
   const grossLoss = Math.abs(closed.reduce((sum, t) => sum + Math.min(0, toNumber(t.pnl ?? t.profit_usd)), 0));
   const netProfit = closed.reduce((sum, t) => sum + toNumber(t.pnl ?? t.profit_usd), 0);
+  const bookedPartial = partial.reduce(
+    (sum, t) => sum + toNumber(t.exchange_realized_pnl ?? t.realized_pnl ?? t.pnl),
+    0,
+  );
   const total = closed.length;
 
   return {
@@ -379,6 +420,8 @@ function computeTradePerformance(trades = []) {
     win_rate: total ? (wins / total) * 100 : 0,
     profit_factor: grossLoss > 0 ? grossProfit / grossLoss : grossProfit > 0 ? grossProfit : 0,
     net_profit: netProfit,
+    partial_open: partial.length,
+    booked_partial_pnl: bookedPartial,
   };
 }
 

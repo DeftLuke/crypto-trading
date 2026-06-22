@@ -11,6 +11,10 @@ from app.api.routes_phase6 import router as phase6_router
 from app.api.routes_phase7 import router as phase7_router
 from app.api.routes_phase8 import router as phase8_router
 from app.api.routes_phase9 import router as phase9_router
+from app.api.routes_e5 import router as e5_router
+from app.api.routes_institutional_smc import router as institutional_smc_router
+from app.api.routes_market_data import router as market_data_router
+from app.api.routes_smc_backtest import router as smc_backtest_router
 from app.api.routes_phase10 import router as phase10_router
 from app.core.config import get_settings
 from app.core.logging import setup_logging
@@ -23,6 +27,21 @@ async def lifespan(app: FastAPI):
     settings = get_settings()
     if settings.scheduler_enabled:
         start_scheduler()
+
+    def _boot_market_data_queue() -> None:
+        try:
+            from app.market_data.download_queue import get_download_queue
+
+            get_download_queue().start_auto_if_enabled()
+        except Exception as exc:
+            import logging
+
+            logging.getLogger("market_data.queue").warning("Auto-download start skipped: %s", exc)
+
+    import threading
+
+    threading.Thread(target=_boot_market_data_queue, daemon=True, name="market-data-boot").start()
+
     if settings.paper_enabled and settings.paper_auto_start:
         from app.paper_trading.engine import get_paper_engine
         await get_paper_engine().start()
@@ -76,6 +95,14 @@ def create_app() -> FastAPI:
     app.include_router(phase9_router, prefix="/api/v1")
     app.include_router(phase10_router)
     app.include_router(phase10_router, prefix="/api/v1")
+    app.include_router(e5_router)
+    app.include_router(e5_router, prefix="/api/v1")
+    app.include_router(smc_backtest_router)
+    app.include_router(smc_backtest_router, prefix="/api/v1")
+    app.include_router(institutional_smc_router)
+    app.include_router(institutional_smc_router, prefix="/api/v1")
+    app.include_router(market_data_router)
+    app.include_router(market_data_router, prefix="/api/v1")
     return app
 
 

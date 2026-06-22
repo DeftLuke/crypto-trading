@@ -54,6 +54,7 @@ import { getChartSetups } from '../services/chartSetups.js';
 import { getScannerState, setScannerRunning } from '../services/scannerState.js';
 import { triggerScan } from '../jobs/marketScanner.js';
 import { getStrategyStats, getLearnedPatterns } from '../services/tradeLearner.js';
+import { getStrategy } from '../strategies/registry.js';
 import {
   saveUserApiKeys,
   saveUserTradingMode,

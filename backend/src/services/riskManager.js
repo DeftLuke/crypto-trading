@@ -279,8 +279,8 @@ export function calculateTPQuantities(totalQty) {
 export function getBreakevenSL(entryPrice, direction) {
   const buffer = entryPrice * 0.0005;
   return direction === 'LONG'
-    ? entryPrice + buffer
-    : entryPrice - buffer;
+    ? entryPrice - buffer
+    : entryPrice + buffer;
 }
 
 export function getLocked1RSL(entryPrice, risk, direction) {

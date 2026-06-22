@@ -93,13 +93,18 @@ export default function StrategyTesterPage() {
   const [period, setPeriod] = useState('1m');
   const [running, setRunning] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [progressPhase, setProgressPhase] = useState('');
+  const [progressMessage, setProgressMessage] = useState('');
   const [result, setResult] = useState(null);
   const [history, setHistory] = useState([]);
   const [error, setError] = useState('');
   const [estimate, setEstimate] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
   const abortRef = useRef(0);
-  const autoRunRef = useRef(false);
+  const [lastRunKey, setLastRunKey] = useState(null);
+
+  const configKey = `${strategyId}|${symbol}|${timeframe}|${period}`;
+  const configDirty = Boolean(result && lastRunKey && lastRunKey !== configKey);
 
   const strategyOptions = useMemo(() => {
     if (!strategies?.length) return DEFAULT_STRATEGIES;
@@ -124,7 +129,6 @@ export default function StrategyTesterPage() {
       if (Array.isArray(p)) setPairs(p);
     }).catch(() => {});
     fetchBacktestHistory().then(setHistory).catch(() => {});
-    autoRunRef.current = true;
   }, []);
 
   useEffect(() => {
@@ -135,16 +139,26 @@ export default function StrategyTesterPage() {
     const runId = ++abortRef.current;
     setRunning(true);
     setProgress(0);
+    setProgressPhase('');
+    setProgressMessage('');
     setError('');
     setResult(null);
 
     try {
-      const res = await runBacktest({
-        strategyId: strat,
-        symbol: sym,
-        timeframe: tf,
-        period: per,
-      });
+      const res = await runBacktest(
+        {
+          strategyId: strat,
+          symbol: sym,
+          timeframe: tf,
+          period: per,
+        },
+        (pct, phase, message) => {
+          if (runId !== abortRef.current) return;
+          setProgress(Math.round(pct));
+          if (phase) setProgressPhase(phase);
+          if (message) setProgressMessage(message);
+        },
+      );
 
       if (runId !== abortRef.current) return;
       setProgress(100);
@@ -168,18 +182,11 @@ export default function StrategyTesterPage() {
     }
   }, []);
 
-  useEffect(() => {
-    if (!autoRunRef.current) return;
-    const shortPeriods = ['1w', '1m', '3m'];
-    if (!shortPeriods.includes(period)) return;
-
-    const timer = setTimeout(() => {
-      executeBacktest(symbol, strategyId, timeframe, period);
-    }, 400);
-    return () => clearTimeout(timer);
-  }, [symbol, strategyId, timeframe, period, executeBacktest]);
-
-  const handleRun = () => executeBacktest(symbol, strategyId, timeframe, period);
+  const handleRun = () => {
+    setLastRunKey(configKey);
+    setActiveTab('overview');
+    executeBacktest(symbol, strategyId, timeframe, period);
+  };
 
   const controlsDisabled = running;
 
@@ -250,15 +257,6 @@ export default function StrategyTesterPage() {
               ))}
             </div>
           </div>
-
-          <button
-            type="button"
-            className="primary-btn toolbar-run"
-            onClick={handleRun}
-            disabled={running}
-          >
-            {running ? `Running ${progress}%` : 'Run backtest'}
-          </button>
           </>
         </div>
 
@@ -271,9 +269,16 @@ export default function StrategyTesterPage() {
         running={running}
         estimate={estimate}
         progress={progress}
+        phase={progressPhase}
+        message={progressMessage}
         onProgress={setProgress}
       />
 
+      {!running && period === '1m' && (timeframe === '5m' || timeframe === '3m') && (
+        <p className="tester-hint tester-hint-warn">
+          <strong>5m/3m on 1M</strong> exceeds server memory. Use <strong>15m</strong> entry TF for reliable results.
+        </p>
+      )}
       {!running && (period === '3m' || period === '6m') && (timeframe === '5m' || timeframe === '3m') && (
         <div className="tester-estimate tester-hint">
           For <strong>3M+</strong> periods, switch entry TF to <strong>15m</strong> or <strong>30m</strong>. 5m entry is only reliable for 1W–1M.
@@ -305,6 +310,33 @@ export default function StrategyTesterPage() {
         </div>
 
         <aside className="tester-results-panel">
+          <div className="tester-run-panel">
+            <div className="tester-run-copy">
+              <strong>Offline validation</strong>
+              <p className="muted">
+                Python SMC engine · downloaded OHLCV from DB (Binance sync when missing). Results saved after each run.
+              </p>
+              {estimate?.estimatedBars != null && (
+                <p className="tester-run-estimate muted">
+                  ~{estimate.estimatedBars.toLocaleString()} bars · {estimate.periodLabel || period.toUpperCase()} · {timeframe}
+                </p>
+              )}
+              {configDirty && (
+                <p className="tester-hint-warn tester-run-dirty">
+                  Settings changed — click Run to validate this configuration.
+                </p>
+              )}
+            </div>
+            <button
+              type="button"
+              className="primary-btn tester-run-btn"
+              onClick={handleRun}
+              disabled={running}
+            >
+              {running ? `Running ${progress}%` : 'Run backtest'}
+            </button>
+          </div>
+
           <div className="results-tabs">
             {['overview', 'trades', 'history'].map((tab) => (
               <button
@@ -321,8 +353,18 @@ export default function StrategyTesterPage() {
           {activeTab === 'overview' && (
             <div className="results-overview">
               {!result && !running && (
-                <p className="muted">
-                  Choose <strong>Pair</strong>, <strong>Strategy</strong>, timeframe and period, then Run.
+                <div className="overview-idle">
+                  <p className="muted">
+                    Set <strong>Pair</strong>, <strong>Entry TF</strong>, and <strong>Period</strong>, then click <strong>Run backtest</strong> on the right.
+                  </p>
+                  <p className="muted">
+                    Nothing runs automatically — change timeframe or period anytime; run only when you click the button.
+                  </p>
+                </div>
+              )}
+              {configDirty && !running && (
+                <p className="tester-hint tester-hint-warn">
+                  Previous results are from an older configuration. Run again to refresh trade count and performance.
                 </p>
               )}
               {running && !result && (
@@ -335,8 +377,22 @@ export default function StrategyTesterPage() {
                 </div>
               )}
 
-              {result && (
+              {result && !configDirty && (
                 <>
+                  {result.summary && (
+                    <div className="overview-summary-block">
+                      <div className="summary-line">Total Trades: <strong>{result.summary.totalTrades ?? result.totalTrades}</strong></div>
+                      <div className="summary-line">Win Rate: <strong>{(result.summary.winRate ?? result.winRate)?.toFixed(1)}%</strong></div>
+                      <div className="summary-line">Profit Factor: <strong>{(result.summary.profitFactor ?? result.profitFactor)?.toFixed(2)}</strong></div>
+                      <div className="summary-line">Max Drawdown: <strong>{(result.summary.maxDrawdown ?? result.maxDrawdownPercent)?.toFixed(1)}%</strong></div>
+                      <div className="summary-line">Net Profit: <strong className={result.netProfit >= 0 ? 'green-text' : 'red-text'}>{(result.summary.netProfitPct ?? result.netProfitPercent) >= 0 ? '+' : ''}{(result.summary.netProfitPct ?? result.netProfitPercent)?.toFixed(1)}%</strong></div>
+                      <div className="summary-line">Average RR: <strong>{(result.summary.averageRR ?? result.avgRMultiple)?.toFixed(1)}</strong></div>
+                      {result.dataSource && (
+                        <div className="summary-line muted">Engine: {result.engine || result.dataSource}</div>
+                      )}
+                    </div>
+                  )}
+
                   <div className="overview-hero">
                     <span className={`overview-pnl ${result.netProfit >= 0 ? 'green-text' : 'red-text'}`}>
                       {result.netProfit >= 0 ? '+' : ''}{formatMoney(result.netProfit)} USDT
@@ -377,8 +433,11 @@ export default function StrategyTesterPage() {
 
           {activeTab === 'trades' && (
             <div className="results-trades-list">
-              {!result?.trades?.length && <p className="muted">No trades in this run.</p>}
-              {result?.trades?.map((t, i) => (
+              {configDirty && !running && (
+                <p className="tester-hint tester-hint-warn">Run backtest to refresh the trade list for current settings.</p>
+              )}
+              {!result?.trades?.length && !configDirty && <p className="muted">No trades in this run.</p>}
+              {!configDirty && result?.trades?.map((t, i) => (
                 <div key={i} className={`trade-row ${t.outcome}`}>
                   <div className="trade-row-head">
                     <span className={t.direction === 'BUY' ? 'green-text' : 'red-text'}>

@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/shared/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useOpenTrades } from "@/hooks/useQueries";
+import { useOpenTrades, useTradingDashboard } from "@/hooks/useQueries";
 import { formatUsd, formatNumber, formatPrice } from "@/lib/utils";
 import { tradingApi } from "@/services/api";
 import { toast } from "sonner";
@@ -15,6 +15,11 @@ import type { Trade } from "@/types";
 export default function PositionsPage() {
   const qc = useQueryClient();
   const { data: positions = [] } = useOpenTrades();
+  const { data: dash } = useTradingDashboard();
+  const account = dash?.accounts?.[0];
+  const exchangeUnreachable = account?.exchange_unreachable === true
+    || dash?.health?.exchange_connected === false;
+  const balanceSource = account?.source;
   const [busyId, setBusyId] = useState<string | null>(null);
 
   const refresh = () => {
@@ -95,7 +100,14 @@ export default function PositionsPage() {
         {positions.length === 0 ? (
           <Card>
             <CardContent className="py-8 text-center text-sm text-zinc-500">
-              No open positions. Connect Binance API in Settings for live data.
+              {exchangeUnreachable || balanceSource === "fallback" ? (
+                <>
+                  <p className="text-amber-400">Binance API temporarily unreachable from the server.</p>
+                  <p className="mt-2">Positions and balance cannot sync right now (often a short IP rate-limit ban). Retry in a few minutes or check Binance directly.</p>
+                </>
+              ) : (
+                <>No open positions on Binance demo account.</>
+              )}
             </CardContent>
           </Card>
         ) : (

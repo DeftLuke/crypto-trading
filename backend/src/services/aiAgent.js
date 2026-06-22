@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { config } from '../config/index.js';
 import { ollamaGenerate } from './ollama.js';
+import { openclawChat, isOpenClawConfigured } from './openclaw.js';
 import {
   getPairStats,
   getTrades,
@@ -10,6 +11,8 @@ import {
   getLessonStats,
   getSignals,
 } from './supabase.js';
+import { getPaperDashboard, paperContextPayload } from './paperSnapshot.js';
+import { buildPlatformContext, isPlatformQuestion, isTradeExecutionQuestion } from './platformContext.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -27,7 +30,8 @@ async function loadSystemPrompt() {
 Answer ONLY from provided data. Use bullet points. Max 400 words for Telegram.`;
 }
 
-export async function buildTradingContext() {
+export async function buildTradingContext(options = {}) {
+  const question = options.question || '';
   const [
     { data: pairStats },
     { data: trades },
@@ -49,6 +53,23 @@ export async function buildTradingContext() {
   const wins = (winLessons || []).filter((l) => l.outcome === 'win').slice(0, 5);
   const losses = (lossLessons || []).filter((l) => l.outcome === 'loss').slice(0, 5);
 
+  let paperDash = null;
+  try {
+    paperDash = await getPaperDashboard();
+  } catch (err) {
+    console.warn('[AI] Paper dashboard unavailable:', err.message);
+  }
+  const paper = paperContextPayload(paperDash);
+
+  let platformOverview = null;
+  if (isPlatformQuestion(question) || isTradeExecutionQuestion(question)) {
+    try {
+      platformOverview = await buildPlatformContext();
+    } catch (err) {
+      console.warn('[AI] Platform context unavailable:', err.message);
+    }
+  }
+
   return {
     pairStats: (pairStats || []).slice(0, 15).map((p) => ({
       symbol: p.symbol,
@@ -64,6 +85,17 @@ export async function buildTradingContext() {
       status: t.status,
       close_reason: t.close_reason,
     })),
+    /** Authoritative for OPEN positions — merged DB + live Binance (same as Paper dashboard). */
+    openPaperPositions: paper?.positions || [],
+    paperSummary: paper
+      ? {
+          open_count: paper.count,
+          unrealized_pnl: paper.unrealized_pnl,
+          equity: paper.equity,
+          win_rate: paper.win_rate,
+        }
+      : null,
+    platformOverview,
     winningLessons: wins.map((l) => ({
       symbol: l.symbol,
       lesson: l.lesson_text?.slice(0, 200),
@@ -90,17 +122,32 @@ export async function buildTradingContext() {
 }
 
 export async function askTradingAgent(question, options = {}) {
-  const context = options.context || await buildTradingContext();
+  const context = options.context || await buildTradingContext({ question, ...options });
   const systemPrompt = await loadSystemPrompt();
+  const conversationId = options.conversationId || options.conversation_id;
 
   const prompt = `TRADING DATA CONTEXT:
 ${JSON.stringify(context, null, 2)}
 
 USER QUESTION: ${question}
 
-Answer using ONLY the data above. Include win/loss/skip lessons when relevant.`;
+Answer using ONLY the data above when discussing trades/stats. For OPEN positions and unrealized PnL, use openPaperPositions and paperSummary. For architecture/code/workflow questions, use platformOverview. For strategy design, apply SMC-MTF and risk rules. Be concise and actionable.`;
 
-  // Try AI gateway first (public domain or internal Docker URL), then direct Ollama
+  if (config.openclaw?.enabled !== false && isOpenClawConfigured() && !options.forceOllama) {
+    try {
+      const { answer, model, source } = await openclawChat({
+        system: systemPrompt,
+        prompt,
+        user: conversationId ? `tradegpt:${conversationId}` : 'tradegpt:dashboard',
+        maxTokens: 1200,
+      });
+      return { answer, model, source };
+    } catch (err) {
+      console.warn('[AI Agent] OpenClaw failed, trying fallbacks:', err.message);
+    }
+  }
+
+  // Legacy AI gateway (optional)
   const gatewayUrl = config.ai?.gatewayUrl;
 
   if (gatewayUrl && !options.forceOllama) {
@@ -111,7 +158,7 @@ Answer using ONLY the data above. Include win/loss/skip lessons when relevant.`;
           'Content-Type': 'application/json',
           ...(config.ai?.apiKey ? { 'X-API-Key': config.ai.apiKey } : {}),
         },
-        body: JSON.stringify({ question, context }),
+        body: JSON.stringify({ question, context, systemPrompt }),
         signal: AbortSignal.timeout(120000),
       });
       if (res.ok) {
@@ -120,7 +167,7 @@ Answer using ONLY the data above. Include win/loss/skip lessons when relevant.`;
       }
       console.warn(`[AI Agent] Gateway HTTP ${res.status}, falling back to Ollama`);
     } catch (err) {
-      console.warn('[AI Agent] Gateway unavailable, using direct Ollama:', err.message);
+      console.warn('[AI Agent] Gateway unavailable:', err.message);
     }
   }
 

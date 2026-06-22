@@ -1,7 +1,8 @@
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
 import AppShell from './AppShell';
 import { AppProvider } from '../context/AppContext';
 import HomePage from './HomePage';
+import PageTransitionLoader from './PageTransitionLoader';
 import { getNavItem } from '../lib/platformUrl';
 
 const TradingPage = lazy(() => import('./TradingPage'));
@@ -11,8 +12,18 @@ const SmartWalletScannerPage = lazy(() => import('./SmartWalletScannerPage'));
 const SettingsPage = lazy(() => import('./SettingsPage'));
 const PlatformFrame = lazy(() => import('./PlatformFrame'));
 
-function PageLoader() {
-  return <div className="page-loading">Loading module…</div>;
+const PAGE_LABELS = {
+  home: 'Home',
+  trading: 'Trading',
+  'wallet-scanner': 'Smart Wallets',
+  'strategy-stats': 'Strategy',
+  'strategy-tester': 'Backtest',
+  settings: 'Settings',
+};
+
+function pageLabel(pageId) {
+  if (PAGE_LABELS[pageId]) return PAGE_LABELS[pageId];
+  return getNavItem(pageId)?.label || 'Loading';
 }
 
 function PlatformRoute({ pageId }) {
@@ -22,6 +33,21 @@ function PlatformRoute({ pageId }) {
 
 export default function Dashboard() {
   const [page, setPage] = useState('home');
+  const [navPending, setNavPending] = useState(false);
+  const [navLabel, setNavLabel] = useState('Loading');
+
+  const navigate = useCallback((id) => {
+    if (id === page) return;
+    setNavLabel(pageLabel(id));
+    setNavPending(true);
+    setPage(id);
+  }, [page]);
+
+  useEffect(() => {
+    if (!navPending) return undefined;
+    const timer = setTimeout(() => setNavPending(false), 350);
+    return () => clearTimeout(timer);
+  }, [page, navPending]);
 
   let content;
   if (page.startsWith('platform-')) {
@@ -29,7 +55,7 @@ export default function Dashboard() {
   } else {
     switch (page) {
       case 'home':
-        content = <HomePage onNavigate={setPage} />;
+        content = <HomePage onNavigate={navigate} />;
         break;
       case 'wallet-scanner':
         content = <SmartWalletScannerPage />;
@@ -51,9 +77,12 @@ export default function Dashboard() {
 
   return (
     <AppProvider>
-      <AppShell page={page} onNavigate={setPage} embed={page.startsWith('platform-')}>
-        <Suspense fallback={<PageLoader />}>
-          {content}
+      <AppShell page={page} onNavigate={navigate} navPending={navPending} embed={page.startsWith('platform-')}>
+        {navPending && <PageTransitionLoader label={`Opening ${navLabel}`} />}
+        <Suspense fallback={<PageTransitionLoader label={`Loading ${navLabel}`} />}>
+          <div key={page} className="page-enter">
+            {content}
+          </div>
         </Suspense>
       </AppShell>
     </AppProvider>

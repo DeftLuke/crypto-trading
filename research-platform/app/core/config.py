@@ -49,6 +49,7 @@ class Settings(BaseSettings):
 
     redis_url: str = "redis://localhost:6380/0"
     data_root: str = "./data"
+    market_data_root: str = "./data/market_data"
 
     default_exchanges: str = "binance,bybit,okx,hyperliquid"
     default_timeframes: str = "1m,5m,15m,30m,1h,4h,1d"
@@ -63,13 +64,15 @@ class Settings(BaseSettings):
     okx_api_secret: str = ""
     okx_passphrase: str = ""
 
-    scheduler_enabled: bool = True
+    scheduler_enabled: bool = False
     sync_interval_minutes: int = 15
+    # Legacy Supabase sync — not required for institutional SMC (Parquet store)
+    database_required: bool = False
 
-    # Phase 5 — Qdrant memory layer
+    # Phase 5 — Qdrant memory layer (optional; off by default for trading-only)
     qdrant_url: str = "http://localhost:6333"
     qdrant_api_key: str = ""
-    memory_enabled: bool = True
+    memory_enabled: bool = False
     memory_low_ram: bool = False
     memory_embedding_provider: str = "hash"  # hash | bge-small | bge-base | bge-large | openai
     memory_embedding_model: str = "BAAI/bge-small-en-v1.5"
@@ -78,8 +81,8 @@ class Settings(BaseSettings):
     memory_vector_size: int = 384
     memory_worker_interval_minutes: int = 10
 
-    # Phase 6 — AI Research Agent
-    agent_enabled: bool = True
+    # Phase 6 — AI Research Agent (optional research; off by default for trading-only)
+    agent_enabled: bool = False
     agent_auto_start: bool = False
     agent_low_ram: bool = False
     agent_cycle_interval_minutes: int = 7
@@ -141,6 +144,9 @@ class Settings(BaseSettings):
     ai_openai_api_url: str = ""
     ai_openai_api_key: str = ""
     ai_openai_model: str = "gpt-4o-mini"
+    openclaw_gateway_url: str = ""
+    openclaw_gateway_token: str = ""
+    openclaw_model: str = "openclaw/default"
     n8n_base_url: str = ""
     n8n_api_key: str = ""
     n8n_webhook_url: str = ""

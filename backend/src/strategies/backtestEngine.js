@@ -1,4 +1,5 @@
 import { getKlines, parseKlines } from '../services/binance.js';
+import { fetchHistoricalCandlesFromStore } from '../services/candleStore.js';
 
 const TF_MAP = { '1m': '1m', '3m': '3m', '5m': '5m', '15m': '15m', '30m': '30m', '1h': '1h', '4h': '4h', '1d': '1d' };
 
@@ -44,6 +45,14 @@ export function getWarmupMs(interval) {
 }
 
 export async function fetchHistoricalCandles(symbol, interval, startTime, endTime) {
+  if (process.env.BACKTEST_USE_BINANCE === '1') {
+    return fetchHistoricalCandlesFromBinance(symbol, interval, startTime, endTime);
+  }
+  return fetchHistoricalCandlesFromStore(symbol, interval, startTime, endTime);
+}
+
+/** Legacy live Binance fetch — opt-in via BACKTEST_USE_BINANCE=1 */
+async function fetchHistoricalCandlesFromBinance(symbol, interval, startTime, endTime) {
   const all = [];
   let start = startTime;
   const limit = 1500;

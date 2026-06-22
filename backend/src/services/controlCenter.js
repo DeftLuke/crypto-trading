@@ -1,21 +1,75 @@
 import { randomUUID } from 'crypto';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { config } from '../config/index.js';
 import { emitN8nEvent } from './n8n.js';
+import { checkExecutionAllowed, logDuplicateBlocked } from './executionLock.js';
 import { getScannerState } from './scannerState.js';
 import { saveSignal, getSupabase, getOpenTrades } from './supabase.js';
 import { sendAlert } from './telegram.js';
 import { getUsdtBalance } from './binance.js';
 import { internalApiHeaders, internalApiUrl } from '../lib/internalFetch.js';
+import { getSystemResourceSnapshot, getInProcessServiceRamMb, estimateCpuPct } from './systemStats.js';
+import { computeOpenExposure, computeOpenMargin } from './tradePnl.js';
+
+/** Modules that run inside the main Node backend process (share one heap). */
+const IN_PROCESS_SERVICES = new Set([
+  'market_scanner', 'signal_engine', 'trade_bot', 'position_monitor',
+  'telegram_bot', 'paper_trading', 'data_warehouse', 'scheduler', 'live_trading',
+]);
 
 const passcode = process.env.TRADE_APPROVAL_PASSCODE || '8888';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const SETTINGS_FILE = path.join(__dirname, '../../data/control-settings.json');
+
+function defaultSignalEngine() {
+  if (process.env.SIGNAL_ENGINE) return process.env.SIGNAL_ENGINE;
+  if (process.env.LEGACY_SMC_MTF_ENABLED === 'true') return 'smc-mtf';
+  if (process.env.RESEARCH_API_URL || config.researchApiUrl) return 'institutional-smc';
+  return 'smc-mtf';
+}
+
+function loadPersistedSettings() {
+  try {
+    if (!fs.existsSync(SETTINGS_FILE)) return {};
+    return JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf8'));
+  } catch {
+    return {};
+  }
+}
+
+function persistSettings(next) {
+  try {
+    fs.mkdirSync(path.dirname(SETTINGS_FILE), { recursive: true });
+    fs.writeFileSync(SETTINGS_FILE, JSON.stringify(next, null, 2), { mode: 0o600 });
+  } catch (err) {
+    console.warn('[ControlCenter] Settings persist failed:', err.message);
+  }
+}
+
+const persisted = loadPersistedSettings();
 
 let settings = {
-  auto_trading: process.env.CONTROL_AUTO_TRADING !== 'false',
-  manual_approval: process.env.CONTROL_MANUAL_APPROVAL === 'true',
-  mode: process.env.CONTROL_TRADING_MODE || 'demo',
-  default_exchange: process.env.CONTROL_DEFAULT_EXCHANGE || 'binance',
-  updated_at: new Date().toISOString(),
+  auto_trading: persisted.auto_trading ?? (process.env.CONTROL_AUTO_TRADING !== 'false'),
+  manual_approval: persisted.manual_approval ?? (process.env.CONTROL_MANUAL_APPROVAL === 'true'),
+  mode: persisted.mode || process.env.CONTROL_TRADING_MODE || 'demo',
+  default_exchange: persisted.default_exchange || process.env.CONTROL_DEFAULT_EXCHANGE || 'binance',
+  risk_per_trade_pct: persisted.risk_per_trade_pct ?? parseFloat(process.env.RISK_PER_TRADE || '0.01') * 100,
+  default_leverage: persisted.default_leverage ?? parseInt(process.env.TELEGRAM_DEFAULT_LEVERAGE || config.telegram?.defaultLeverage || '50', 10),
+  max_daily_loss_pct: persisted.max_daily_loss_pct ?? parseFloat(process.env.MAX_DAILY_LOSS || '0.03') * 100,
+  max_open_trades: persisted.max_open_trades ?? parseInt(process.env.MAX_OPEN_TRADES || '5', 10),
+  max_drawdown_pct: persisted.max_drawdown_pct ?? parseFloat(process.env.MAX_DRAWDOWN_PCT || '10'),
+  scanner_enabled: persisted.scanner_enabled ?? (process.env.SCANNER_ENABLED !== 'false'),
+  telegram_signals_enabled: persisted.telegram_signals_enabled ?? (process.env.TELEGRAM_SIGNALS_ENABLED !== 'false'),
+  signal_engine: persisted.signal_engine || defaultSignalEngine(),
+  institutional_min_score: persisted.institutional_min_score ?? parseInt(process.env.INSTITUTIONAL_SMC_MIN_SCORE || '80', 10),
+  updated_at: persisted.updated_at || new Date().toISOString(),
 };
+
+if (settings.signal_engine === 'smc-mtf' && process.env.LEGACY_SMC_MTF_ENABLED !== 'true') {
+  settings.signal_engine = defaultSignalEngine();
+}
 
 const pendingApprovals = new Map();
 const serviceStartedAt = Object.create(null);
@@ -58,7 +112,60 @@ export async function updateLocalControlSettings(updates = {}, actor = 'tradegpt
     settings.manual_approval = false;
   }
   if (updates.default_exchange) settings.default_exchange = updates.default_exchange;
+  if (updates.risk_per_trade_pct != null) settings.risk_per_trade_pct = parseFloat(updates.risk_per_trade_pct);
+  if (updates.default_leverage != null) settings.default_leverage = parseInt(updates.default_leverage, 10);
+  if (updates.max_daily_loss_pct != null) settings.max_daily_loss_pct = parseFloat(updates.max_daily_loss_pct);
+  if (updates.max_open_trades != null) settings.max_open_trades = parseInt(updates.max_open_trades, 10);
+  if (updates.max_drawdown_pct != null) settings.max_drawdown_pct = parseFloat(updates.max_drawdown_pct);
+  if (typeof updates.scanner_enabled === 'boolean') settings.scanner_enabled = updates.scanner_enabled;
+  if (typeof updates.telegram_signals_enabled === 'boolean') settings.telegram_signals_enabled = updates.telegram_signals_enabled;
+  if (updates.signal_engine === 'smc-mtf' || updates.signal_engine === 'institutional-smc') {
+    if (updates.signal_engine === 'smc-mtf' && process.env.LEGACY_SMC_MTF_ENABLED !== 'true') {
+      throw new Error('Legacy SMC-MTF is disabled on this server');
+    }
+    settings.signal_engine = updates.signal_engine;
+  }
+  if (updates.institutional_min_score != null) {
+    const score = parseInt(updates.institutional_min_score, 10);
+    if (Number.isFinite(score) && score >= 50 && score <= 100) {
+      settings.institutional_min_score = score;
+      if (config.institutionalSmc) config.institutionalSmc.minScore = score;
+    }
+  }
+
+  if (Number.isFinite(settings.risk_per_trade_pct)) {
+    config.strategy.riskPerTrade = settings.risk_per_trade_pct / 100;
+  }
+  if (Number.isFinite(settings.max_daily_loss_pct)) {
+    config.strategy.maxDailyLoss = settings.max_daily_loss_pct / 100;
+  }
+  if (Number.isFinite(settings.max_open_trades)) {
+    config.strategy.maxDailyTrades = settings.max_open_trades;
+  }
+  if (Number.isFinite(settings.default_leverage) && config.telegram) {
+    config.telegram.defaultLeverage = settings.default_leverage;
+  }
+
   settings.updated_at = new Date().toISOString();
+  persistSettings({
+    auto_trading: settings.auto_trading,
+    manual_approval: settings.manual_approval,
+    mode: settings.mode,
+    default_exchange: settings.default_exchange,
+    risk_per_trade_pct: settings.risk_per_trade_pct,
+    default_leverage: settings.default_leverage,
+    max_daily_loss_pct: settings.max_daily_loss_pct,
+    max_open_trades: settings.max_open_trades,
+    max_drawdown_pct: settings.max_drawdown_pct,
+    scanner_enabled: settings.scanner_enabled,
+    telegram_signals_enabled: settings.telegram_signals_enabled,
+    signal_engine: settings.signal_engine,
+    institutional_min_score: settings.institutional_min_score,
+    updated_at: settings.updated_at,
+  });
+  const { cacheInvalidatePrefix } = await import('./cache.js');
+  await cacheInvalidatePrefix('dashboard:').catch(() => {});
+  await cacheInvalidatePrefix('dash:').catch(() => {});
   await emitN8nEvent('control.settings_updated', {
     message: `Settings updated by ${actor}`,
     settings,
@@ -67,14 +174,14 @@ export async function updateLocalControlSettings(updates = {}, actor = 'tradegpt
   return getLocalControlSettings();
 }
 
-async function buildServiceState(serviceId) {
-  const scanner = await getScannerState();
+async function buildServiceState(serviceId, scanner = null) {
+  const scan = scanner || await getScannerState();
   const runningIds = new Set([
     'market_scanner', 'signal_engine', 'trade_bot', 'position_monitor',
     'telegram_bot', 'telegram_signal_ingestion', 'paper_trading', 'data_warehouse', 'backtest_engine', 'scheduler',
   ]);
 
-  if (scanner.isRunning) runningIds.add('market_scanner');
+  if (scan.isRunning) runningIds.add('market_scanner');
   else runningIds.delete('market_scanner');
 
   if (settings.mode === 'demo') runningIds.add('paper_trading');
@@ -86,9 +193,44 @@ async function buildServiceState(serviceId) {
     health: isRunning ? 'healthy' : 'degraded',
     uptime_sec: uptimeSec(serviceId),
     metadata: serviceId === 'market_scanner'
-      ? { is_running: scanner.isRunning, pairs_scanned: scanner.pairsScanned }
+      ? { is_running: scan.isRunning, pairs_scanned: scan.pairsScanned }
       : {},
   };
+}
+
+/** Fast service list for homepage snapshot — no Binance balance, no open-trade queries. */
+export async function getLocalControlServicesLite() {
+  const scanner = await getScannerState();
+  const cpuPct = estimateCpuPct();
+  const host = getSystemResourceSnapshot();
+  const backendRssMb = getInProcessServiceRamMb();
+
+  const rows = await Promise.all(
+    SERVICE_DEFS.map(async (def) => {
+      const live = await buildServiceState(def.service_id, scanner);
+      return {
+        ...def,
+        version: '0.10.0',
+        state: live.state,
+        health: live.health,
+        uptime_sec: live.uptime_sec,
+        metadata: live.metadata,
+        cpu_pct: live.state === 'running' ? cpuPct : 0,
+        ram_mb: live.state === 'running'
+          ? (IN_PROCESS_SERVICES.has(def.service_id) ? backendRssMb : 0)
+          : 0,
+        memory_shared: IN_PROCESS_SERVICES.has(def.service_id),
+        memory_note: IN_PROCESS_SERVICES.has(def.service_id)
+          ? `Shared Node backend · heap limit ${host.process.heap_limit_mb} MB`
+          : 'Separate service',
+        error_count: 0,
+        queue_size: 0,
+        last_run: new Date().toISOString(),
+      };
+    }),
+  );
+
+  return { services: rows, scanner, mode: settings.mode };
 }
 
 export async function getLocalControlDashboard() {
@@ -104,26 +246,52 @@ export async function getLocalControlDashboard() {
 
   const services = await Promise.all(
     SERVICE_DEFS.map(async (def) => {
-      const live = await buildServiceState(def.service_id);
-      return {
-        ...def,
-        version: '0.10.0',
-        state: live.state,
-        health: live.health,
-        uptime_sec: live.uptime_sec,
-        metadata: live.metadata,
-        cpu_pct: live.state === 'running' ? 8 : 0,
-        ram_mb: live.state === 'running' ? 128 : 0,
-        error_count: 0,
-        queue_size: 0,
-        last_run: new Date().toISOString(),
-      };
+      const live = await buildServiceState(def.service_id, scanner);
+      return { ...def, live };
     }),
   );
+  const cpuPct = estimateCpuPct();
+  const host = getSystemResourceSnapshot();
+  const backendRssMb = getInProcessServiceRamMb();
+
+  const serviceRows = services.map(({ live, ...def }) => ({
+    ...def,
+    version: '0.10.0',
+    state: live.state,
+    health: live.health,
+    uptime_sec: live.uptime_sec,
+    metadata: live.metadata,
+    cpu_pct: live.state === 'running' ? cpuPct : 0,
+    ram_mb: live.state === 'running'
+      ? (IN_PROCESS_SERVICES.has(def.service_id) ? backendRssMb : 0)
+      : 0,
+    memory_shared: IN_PROCESS_SERVICES.has(def.service_id),
+    memory_note: IN_PROCESS_SERVICES.has(def.service_id)
+      ? `Shared Node backend · heap limit ${host.process.heap_limit_mb} MB`
+      : 'Separate service',
+    error_count: 0,
+    queue_size: 0,
+    last_run: new Date().toISOString(),
+  }));
+
+  const openList = openTrades || [];
+  const exposureFromDb = computeOpenExposure(openList);
+  const marginFromDb = computeOpenMargin(openList);
 
   return {
     settings: await getLocalControlSettings(),
-    services,
+    services: serviceRows,
+    host_resources: host,
+    runtime: {
+      node_heap_limit_mb: host.process.heap_limit_mb,
+      node_heap_used_mb: host.process.heap_mb,
+      node_rss_mb: host.process.rss_mb,
+      server_ram_total_mb: host.memory.total_mb,
+      server_ram_used_mb: host.memory.used_mb,
+      server_ram_free_mb: host.memory.free_mb,
+      container_memory_unlimited: host.container.unlimited,
+      in_process_modules: IN_PROCESS_SERVICES.size,
+    },
     scanner,
     pending_approvals: approvals,
     mode: settings.mode,
@@ -142,8 +310,26 @@ export async function getLocalControlDashboard() {
       live: settings.mode === 'live' ? (openTrades || []) : [],
     },
     risk: {
-      live: { kill_switch: false, active: settings.mode === 'live' },
-      paper: { open_positions: openTrades?.length || 0, mode: settings.mode },
+      live: {
+        kill_switch: false,
+        active: settings.mode === 'live',
+        total_exposure: settings.mode === 'live' ? exposureFromDb : 0,
+        total_margin: settings.mode === 'live' ? marginFromDb : 0,
+        open_positions: settings.mode === 'live' ? openList.length : 0,
+      },
+      paper: {
+        open_positions: settings.mode === 'demo' ? openList.length : 0,
+        total_exposure: settings.mode === 'demo' ? exposureFromDb : 0,
+        total_margin: settings.mode === 'demo' ? marginFromDb : 0,
+        mode: settings.mode,
+      },
+      limits: {
+        risk_per_trade_pct: settings.risk_per_trade_pct,
+        default_leverage: settings.default_leverage,
+        max_daily_loss_pct: settings.max_daily_loss_pct,
+        max_open_trades: settings.max_open_trades,
+        max_drawdown_pct: settings.max_drawdown_pct,
+      },
     },
     memory: { total_memories: 0 },
   };
@@ -215,6 +401,10 @@ function normalizeSignal(signal) {
 }
 
 export async function processLocalControlSignal(rawSignal, source = 'scanner') {
+  if (rawSignal.already_executed || rawSignal.skip_execute || rawSignal.result?.success) {
+    return { executed: false, reason: 'already_executed', duplicate: true, notified: true };
+  }
+
   const signal = normalizeSignal(rawSignal);
   markStarted('signal_engine');
   markStarted('trade_bot');
@@ -248,12 +438,26 @@ export async function processLocalControlSignal(rawSignal, source = 'scanner') {
     };
   }
 
+  const allowed = await checkExecutionAllowed(signal);
+  if (!allowed.allowed) {
+    await logDuplicateBlocked(signal, allowed, 'controlCenter');
+    return {
+      executed: false,
+      reason: allowed.reason,
+      duplicate: true,
+      tradeId: allowed.tradeId,
+      mode: settings.mode,
+    };
+  }
+
   const result = await executeSignal(signal);
   await emitN8nEvent('trade.opened', {
     message: `Auto trade opened: ${signal.symbol} ${signal.direction}`,
     signal,
     trade: result.trade,
     severity: 'trade',
+    silent: false,
+    already_executed: true,
   });
   return { executed: true, ...result, mode: settings.mode };
 }
@@ -321,8 +525,8 @@ export async function rejectLocalApproval(approvalId) {
 }
 
 export async function sendDemoSignalToTelegram(symbol = 'BTCUSDT', { force = false } = {}) {
-  const { getStrategy } = await import('../strategies/registry.js');
-  const strategy = getStrategy('smc-mtf');
+  const { getActiveSignalStrategy } = await import('./signalEngineSelector.js');
+  const strategy = await getActiveSignalStrategy();
   let signal = await strategy.generateSignal(symbol.toUpperCase());
 
   if (signal.direction === 'IGNORE' && force) {

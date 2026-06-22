@@ -41,8 +41,10 @@ function analyzeWindow(candles, index) {
 
 /** Step MTF precompute on long series — avoids Node segfault in Docker */
 function getPrecomputeStep(candleCount) {
-  if (candleCount > 20000) return 4;
-  if (candleCount > 8000) return 2;
+  if (candleCount > 20000) return 6;
+  if (candleCount > 12000) return 4;
+  if (candleCount > 8000) return 3;
+  if (candleCount > 4000) return 2;
   return 1;
 }
 
@@ -346,6 +348,7 @@ export async function runBacktest(options) {
     ...stats,
     trades: rawTrades.map(formatTradeForApi),
     chartCandles,
+    dataSource: 'database',
   };
 }
 

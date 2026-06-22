@@ -93,8 +93,13 @@ export default function BacktestChart({ candles, trades, symbol, loading }) {
     <div className="backtest-chart-wrap">
       <div className="backtest-chart-header">
         <span>{symbol || '—'}</span>
-        {loading && <span className="backtest-loading-badge">Loading…</span>}
+        {loading && <span className="backtest-loading-badge">Running backtest…</span>}
       </div>
+      {!loading && !candles?.length && (
+        <div className="backtest-chart-empty muted">
+          Chart loads after you run a backtest — uses cached OHLCV, no live Binance polling.
+        </div>
+      )}
       <div ref={containerRef} className="backtest-chart" />
     </div>
   );

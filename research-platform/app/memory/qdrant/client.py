@@ -113,6 +113,4 @@ def get_qdrant_store() -> QdrantMemoryStore:
         client = QdrantClient(":memory:")
     else:
         client = QdrantClient(url=settings.qdrant_url, api_key=settings.qdrant_api_key or None)
-    store = QdrantMemoryStore(client, vector_size=settings.memory_vector_size)
-    store.ensure_collections()
-    return store
+    return QdrantMemoryStore(client, vector_size=settings.memory_vector_size)

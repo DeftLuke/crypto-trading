@@ -6,8 +6,16 @@ import {
   testApiKeys,
 } from '../services/api';
 import { loadTvConfig, saveTvConfig } from '../utils/tvConfig';
+import RiskControlPanel from './RiskControlPanel';
 
-export default function SettingsPage() {
+const TABS = [
+  { id: 'account', label: 'Account & Keys' },
+  { id: 'risk', label: 'Risk & Signal Engine' },
+  { id: 'chart', label: 'TradingView Chart' },
+];
+
+export default function SettingsPage({ initialTab = 'account' }) {
+  const [tab, setTab] = useState(initialTab);
   const [apiKey, setApiKey] = useState('');
   const [apiSecret, setApiSecret] = useState('');
   const [keyMode, setKeyMode] = useState('demo');
@@ -42,9 +50,9 @@ export default function SettingsPage() {
     try {
       const res = await testApiKeys({ apiKey, apiSecret, mode: keyMode });
       const label = keyMode === 'live' ? 'Live Mainnet' : 'Demo Futures';
-      setMessage(`✅ Connected! Balance: ${res.balance?.toFixed(2)} USDT (${label})`);
+      setMessage(`Connected — Balance: ${res.balance?.toFixed(2)} USDT (${label})`);
     } catch (err) {
-      setMessage(`❌ ${err.message || 'Connection failed'}`);
+      setMessage(err.message || 'Connection failed');
     }
     setTesting(false);
   };
@@ -58,14 +66,14 @@ export default function SettingsPage() {
     setMessage('');
     try {
       const res = await saveApiKeys({ apiKey, apiSecret, mode });
-      setMessage(`✅ ${res.message}. Balance: ${res.balance?.toFixed(2)} USDT`);
+      setMessage(`${res.message}. Balance: ${res.balance?.toFixed(2)} USDT`);
       setApiKey('');
       setApiSecret('');
       setEditingMode(null);
       await refreshStatus();
       window.dispatchEvent(new Event('balance-updated'));
     } catch (err) {
-      setMessage(`❌ ${err.message || 'Save failed'}`);
+      setMessage(err.message || 'Save failed');
     }
     setSaving(false);
   };
@@ -86,11 +94,11 @@ export default function SettingsPage() {
     try {
       const res = await setTradingMode(mode);
       setTradingModeState(mode);
-      setMessage(`✅ ${res.message}`);
+      setMessage(res.message);
       await refreshStatus();
       window.dispatchEvent(new Event('balance-updated'));
     } catch (err) {
-      setMessage(`❌ ${err.message || 'Mode switch failed'}`);
+      setMessage(err.message || 'Mode switch failed');
     }
     setSwitchingMode(false);
   };
@@ -129,7 +137,7 @@ export default function SettingsPage() {
             <p>{mode === 'live' ? 'binance.com — real USDT' : 'demo.binance.com — paper futures'}</p>
           </div>
           <span className={`key-badge ${saved ? 'ok' : 'missing'}`}>
-            {saved ? '✅ Saved' : 'Not set'}
+            {saved ? 'Saved' : 'Not set'}
           </span>
         </div>
 
@@ -169,7 +177,7 @@ export default function SettingsPage() {
                 onClick={handleTest}
                 disabled={testing || keyMode !== mode}
               >
-                {testing && keyMode === mode ? 'Testing…' : 'Test Connection'}
+                {testing && keyMode === mode ? 'Testing…' : 'Test'}
               </button>
               <button
                 type="button"
@@ -177,7 +185,7 @@ export default function SettingsPage() {
                 onClick={() => handleSave(mode)}
                 disabled={saving || keyMode !== mode || !apiKey || !apiSecret}
               >
-                {saving && keyMode === mode ? 'Saving…' : `Save ${label} Keys`}
+                {saving && keyMode === mode ? 'Saving…' : `Save ${label}`}
               </button>
               {saved && (
                 <button type="button" className="text-btn" onClick={() => setEditingMode(null)}>
@@ -193,122 +201,126 @@ export default function SettingsPage() {
 
   return (
     <div className="settings-page">
-      <header className="page-header">
-        <h2>Settings</h2>
-        <span className="page-sub">Binance Futures — demo & live trading</span>
+      <header className="page-header settings-page-header">
+        <div>
+          <h2>Settings</h2>
+          <span className="page-sub">Account keys · risk limits · SMC engine · chart</span>
+        </div>
       </header>
 
-      <div className="settings-card">
-        <h3>Trading account mode</h3>
-        <p className="settings-intro">
-          Active mode controls <strong>balance, orders, and positions</strong> across the dashboard.
-        </p>
-
-        <div className="trading-mode-switcher">
+      <nav className="settings-tabs" aria-label="Settings sections">
+        {TABS.map((t) => (
           <button
+            key={t.id}
             type="button"
-            className={`mode-btn ${!isLive ? 'active demo' : ''}`}
-            disabled={switchingMode}
-            onClick={() => handleTradingModeSwitch('demo')}
+            className={`settings-tab ${tab === t.id ? 'active' : ''}`}
+            onClick={() => setTab(t.id)}
           >
-            <span className="mode-icon">🧪</span>
-            <span className="mode-label">Demo</span>
-            <span className="mode-sub">{demoSaved ? 'Paper futures' : 'Add keys below'}</span>
+            {t.label}
           </button>
-          <button
-            type="button"
-            className={`mode-btn ${isLive ? 'active live' : ''}`}
-            disabled={switchingMode}
-            onClick={() => handleTradingModeSwitch('live')}
-          >
-            <span className="mode-icon">⚡</span>
-            <span className="mode-label">Live</span>
-            <span className="mode-sub">{liveSaved ? 'Real funds' : 'Add keys below'}</span>
-          </button>
+        ))}
+      </nav>
+
+      {tab === 'account' && (
+        <>
+          <div className="settings-card settings-card-wide">
+            <h3>Trading account mode</h3>
+            <p className="settings-intro">
+              Active mode controls balance, orders, and positions across the dashboard.
+            </p>
+
+            <div className="trading-mode-switcher">
+              <button
+                type="button"
+                className={`mode-btn ${!isLive ? 'active demo' : ''}`}
+                disabled={switchingMode}
+                onClick={() => handleTradingModeSwitch('demo')}
+              >
+                <span className="mode-icon">🧪</span>
+                <span className="mode-label">Demo</span>
+                <span className="mode-sub">{demoSaved ? 'Paper futures' : 'Add keys below'}</span>
+              </button>
+              <button
+                type="button"
+                className={`mode-btn ${isLive ? 'active live' : ''}`}
+                disabled={switchingMode}
+                onClick={() => handleTradingModeSwitch('live')}
+              >
+                <span className="mode-icon">⚡</span>
+                <span className="mode-label">Live</span>
+                <span className="mode-sub">{liveSaved ? 'Real funds' : 'Add keys below'}</span>
+              </button>
+            </div>
+
+            <div className={`mode-banner ${isLive ? 'live' : 'demo'}`}>
+              {isLive ? (
+                <>⚠️ <strong>LIVE MODE</strong> — trades execute on mainnet with real USDT</>
+              ) : (
+                <>🧪 <strong>DEMO MODE</strong> — trades execute on Binance demo futures</>
+              )}
+            </div>
+          </div>
+
+          <div className="settings-card settings-card-wide">
+            <h3>Binance API keys</h3>
+            <p className="settings-intro">
+              Demo keys on the left · Live keys on the right. Enable <strong>Futures only</strong> — never withdrawals.
+            </p>
+
+            <div className="keys-grid-two-col">
+              {renderKeyCard('demo')}
+              {renderKeyCard('live')}
+            </div>
+
+            {message && tab === 'account' && <p className="form-message">{message}</p>}
+
+            <div className="settings-warning">
+              <strong>Security:</strong> Keys encrypted in Supabase — never shown again after save.
+            </div>
+          </div>
+        </>
+      )}
+
+      {tab === 'risk' && (
+        <div className="settings-card settings-card-wide">
+          <h3>Risk & signal engine</h3>
+          <RiskControlPanel />
         </div>
+      )}
 
-        <div className={`mode-banner ${isLive ? 'live' : 'demo'}`}>
-          {isLive ? (
-            <>⚠️ <strong>LIVE MODE</strong> — trades execute on mainnet with real USDT</>
-          ) : (
-            <>🧪 <strong>DEMO MODE</strong> — trades execute on Binance demo futures</>
-          )}
+      {tab === 'chart' && (
+        <div className="settings-card settings-card-wide">
+          <h3>TradingView Chart</h3>
+          <p className="settings-intro">
+            Chart widget for live market data. Load Smart Money Algo Pro E5 on TradingView for backtests.
+          </p>
+
+          <div className="form-row">
+            <label>Your saved chart URL (with E5 loaded)</label>
+            <input
+              type="url"
+              value={tvConfig.chartLayoutUrl}
+              onChange={(e) => setTvConfig({ ...tvConfig, chartLayoutUrl: e.target.value })}
+              placeholder="https://www.tradingview.com/chart/AbCdEfGh/?symbol=BINANCE:BTCUSDT"
+            />
+          </div>
+
+          <div className="form-row">
+            <label>Published Pine study ID (optional)</label>
+            <input
+              type="text"
+              value={tvConfig.pineStudyId}
+              onChange={(e) => setTvConfig({ ...tvConfig, pineStudyId: e.target.value })}
+              placeholder="Only if E5 is published publicly"
+            />
+          </div>
+
+          <div className="form-actions">
+            <button type="button" className="primary-btn" onClick={saveTvSettings}>Save Chart Settings</button>
+          </div>
+          {tvSaved && <p className="form-message success">{tvSaved}</p>}
         </div>
-      </div>
-
-      <div className="settings-card">
-        <h3>Binance API keys</h3>
-        <p className="settings-intro">
-          Keys are encrypted and stored in <strong>Supabase</strong> linked to your login.
-          Enable <strong>Futures only</strong> — never enable withdrawals.
-        </p>
-
-        {renderKeyCard('demo')}
-        {renderKeyCard('live')}
-
-        {message && <p className="form-message">{message}</p>}
-
-        <div className="settings-warning">
-          <strong>Security:</strong> Saved once per account — survives reload, restart, and new devices when signed in.
-        </div>
-      </div>
-
-      <div className="settings-card">
-        <h3>TradingView Chart (required for E5 + backtest)</h3>
-        <p className="settings-intro">
-          Your site uses the <strong>TradingView chart widget</strong> for live market data and tools.
-          Your private <strong>Smart Money Algo Pro E5</strong> script runs on TradingView when you open your saved chart — Strategy Tester backtest is there too.
-        </p>
-
-        <div className="form-row">
-          <label>Your saved chart URL (with E5 loaded)</label>
-          <input
-            type="url"
-            value={tvConfig.chartLayoutUrl}
-            onChange={(e) => setTvConfig({ ...tvConfig, chartLayoutUrl: e.target.value })}
-            placeholder="https://www.tradingview.com/chart/AbCdEfGh/?symbol=BINANCE:BTCUSDT"
-          />
-          <span className="field-hint">
-            In TradingView: load E5 → Save layout → copy browser URL → paste here.
-          </span>
-        </div>
-
-        <div className="form-row">
-          <label>Published Pine study ID (optional — widget only)</label>
-          <input
-            type="text"
-            value={tvConfig.pineStudyId}
-            onChange={(e) => setTvConfig({ ...tvConfig, pineStudyId: e.target.value })}
-            placeholder="Only if you published E5 publicly on TradingView"
-          />
-        </div>
-
-        <div className="form-actions">
-          <button type="button" className="primary-btn" onClick={saveTvSettings}>Save Chart Settings</button>
-        </div>
-        {tvSaved && <p className="form-message success">{tvSaved}</p>}
-
-        <div className="settings-steps">
-          <h4>Setup (one time)</h4>
-          <ol>
-            <li>Log in at <a href="https://www.tradingview.com" target="_blank" rel="noopener noreferrer">tradingview.com</a>.</li>
-            <li>Open a <strong>new blank chart</strong> (do not copy a shared layout with many indicators).</li>
-            <li>Add <strong>only</strong> Smart Money Algo Pro E5 from My scripts.</li>
-            <li>Remove any other indicators (free plan allows ~2 studies per chart).</li>
-            <li>File → Save layout → copy URL → paste above → Save.</li>
-          </ol>
-        </div>
-      </div>
-
-      <div className="settings-card">
-        <h3>Strategy Rules (SMC-MTF)</h3>
-        <ul className="rules-list">
-          <li>🟢 <strong>BUY</strong> only when RSI &lt; 30 (ideal &lt; 25)</li>
-          <li>🔴 <strong>SHORT</strong> only when RSI &gt; 70 (ideal &gt; 80)</li>
-          <li>MTF: 1H trend → 30M confirm → 15M OB → 5M entry</li>
-          <li>Scanner OFF by default — Telegram <code>/startT</code> or dashboard toggle</li>
-        </ul>
-      </div>
+      )}
     </div>
   );
 }

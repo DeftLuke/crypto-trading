@@ -31,6 +31,12 @@ class LLMGateway:
         if context:
             full_prompt = f"CONTEXT:\n{json.dumps(context, default=str)[:12000]}\n\n{prompt}"
 
+        if self.settings.openclaw_gateway_url and self.settings.openclaw_gateway_token:
+            try:
+                return await self._call_openclaw(full_prompt, sys)
+            except Exception as e:
+                logger.warning("OpenClaw failed", extra={"error": str(e)})
+
         if self.settings.ai_gateway_url:
             try:
                 return await self._call_gateway(full_prompt, sys)
@@ -72,6 +78,26 @@ class LLMGateway:
         if context and context.get("memories"):
             parts.append(f"Recalled memories: {len(context['memories'])} items available.")
         return "\n".join(parts)
+
+    async def _call_openclaw(self, prompt: str, system: str) -> dict[str, Any]:
+        url = f"{self.settings.openclaw_gateway_url.rstrip('/')}/v1/chat/completions"
+        headers = {
+            "Authorization": f"Bearer {self.settings.openclaw_gateway_token}",
+            "Content-Type": "application/json",
+        }
+        body = {
+            "model": self.settings.openclaw_model,
+            "messages": [{"role": "system", "content": system}, {"role": "user", "content": prompt}],
+            "temperature": 0.3,
+            "max_tokens": 900,
+            "stream": False,
+        }
+        async with httpx.AsyncClient(timeout=180.0) as client:
+            r = await client.post(url, json=body, headers=headers)
+            r.raise_for_status()
+            data = r.json()
+            answer = data["choices"][0]["message"]["content"]
+            return {"answer": answer, "model": data.get("model"), "source": "openclaw"}
 
     async def _call_gateway(self, prompt: str, system: str) -> dict[str, Any]:
         url = f"{self.settings.ai_gateway_url.rstrip('/')}/chat"

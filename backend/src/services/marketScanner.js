@@ -3,7 +3,6 @@ import { callN8nWebhook } from '../services/n8n.js';
 import { formatSignalMessage } from '../strategy/signalEngine.js';
 import { saveSignal, logEvent, getPairStats, getSupabase } from '../services/supabase.js';
 import { sendAlert, sendSignalNotification } from '../services/telegram.js';
-import { binanceWs } from '../services/binanceWs.js';
 import { scheduleSignalOutcomeCheck } from './signalOutcomeTracker.js';
 import { notifyWatchlistUsers } from './agentTaskRunner.js';
 import { getStrategy } from '../strategies/registry.js';
@@ -52,7 +51,6 @@ export async function scanMarkets() {
       const batch = sortedPairs.slice(i, i + batchSize);
       const results = await Promise.allSettled(
         batch.map(async (symbol) => {
-          binanceWs.subscribeMarkPrice(symbol, () => {});
           const signal = await strategy.generateSignal(symbol);
           return signal;
         })

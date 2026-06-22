@@ -1,6 +1,10 @@
 {
-    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+    "python.defaultInterpreterPath": "python",
     "python.analysis.diagnosticMode": "openFilesOnly",
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/research-platform",
+        "${workspaceFolder}/research-platform/typings"
+    ],
     "python.analysis.exclude": [
         "**/node_modules",
         "analytics-dashboard/**",
@@ -8,6 +12,10 @@
         "backend/**"
     ],
     "basedpyright.analysis.diagnosticMode": "openFilesOnly",
+    "basedpyright.analysis.extraPaths": [
+        "${workspaceFolder}/research-platform",
+        "${workspaceFolder}/research-platform/typings"
+    ],
     "basedpyright.analysis.diagnosticSeverityOverrides": {
         "reportMissingTypeStubs": "none",
         "reportAttributeAccessIssue": "none",
@@ -16,6 +24,7 @@
         "reportArgumentType": "none",
         "reportWildcardImportFromLibrary": "none",
         "reportImplicitOverride": "none",
-        "reportIncompatibleMethodOverride": "none"
+        "reportIncompatibleMethodOverride": "none",
+        "reportCallIssue": "none"
     }
 }

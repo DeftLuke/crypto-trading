@@ -16,7 +16,7 @@ import {
 } from './services/telegram.js';
 import { binanceWs } from './services/binanceWs.js';
 import { logEvent, getSupabase } from './services/supabase.js';
-import { callN8nWebhook } from './services/n8n.js';
+import { emitN8nEvent } from './services/n8n.js';
 import { askPersonalAssistant } from './services/personalAssistant.js';
 import { getLessonsSummary } from './services/aiAgent.js';
 import { getPairStats } from './services/supabase.js';
@@ -105,9 +105,13 @@ async function executeTradeWithSize(signalId, usdtAmount, chatId) {
       `Size: $${usdtAmount} USDT\nQty: ${result.trade?.quantity || '—'}\n` +
       `Entry: ${signal.entry_price}`
     );
-    if (config.n8n.executeWebhook) {
-      await callN8nWebhook(config.n8n.executeWebhook, { action: 'execute', signalId, result });
-    }
+    await emitN8nEvent('trade.opened', {
+      message: `Trade opened: ${signal.symbol} ${signal.direction}`,
+      signal,
+      trade: result.trade,
+      severity: 'trade',
+      already_executed: true,
+    }).catch(() => {});
   } else {
     await sendTelegramReply(chatId, `❌ Trade failed: ${result.error || 'Unknown error'}`);
   }

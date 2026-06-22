@@ -75,6 +75,92 @@ export async function fetchBalance() {
   return res.json();
 }
 
+export async function fetchTradeHomeDashboard(localDay = null) {
+  const day = localDay || new Date().toLocaleDateString('en-CA');
+  const tz = -new Date().getTimezoneOffset();
+  const qs = `?day=${encodeURIComponent(day)}&tz=${tz}`;
+  const res = await fetchWithTimeout(`${API_URL}/api/trades/home-dashboard${qs}`, {}, 8000);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Dashboard unavailable');
+  return data;
+}
+
+/** One request: trade audit + services + settings + signal engine (cached server-side). */
+export async function fetchDashboardSnapshot(localDay = null) {
+  const day = localDay || new Date().toLocaleDateString('en-CA');
+  const tz = -new Date().getTimezoneOffset();
+  const qs = `?day=${encodeURIComponent(day)}&tz=${tz}`;
+  const res = await fetchWithTimeout(`${API_URL}/api/dashboard/snapshot${qs}`, {}, 8000);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Dashboard unavailable');
+  return data;
+}
+
+export async function fetchMarketDataProgress() {
+  const res = await fetchWithTimeout(`${API_URL}/api/market-data/progress`, {}, 6000);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || data.detail || 'Market data unavailable');
+  return data;
+}
+
+/** Compact archive backfill + live WS candle sync (home dashboard). */
+export async function fetchCandleSyncStatus() {
+  const res = await fetchWithTimeout(`${API_URL}/api/candles/sync-status`, {}, 8000);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Candle sync status unavailable');
+  return data;
+}
+
+export async function fetchControlSettings() {
+  const res = await fetchWithTimeout(`${API_URL}/api/control/settings`, {}, 8000);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Settings unavailable');
+  return data;
+}
+
+export async function updateControlSettings(updates) {
+  const res = await fetchWithTimeout(`${API_URL}/api/control/settings`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
+    body: JSON.stringify({ ...updates, actor: 'dashboard' }),
+  }, 10000);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Save failed');
+  return data;
+}
+
+export async function fetchSignalEngineStatus() {
+  const res = await fetchWithTimeout(`${API_URL}/api/signal-engine/status`, {}, 8000);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Engine status unavailable');
+  return data;
+}
+
+export async function setSignalEngine(signal_engine) {
+  const res = await fetchWithTimeout(`${API_URL}/api/signal-engine`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...(await authHeaders()) },
+    body: JSON.stringify({ signal_engine, actor: 'dashboard' }),
+  }, 10000);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Engine switch failed');
+  return data;
+}
+
+export async function fetchTradesToday(days = 7) {
+  const qs = days ? `?days=${days}` : '';
+  const res = await fetchWithTimeout(`${API_URL}/api/trades/today${qs}`, {}, 10000);
+  return res.json();
+}
+
+export async function fetchTradesByDay(day, tz = -new Date().getTimezoneOffset()) {
+  const qs = `?day=${encodeURIComponent(day)}&tz=${tz}`;
+  const res = await fetchWithTimeout(`${API_URL}/api/trades/by-day${qs}`, {}, 8000);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Could not load trades for day');
+  return data;
+}
+
 export async function fetchPairs() {
   const res = await fetch(`${API_URL}/api/pairs`);
   return res.json();
@@ -154,28 +240,63 @@ export async function stopScanner() {
   return res.json();
 }
 
-export async function runBacktest(params) {
+export async function runBacktest(params, onProgress) {
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 180000);
+  const timeout = setTimeout(() => controller.abort(), 300000);
 
   try {
     const res = await fetch(`${API_URL}/api/backtest`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(params),
+      body: JSON.stringify({ ...params, async: true }),
       signal: controller.signal,
     });
     clearTimeout(timeout);
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || 'Backtest failed');
+
+    if (data.jobId) {
+      return pollBacktestJob(data.jobId, onProgress);
+    }
     return data;
   } catch (err) {
     clearTimeout(timeout);
     if (err.name === 'AbortError') {
-      throw new Error('Backtest timed out after 3 minutes. Try 3M or 6M period.');
+      throw new Error('Backtest timed out after 5 minutes.');
     }
     throw err;
   }
+}
+
+async function pollBacktestJob(jobId, onProgress) {
+  const deadline = Date.now() + 300000;
+  let lastProgress = 0;
+  while (Date.now() < deadline) {
+    try {
+      const res = await fetch(`${API_URL}/api/backtest/status/${jobId}`);
+      const st = await res.json();
+      if (!res.ok) {
+        if (res.status === 404) {
+          throw new Error('Backtest job lost — server restarted during run. Try 15m TF or 1M period.');
+        }
+        throw new Error(st.error || 'Backtest status failed');
+      }
+
+      lastProgress = st.progress_pct || lastProgress;
+      onProgress?.(lastProgress, st.phase, st.message);
+
+      if (st.status === 'completed' && st.result) return st.result;
+      if (st.status === 'failed') throw new Error(st.error || st.message || 'Backtest failed');
+    } catch (err) {
+      if (err.message?.includes('Failed to fetch') || err.message?.includes('NetworkError')) {
+        throw new Error('Server disconnected during backtest (likely out of memory). Use 15m entry TF or 1M period.');
+      }
+      throw err;
+    }
+
+    await new Promise((r) => setTimeout(r, 450));
+  }
+  throw new Error('Backtest timed out while waiting for results.');
 }
 
 export async function fetchBacktestHistory(limit = 30) {

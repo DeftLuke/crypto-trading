@@ -33,6 +33,21 @@ export function formatPrice(n: number | null | undefined) {
   return n.toFixed(2);
 }
 
+export function formatDateTime(iso?: string | null) {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleString("en-GB", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false,
+    timeZone: "UTC",
+  }) + " UTC";
+}
+
 export function formatCurrency(n: number | null | undefined, digits = 2) {
   return formatUsd(n, digits);
 }

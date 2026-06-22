@@ -27,6 +27,36 @@ learn_and_store_group_format = _format_learner.learn_and_store_group_format
 download_photo_base64 = _message_media.download_photo_base64
 
 
+def _stored_chat_id(chat_id: int) -> str:
+    """Normalize Telethon channel ids (-100…) to positive ids stored in DB."""
+    cid = int(chat_id)
+    if cid < 0:
+        abs_id = abs(cid)
+        if abs_id > 1_000_000_000_000:
+            return str(abs_id - 1_000_000_000_000)
+    return str(abs(cid))
+
+
+def _followed_index(sources: list[dict]) -> dict[str, dict]:
+    """Index followed sources by every chat id variant Telethon may emit."""
+    index: dict[str, dict] = {}
+    for source in sources:
+        raw = source.get("telegram_chat_id")
+        if raw is None:
+            continue
+        try:
+            n = int(raw)
+        except (TypeError, ValueError):
+            index[str(raw)] = source
+            continue
+        keys = {str(n), str(abs(n)), _stored_chat_id(n)}
+        if n > 0:
+            keys.add(str(-(1_000_000_000_000 + n)))
+        for key in keys:
+            index[key] = source
+    return index
+
+
 class TelegramSignalListener:
     def __init__(
         self,
@@ -47,12 +77,20 @@ class TelegramSignalListener:
 
     async def refresh_followed_sources(self) -> None:
         sources = await self.api_client.followed_sources()
-        self.followed_sources = {str(source.get("telegram_chat_id")): source for source in sources}
+        self.followed_sources = _followed_index(sources)
         await self._schedule_format_learning()
         await self._schedule_scrape()
 
+    def _lookup_followed(self, chat_id: int) -> dict | None:
+        return self.followed_sources.get(str(chat_id)) or self.followed_sources.get(_stored_chat_id(chat_id))
+
     async def _schedule_format_learning(self) -> None:
-        for chat_id, source in self.followed_sources.items():
+        unique: dict[str, dict] = {}
+        for source in self.followed_sources.values():
+            key = str(source.get("id") or source.get("telegram_chat_id"))
+            unique[key] = source
+        for source in unique.values():
+            chat_id = str(source.get("telegram_chat_id"))
             if chat_id in self._learning:
                 continue
             profile = (source.get("metadata") or {}).get("format_profile") or {}
@@ -95,7 +133,22 @@ class TelegramSignalListener:
             source for source in self.followed_sources.values()
             if (source.get("metadata") or {}).get("scrape_requested_at")
         ]
-        if not pending or self._scraping:
+        archive_pending = [
+            source for source in self.followed_sources.values()
+            if (source.get("metadata") or {}).get("archive_requested_at")
+        ]
+        if archive_pending and "archive" not in self._scraping:
+            self._scraping.add("archive")
+            jobs: list[tuple[dict, int]] = []
+            for source in archive_pending:
+                meta = dict(source.get("metadata") or {})
+                limit = int(meta.get("archive_limit") or 50)
+                meta.pop("archive_requested_at", None)
+                meta.pop("archive_limit", None)
+                await self.api_client.update_source(source["id"], {"metadata": meta})
+                jobs.append((source, limit))
+            asyncio.create_task(self._run_archive(jobs))
+        if not pending or "all" in self._scraping:
             return
         self._scraping.add("all")
         for source in pending:
@@ -120,13 +173,30 @@ class TelegramSignalListener:
             print(f"[SignalIngestion] Scrape failed: {err}")
         finally:
             self._scraping.discard("all")
+
+    async def _run_archive(self, jobs: list[tuple[dict, int]]) -> None:
+        try:
+            scraper = _load_local_module("tg_history_scraper", "history_scraper.py")
+            for source, limit in jobs:
+                stats = await scraper.archive_recent_messages(
+                    self.client,
+                    source,
+                    self.api_client,
+                    limit=limit,
+                )
+                print(f"[SignalIngestion] Archived {source.get('title')}: {stats}")
+        except Exception as err:  # noqa: BLE001
+            print(f"[SignalIngestion] Archive failed: {err}")
+        finally:
+            self._scraping.discard("archive")
             # Do not call refresh_followed_sources here — 30s loop handles follow list only
 
-    async def refresh_loop(self, interval_seconds: int = 30) -> None:
+    async def refresh_loop(self, interval_seconds: int = 120) -> None:
         while True:
             await asyncio.sleep(interval_seconds)
             try:
-                await self.refresh_followed_sources()
+                sources = await self.api_client.followed_sources()
+                self.followed_sources = _followed_index(sources)
             except Exception as err:  # noqa: BLE001
                 print(f"[SignalIngestion] Followed source refresh failed: {err}")
 
@@ -174,7 +244,7 @@ class TelegramSignalListener:
             if raw_chat_id is None:
                 return
             chat_id = int(raw_chat_id)
-            followed = self.followed_sources.get(str(chat_id))
+            followed = self._lookup_followed(chat_id)
             if not followed:
                 return
 
@@ -192,7 +262,6 @@ class TelegramSignalListener:
             if not provider_by_chat(self.providers, chat_id, username):
                 pass
 
-            parsed = self.parser.parse(context, provider)
             msg_time = event.message.date
             ts = datetime.now(timezone.utc).isoformat()
             if msg_time:
@@ -200,34 +269,72 @@ class TelegramSignalListener:
                     msg_time = msg_time.replace(tzinfo=timezone.utc)
                 ts = msg_time.isoformat()
 
+            stored_chat_id = int(followed.get("telegram_chat_id") or _stored_chat_id(chat_id))
+
+            audit_base = {
+                "has_image": context.has_image,
+                "original_text": context.text or "",
+                "image_base64": context.image_b64,
+                "image_mime": "image/jpeg",
+            }
+
+            await self.api_client.save_message({
+                "source_id": followed.get("id"),
+                "telegram_chat_id": stored_chat_id,
+                "message_id": event.message.id,
+                "raw_message": context.combined_text() or context.text,
+                "parse_status": "parsing",
+                "api_result": {"pipeline_stage": "parsing", "live": True},
+                "message_date": ts,
+                "audit": {**audit_base, "parse_stage": "parsing"},
+            })
+
+            parsed, parse_audit = self.parser.parse_with_audit(context, provider)
+
             if not parsed:
                 await self.api_client.save_message({
                     "source_id": followed.get("id"),
-                    "telegram_chat_id": chat_id,
+                    "telegram_chat_id": stored_chat_id,
                     "message_id": event.message.id,
                     "raw_message": context.combined_text() or context.text,
                     "parse_status": "skipped",
-                    "api_result": {"pipeline_stage": "received", "reason": "Not a trading signal"},
+                    "api_result": {
+                        "pipeline_stage": "received",
+                        "reason": parse_audit.get("reject_reason") or "Not a trading signal",
+                        "live": True,
+                    },
                     "message_date": ts,
+                    "audit": {**audit_base, **parse_audit},
                 })
                 return
 
             parsed.timestamp = ts
             parsed.provider_message_id = event.message.id
-            parsed.source_chat_id = chat_id
+            parsed.source_chat_id = stored_chat_id
             payload = parsed.to_main_api_payload()
             result = await self.api_client.validate_signal(payload)
             passed = bool(result.get("passed"))
-            await self.api_client.supersede_chat_messages(chat_id, keep_message_id=event.message.id)
+            await self.api_client.supersede_chat_messages(stored_chat_id, keep_message_id=event.message.id)
             await self.api_client.save_message({
                 "source_id": followed.get("id"),
-                "telegram_chat_id": chat_id,
+                "telegram_chat_id": stored_chat_id,
                 "message_id": event.message.id,
                 "raw_message": context.combined_text() or context.text,
                 "parsed_signal": payload,
                 "parse_status": "parsed",
-                "api_result": {**result, "pipeline_stage": "validated" if passed else "rejected", "live": True},
+                "api_result": {
+                    **result,
+                    "pipeline_stage": "validated" if passed else "rejected",
+                    "live": True,
+                },
                 "message_date": ts,
+                "audit": {
+                    **audit_base,
+                    **parse_audit,
+                    "parser_used": parsed.parser,
+                    "model_used": (payload.get("metadata") or {}).get("ai_model") or parse_audit.get("model_used"),
+                    "ai_output": parse_audit.get("ai_output") or payload,
+                },
             })
             await self._record_parsed_example(followed, context, payload)
 

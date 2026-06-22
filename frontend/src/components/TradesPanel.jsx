@@ -13,7 +13,10 @@ export default function TradesPanel({ bare = false }) {
 
   async function loadTrades() {
     try {
-      const [all, open] = await Promise.all([fetchTrades(10), fetchOpenTrades()]);
+      const [all, open] = await Promise.all([
+        fetchTrades(500),
+        fetchOpenTrades(),
+      ]);
       setTrades(Array.isArray(all) ? all : []);
       setOpenTrades(Array.isArray(open) ? open : []);
     } catch {

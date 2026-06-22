@@ -3,7 +3,6 @@ import {
   updateTrade,
   logEvent,
   updatePairStats,
-  saveTradeLesson,
 } from '../services/supabase.js';
 import {
   placeStopMarketOrder,
@@ -393,23 +392,11 @@ class PositionMonitor {
 
     await updatePairStats(trade.symbol, outcome, rMultiple);
 
-    const lesson = buildTradeLesson(trade, exitPrice, pnl, outcome, reason);
-    const lessonData = {
-      trade_id: trade.id,
-      symbol: trade.symbol,
-      direction: trade.direction,
-      outcome,
-      lesson_type: 'executed',
-      setup_description: `${trade.direction} on ${trade.symbol} — entry ${entry}, SL ${trade.stop_loss}`,
-      lesson_text: lesson,
-      tags: [trade.symbol, trade.direction, outcome, reason],
-      pnl,
-      r_multiple: rMultiple,
-    };
-    await saveTradeLesson(lessonData);
-
-    const { learnFromTrade } = await import('../services/tradeLearner.js');
-    await learnFromTrade({ ...trade, pnl, exit_price: exitPrice, r_multiple: rMultiple }, lesson);
+    const { processTradeCloseReview } = await import('../services/tradeCloseReview.js');
+    await processTradeCloseReview(
+      { ...trade, pnl, exit_price: exitPrice, r_multiple: rMultiple, closed_at: new Date().toISOString(), close_reason: reason },
+      { reason, levelsAdapted: trade.close_factors?.slippage?.levels_adapted },
+    );
 
     const { sendTradeLifecycle } = await import('../services/telegram.js');
     await sendTradeLifecycle('trade.closed', {
@@ -462,16 +449,6 @@ async function getLivePositionQty(symbol) {
   } catch {
     return null;
   }
-}
-
-function buildTradeLesson(trade, exitPrice, pnl, outcome, reason) {
-  return `Trade on ${trade.symbol} ${trade.direction}: ${outcome.toUpperCase()}.
-Entry: ${trade.entry_price}, Exit: ${exitPrice}, PnL: ${pnl.toFixed(2)} USDT.
-Close reason: ${reason}.
-TP1: ${trade.tp1_hit ? 'hit' : 'missed'}, TP2: ${trade.tp2_hit ? 'hit' : 'missed'}.
-Lesson: ${outcome === 'win'
-    ? 'Setup validated — similar conditions may repeat on this pair.'
-    : 'Review OB retest quality and MTF alignment before re-entering this pair.'}`;
 }
 
 export const positionMonitor = new PositionMonitor();

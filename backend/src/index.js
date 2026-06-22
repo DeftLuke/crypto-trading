@@ -7,6 +7,7 @@ import apiRoutes from './routes/api.js';
 import { rateLimit, corsOptions, securityHeaders } from './middleware/security.js';
 import { startScanner } from './jobs/marketScanner.js';
 import { positionMonitor } from './jobs/positionMonitor.js';
+import { tradeSafetyMonitor } from './jobs/tradeSafetyMonitor.js';
 import { startOutcomeTrackerRecovery } from './jobs/signalOutcomeTracker.js';
 import {
   setupTelegramPolling,
@@ -14,9 +15,11 @@ import {
   sendAlert,
   askPositionSize,
 } from './services/telegram.js';
+import { startCandleIngestion } from './jobs/candleIngestion.js';
 import { binanceWs } from './services/binanceWs.js';
+import { startUserStream, stopUserStream } from './services/binanceUserStream.js';
 import { logEvent, getSupabase } from './services/supabase.js';
-import { callN8nWebhook } from './services/n8n.js';
+import { callN8nWebhook, emitN8nEvent } from './services/n8n.js';
 import { askPersonalAssistant } from './services/personalAssistant.js';
 import { getLessonsSummary } from './services/aiAgent.js';
 import { getPairStats } from './services/supabase.js';
@@ -105,9 +108,14 @@ async function executeTradeWithSize(signalId, usdtAmount, chatId) {
       `Size: $${usdtAmount} USDT\nQty: ${result.trade?.quantity || '—'}\n` +
       `Entry: ${signal.entry_price}`
     );
-    if (config.n8n.executeWebhook) {
-      await callN8nWebhook(config.n8n.executeWebhook, { action: 'execute', signalId, result });
-    }
+    // Do not call N8N_EXECUTE_WEBHOOK — trade is already open; that webhook re-runs /control/signal → duplicate execute.
+    await emitN8nEvent('trade.opened', {
+      message: `Trade opened: ${signal.symbol} ${signal.direction}`,
+      signal,
+      trade: result.trade,
+      severity: 'trade',
+      already_executed: true,
+    }).catch(() => {});
   } else {
     await sendTelegramReply(chatId, `❌ Trade failed: ${result.error || 'Unknown error'}`);
   }
@@ -207,11 +215,32 @@ server.listen(config.port, async () => {
 
   await initUserBinance();
 
+  const userStream = await startUserStream();
+  if (userStream.ok) {
+    console.log(`[UserStream] Live account feed — ${userStream.positions ?? 0} positions`);
+  } else {
+    console.warn('[UserStream] Not started:', userStream.reason || 'unknown');
+  }
+
+  try {
+    const { reconcileAllFlatExchangeTrades } = await import('./services/tradeReconcile.js');
+    const reconciled = await reconcileAllFlatExchangeTrades({ skipNotify: true });
+    if (reconciled.closed > 0) {
+      console.log(`[Reconcile] Closed ${reconciled.closed} orphan DB trade(s): ${reconciled.trades.map((t) => t.symbol).join(', ')}`);
+    }
+  } catch (err) {
+    console.warn('[Reconcile] Boot flat-sync skipped:', err.message);
+  }
+
   await logEvent('info', 'server', 'Backend started');
+
+  const { warmDashboardCaches } = await import('./services/cache.js');
+  warmDashboardCaches().catch(() => {});
 
   const autoStartScanner = process.env.SCANNER_AUTO_START !== 'false';
   await setScannerRunning(autoStartScanner);
   startScanner();
+  startCandleIngestion();
   if (autoStartScanner) triggerScan();
 
   try {
@@ -227,6 +256,7 @@ server.listen(config.port, async () => {
     console.warn('[ControlCenter] Boot activation skipped:', err.message);
   }
   positionMonitor.start();
+  tradeSafetyMonitor.start();
   startOutcomeTrackerRecovery();
   startAgentTaskRunner();
 
@@ -247,6 +277,8 @@ server.listen(config.port, async () => {
 
 process.on('SIGINT', () => {
   positionMonitor.stop();
+  tradeSafetyMonitor.stop();
+  stopUserStream();
   binanceWs.closeAll();
   process.exit(0);
 });

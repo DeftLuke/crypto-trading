@@ -78,7 +78,15 @@ export async function getPatternPenalty(patternKey) {
 }
 
 export async function validateAgainstLessons(signal) {
-  const patternKey = signal.pattern_key || buildPatternKey(signal.symbol, signal.direction, signal.mtf_status);
+  let patternKey = signal.pattern_key;
+  if (!patternKey) {
+    if (signal.strategy_id === 'institutional-smc' || signal.strategy_name === 'institutional-smc') {
+      const { buildInstitutionalPatternKey } = await import('../strategies/institutional-smc/rules.js');
+      patternKey = buildInstitutionalPatternKey(signal.symbol, signal.direction, signal.explanation || signal.reasons);
+    } else {
+      patternKey = buildPatternKey(signal.symbol, signal.direction, signal.mtf_status);
+    }
+  }
   const penalty = await getPatternPenalty(patternKey);
 
   if (penalty >= 25) {

@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import AccountPanel from './AccountPanel';
+import ScannerProgressPill from './ScannerProgressPill';
 
 export default function TopBar({ onNavigate, onMenuClick }) {
   const {
-    balance, scannerOn, autoTrade, tradingMode, setTradingMode, toggleScanner, toggleAutoTrade,
+    balance, scannerOn, scannerStatus, autoTrade, tradingMode, setTradingMode, toggleScanner, toggleAutoTrade,
   } = useApp();
   const [accountOpen, setAccountOpen] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -46,6 +47,11 @@ export default function TopBar({ onNavigate, onMenuClick }) {
       </div>
 
       <div className="top-bar-center">
+        <ScannerProgressPill
+          scannerOn={scannerOn}
+          status={scannerStatus}
+          onClick={toggleScanner}
+        />
         <button type="button" className={`top-toggle ${scannerOn ? 'is-on' : ''}`} onClick={toggleScanner}>
           <span className="toggle-dot" />
           Scanner {scannerOn ? 'ON' : 'OFF'}
@@ -62,8 +68,11 @@ export default function TopBar({ onNavigate, onMenuClick }) {
       </div>
 
       <div className="top-bar-right">
-        <button type="button" className="top-icon-btn" onClick={() => onNavigate('settings')}>
-          Settings
+        <button type="button" className="top-icon-btn top-settings-btn" onClick={() => onNavigate('settings')} title="Settings">
+          ⚙ Settings
+        </button>
+        <button type="button" className="top-icon-btn" onClick={() => onNavigate('platform-risk')} title="Risk management">
+          Risk
         </button>
         <button type="button" className="top-account-btn" onClick={() => setAccountOpen((v) => !v)}>
           Account

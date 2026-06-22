@@ -11,11 +11,15 @@ import { BarChartSimple } from "@/components/charts/RechartsPanel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MetricCard } from "@/components/ui/badge";
 import { useOpenTrades, useTrades } from "@/hooks/useQueries";
-import { formatUsd, formatPct, formatPrice } from "@/lib/utils";
+import { formatUsd, formatPct, formatPrice, formatDateTime } from "@/lib/utils";
 import type { Trade } from "@/types";
 
 function tradePnl(t: Trade) {
-  return t.profit_usd ?? t.pnl_usd ?? t.pnl ?? 0;
+  return t.realized_pnl ?? t.profit_usd ?? t.pnl_usd ?? t.pnl ?? 0;
+}
+
+function tradeBookedPnl(t: Trade) {
+  return t.realized_pnl ?? t.exchange_realized_pnl ?? 0;
 }
 
 function isToday(iso?: string) {
@@ -105,6 +109,12 @@ export default function TradesPage() {
                 { key: "leverage", header: "Lev", width: "50px" },
                 { key: "roe_pct", header: "ROI", width: "70px", render: (r) => formatPct(r.roe_pct ?? r.profit_percent) },
                 { key: "profit_usd", header: "PnL", width: "80px", render: (r) => formatUsd(tradePnl(r)) },
+                {
+                  key: "booked",
+                  header: "Booked",
+                  width: "80px",
+                  render: (r) => (tradeBookedPnl(r) ? formatUsd(tradeBookedPnl(r)) : "—"),
+                },
                 { key: "tp", header: "TP hits", width: "80px", render: (r) => tpLabel(r) },
               ]}
             />
@@ -117,6 +127,18 @@ export default function TradesPage() {
         columns={[
           { key: "symbol", header: "Symbol", width: "90px" },
           { key: "direction", header: "Dir", width: "60px" },
+          {
+            key: "opened_at",
+            header: "Opened",
+            width: "130px",
+            render: (r) => formatDateTime(r.opened_at),
+          },
+          {
+            key: "closed_at",
+            header: "Closed",
+            width: "130px",
+            render: (r) => formatDateTime(r.closed_at),
+          },
           {
             key: "result",
             header: "Result",

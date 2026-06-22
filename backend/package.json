@@ -16,6 +16,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "node-telegram-bot-api": "^0.66.0",
+    "redis": "^4.7.1",
     "technicalindicators": "^3.1.0",
     "ws": "^8.18.0"
   }

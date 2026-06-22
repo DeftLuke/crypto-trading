@@ -4,9 +4,19 @@ import {
   getTodayDailyPnl,
   logEvent,
 } from '../services/supabase.js';
-import { getUsdtBalance as getBinanceBalance } from '../services/binance.js';
+import { getUsdtBalance as getBinanceBalance, isBlockedTradeSymbol } from '../services/binance.js';
 
 export async function validateTradeExecution(signal) {
+  if (isBlockedTradeSymbol(signal?.symbol)) {
+    return {
+      passed: false,
+      checks: [{
+        rule: 'symbol_blocked',
+        passed: false,
+        message: `${signal.symbol} is blocked — stablecoin pairs have negligible price risk`,
+      }],
+    };
+  }
   const isTelegram = isTelegramSource(signal);
   if (isTelegram) return validateTelegramTradeExecution(signal);
   return validateScannerTradeExecution(signal);
@@ -187,6 +197,9 @@ export async function validateTelegramTradeExecution(signal) {
     checks.push({ rule: 'protection', passed: true, message: 'SL/TP levels present' });
   }
 
+  const testMode = config.externalSignals?.testMode === true;
+  const adaptedTelegram = signal.source === 'telegram' && signal.levels_adapted === true;
+  const unlimitedDemo = hasUnlimitedDemoRisk(signal);
   const minConfidence = config.externalSignals?.minValidationScore || config.strategy.minConfidence;
   const skipConfidenceGate = signal.manual_approved || adaptedTelegram || unlimitedDemo;
   if (!skipConfidenceGate && (signal.confidence || 0) < minConfidence) {
@@ -200,11 +213,8 @@ export async function validateTelegramTradeExecution(signal) {
     checks.push({ rule: 'confidence', passed: true, message: `Validation score ${signal.confidence} OK` });
   }
 
-  const testMode = config.externalSignals?.testMode === true;
-  const adaptedTelegram = signal.source === 'telegram' && signal.levels_adapted === true;
   const manualTest = (testMode && (signal.manual_approved === true || signal.test_levels_refreshed === true))
     || adaptedTelegram;
-  const unlimitedDemo = hasUnlimitedDemoRisk(signal);
 
   const todayCount = await getTodayTradesCount();
   if (!unlimitedDemo && !manualTest && todayCount >= config.strategy.maxDailyTrades) {
@@ -306,13 +316,50 @@ export function calculateTPQuantities(totalQty) {
 
 export function getBreakevenSL(entryPrice, direction) {
   const buffer = entryPrice * 0.0005;
+  // LONG: SELL stop triggers on pullback — sit at/below entry. SHORT: BUY stop above entry.
   return direction === 'LONG'
-    ? entryPrice + buffer
-    : entryPrice - buffer;
+    ? entryPrice - buffer
+    : entryPrice + buffer;
 }
 
 export function getLocked1RSL(entryPrice, risk, direction) {
   return direction === 'LONG'
     ? entryPrice + risk
     : entryPrice - risk;
+}
+
+/** After TP2: lock runner at TP1 when price has been there; else stay at breakeven. */
+export function getRunnerStopAfterTP2(tp1Price, direction, { markPrice, entryPrice } = {}) {
+  const tp1 = parseFloat(tp1Price);
+  if (!Number.isFinite(tp1) || tp1 <= 0) return tp1;
+  const buffer = tp1 * 0.0003;
+  const tp1Stop = direction === 'LONG' ? tp1 - buffer : tp1 + buffer;
+  const mark = parseFloat(markPrice);
+  const entry = parseFloat(entryPrice);
+  if (!Number.isFinite(mark) || !Number.isFinite(entry)) return tp1Stop;
+  if (direction === 'LONG') {
+    return mark >= tp1 ? tp1Stop : getBreakevenSL(entry, direction);
+  }
+  return mark <= tp1 ? tp1Stop : getBreakevenSL(entry, direction);
+}
+
+/** Trailing stop from peak — never loosens below runner floor (TP1 after TP2). */
+export function computeTrailingStop({
+  direction,
+  peakPrice,
+  currentSL,
+  risk,
+  floorSL,
+  trailFraction = 0.4,
+}) {
+  const isLong = direction === 'LONG';
+  const peak = parseFloat(peakPrice);
+  const riskDist = Math.abs(parseFloat(risk)) * trailFraction;
+  const candidate = isLong ? peak - riskDist : peak + riskDist;
+  const floor = parseFloat(floorSL ?? currentSL);
+  const current = parseFloat(currentSL);
+  if (isLong) {
+    return Math.max(floor, current, candidate);
+  }
+  return Math.min(floor, current, candidate);
 }

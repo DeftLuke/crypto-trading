@@ -70,7 +70,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const update = $json;\nconst message = update.message || update.callback_query?.message || {};\nconst chatId = message.chat?.id || update.callback_query?.from?.id;\nconst rawText = update.message?.text || update.callback_query?.data || '';\nconst text = String(rawText).trim();\nconst parts = text.split(/\\s+/);\nconst cmd = parts[0]?.toLowerCase() || '';\n\nlet method = 'POST';\nlet path = '/api/telegram/callback';\nlet body = {};\nlet label = 'Trade';\nlet skipHttp = false;\n\nconst cb = update.callback_query;\nif (cb?.data && /^(execute|default|manual|size|skip):/.test(cb.data)) {\n  body = { callback_data: cb.data, chat_id: chatId };\n  return [{ json: { chatId, method, path, body, label, skipHttp: false } }];\n}\n\nif (!cb && /^[\\d.]+(\\s*(usdt|usd)?)?$/i.test(text)) {\n  body = { action: 'text_size', chat_id: chatId, text };\n  return [{ json: { chatId, method, path, body, label: 'Manual size', skipHttp: false } }];\n}\n\npath = '/api/ai/query';\nbody = { question: text, chatId };\nlabel = 'AI answer';\n\nif (cmd === '/stats') { method = 'GET'; path = '/api/scanner/status'; body = undefined; label = 'Scanner'; }\nelse if (cmd === '/demo') { path = '/api/control/demo-signal'; body = { symbol: (parts[1]||'BTCUSDT').toUpperCase(), force: true }; label = 'Demo signal'; }\nelse if (cmd === '/stop') { path = '/api/scanner/stop'; body = { source: 'telegram' }; label = 'Scanner stopped'; }\nelse if (cmd === '/start') {\n  return [{ json: { chatId, skipHttp: true, label: 'Help', reply: '🤖 Tap signal buttons: SHORT/LONG → Default or Manual size.\\n/stats /demo /stop' } }];\n}\n\nreturn [{ json: { chatId, method, path, body, label, skipHttp } }];"
+        "jsCode": "const update = $json;\nconst message = update.message || update.callback_query?.message || {};\nconst chatId = message.chat?.id || update.callback_query?.from?.id;\nconst rawText = update.message?.text || update.callback_query?.data || '';\nconst text = String(rawText).trim();\nconst parts = text.split(/\\s+/);\nconst cmd = parts[0]?.toLowerCase() || '';\nconst lower = text.toLowerCase();\n\nlet method = 'POST';\nlet path = '/api/telegram/callback';\nlet body = {};\nlet label = 'Trade';\nlet skipHttp = false;\nlet showLoader = false;\n\nconst cb = update.callback_query;\nif (cb?.data && /^(execute|default|manual|size|skip):/.test(cb.data)) {\n  body = { callback_data: cb.data, chat_id: chatId };\n  return [{ json: { chatId, method, path, body, label, skipHttp: false, showLoader: false } }];\n}\n\nif (!cb && /^[\\d.]+(\\s*(usdt|usd)?)?$/i.test(text)) {\n  body = { action: 'text_size', chat_id: chatId, text };\n  return [{ json: { chatId, method, path, body, label: 'Manual size', skipHttp: false, showLoader: false } }];\n}\n\npath = '/api/ai/query';\nbody = { question: text, chatId };\nlabel = 'AI answer';\nshowLoader = true;\n\nif (cmd === '/stats') { method = 'GET'; path = '/api/scanner/status'; body = undefined; label = 'Scanner'; showLoader = false; }\nelse if (cmd === '/demo') { path = '/api/control/demo-signal'; body = { symbol: (parts[1]||'BTCUSDT').toUpperCase(), force: true }; label = 'Demo signal'; showLoader = false; }\nelse if (cmd === '/stop' || /^scanner\\s+(off|stop|pause|disable)\\b/.test(lower) || /^(stop|turn off|disable)\\s+(the\\s+)?scanner/.test(lower)) { path = '/api/scanner/stop'; body = { source: 'telegram' }; label = 'Scanner stopped'; showLoader = false; }\nelse if (/^scanner\\s+(on|start|run|enable)\\b/.test(lower) || /^(start|turn on|enable)\\s+(the\\s+)?scanner/.test(lower)) { path = '/api/scanner/start'; body = { source: 'telegram' }; label = 'Scanner started'; showLoader = false; }\nelse if (cmd === '/start') {\n  return [{ json: { chatId, skipHttp: true, label: 'Help', showLoader: false, reply: '🤖 TradeGPT (OpenClaw)\\n\\nAsk questions or tasks:\\n• scanner on / scanner off\\n• demo signal BTC\\n• open positions / risk\\n\\n/stats /demo /stop' } }];\n}\n\nreturn [{ json: { chatId, method, path, body, label, skipHttp, showLoader } }];"
       },
       "id": "parse-command",
       "name": "Parse Telegram Command",
@@ -102,12 +102,47 @@
     },
     {
       "parameters": {
-        "method": "={{ $json.method }}",
-        "url": "={{ ($env.BACKEND_URL || 'https://api.deftluke.online') + $json.path }}",
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict" },
+          "conditions": [
+            {
+              "id": "show-loader",
+              "leftValue": "={{ $json.showLoader }}",
+              "rightValue": true,
+              "operator": { "type": "boolean", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "if-loader",
+      "name": "Needs Loader?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [760, 620]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chatId }}",
+        "text": "⏳ Processing your request…",
+        "additionalFields": {}
+      },
+      "id": "telegram-loader",
+      "name": "Telegram Send Loader",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [980, 540],
+      "credentials": { "telegramApi": { "id": "telegram-bot", "name": "Telegram Bot" } }
+    },
+    {
+      "parameters": {
+        "method": "={{ $('Parse Telegram Command').item.json.method }}",
+        "url": "={{ ($env.BACKEND_URL || 'https://api.deftluke.online') + $('Parse Telegram Command').item.json.path }}",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify($json.body || {}) }}",
-        "options": { "timeout": 60000 }
+        "jsonBody": "={{ JSON.stringify($('Parse Telegram Command').item.json.body || {}) }}",
+        "options": { "timeout": 120000 }
       },
       "id": "backend-command",
       "name": "Call TradeGPT Backend",
@@ -170,7 +205,7 @@
         [{ "node": "Telegram Send Event", "type": "main", "index": 0 }]]
     },
     "Telegram Command Trigger": {
-      "main": []
+      "main": [[{ "node": "Parse Telegram Command", "type": "main", "index": 0 }]]
     },
     "Parse Telegram Command": {
       "main": [[{ "node": "Help Only?", "type": "main", "index": 0 }]]
@@ -178,8 +213,17 @@
     "Help Only?": {
       "main": [
         [{ "node": "Telegram Send Command Response", "type": "main", "index": 0 }],
+        [{ "node": "Needs Loader?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Needs Loader?": {
+      "main": [
+        [{ "node": "Telegram Send Loader", "type": "main", "index": 0 }],
         [{ "node": "Call TradeGPT Backend", "type": "main", "index": 0 }]
       ]
+    },
+    "Telegram Send Loader": {
+      "main": [[{ "node": "Call TradeGPT Backend", "type": "main", "index": 0 }]]
     },
     "Call TradeGPT Backend": {
       "main": [[{ "node": "Format Command Response", "type": "main", "index": 0 }]]

@@ -81,6 +81,40 @@ Do not run `start-windows-tunnel.bat` anymore.
 
 ---
 
+## Backend 24/7 (must not die overnight)
+
+Production API runs as Docker **`backend-recovery`** on `127.0.0.1:3002`.
+
+**One-time setup:**
+
+```bash
+bash ~/crypto-trading/scripts/install-kali-24x7.sh
+# Optional (boot + systemd timer): sudo bash ~/crypto-trading/scripts/install-kali-24x7.sh
+```
+
+This enables:
+
+| Layer | What it does |
+|-------|----------------|
+| Docker `--restart always` | Auto-restart on crash (exit 139 SIGSEGV, OOM, etc.) |
+| Cron watchdog every 2 min | Recreates container if health fails or restart policy was lost |
+| PM2 | Keeps analytics dashboard on `:3000` after reboot |
+
+**If backend is down:**
+
+```bash
+bash ~/crypto-trading/scripts/run-backend-recovery.sh
+curl http://127.0.0.1:3002/api/health
+tail -20 ~/.tradegpt/watchdog.log
+docker logs backend-recovery --tail 30
+```
+
+**Why it stopped before:** Node crashed (exit **139**) during the 523-pair market scanner; the container had **`RestartPolicy=no`** after a manual `docker restart`, so it stayed dead until morning.
+
+**Telegram + scanner overnight:** keep `SCANNER_AUTO_START=true` in `deploy/.env`. If Node crashes during scans, `--restart always` + the watchdog bring the backend back within ~2 minutes.
+
+---
+
 ## After power outage
 
 If **only Windows** lost power → Kali keeps running ✅

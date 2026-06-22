@@ -59,6 +59,51 @@ def _worth_scanning(context: ParseContext) -> bool:
     return False
 
 
+async def archive_recent_messages(
+    client: TelegramClient,
+    source: dict[str, Any],
+    api_client: MainTradingApiClient,
+    *,
+    limit: int = 50,
+) -> dict[str, int]:
+    """Store last N messages raw (text + image) for audit — no parsing."""
+    chat_id = int(source["telegram_chat_id"])
+    stats = {"archived": 0, "skipped_empty": 0}
+
+    async for message in client.iter_messages(chat_id, limit=limit):
+        context = await _build_context_from_message(client, message, source)
+        if not context:
+            stats["skipped_empty"] += 1
+            continue
+        timestamp = await _message_timestamp(message)
+        await api_client.save_message({
+            "source_id": source.get("id"),
+            "telegram_chat_id": chat_id,
+            "message_id": message.id,
+            "raw_message": context.combined_text() or context.text or "[image only]",
+            "parse_status": "archived",
+            "message_date": timestamp,
+            "api_result": {"pipeline_stage": "archived", "archive": True},
+            "audit": {
+                "has_image": context.has_image,
+                "original_text": context.text or "",
+                "image_base64": context.image_b64,
+                "image_mime": "image/jpeg",
+                "parse_stage": "archived",
+            },
+        })
+        stats["archived"] += 1
+        await asyncio.sleep(1.5)
+
+    metadata = dict(source.get("metadata") or {})
+    metadata["last_archive_at"] = datetime.now(timezone.utc).isoformat()
+    metadata["last_archive_stats"] = stats
+    metadata.pop("archive_requested_at", None)
+    metadata.pop("archive_limit", None)
+    await api_client.update_source(source["id"], {"metadata": metadata})
+    return stats
+
+
 async def _save_parsed(
     api_client: MainTradingApiClient,
     base_record: dict,

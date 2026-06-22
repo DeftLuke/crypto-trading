@@ -1,9 +1,45 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 /** TradingView Charting Library — loads when NEXT_PUBLIC_TV_LIBRARY is set */
+function TvAdvancedWidget({ symbol, interval, height }: { symbol: string; interval: string; height: number }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    el.innerHTML = "";
+    const script = document.createElement("script");
+    script.src = "https://s3.tradingview.com/external-embedding/embed-widget-advanced-chart.js";
+    script.async = true;
+    script.type = "text/javascript";
+    script.innerHTML = JSON.stringify({
+      autosize: true,
+      symbol,
+      interval,
+      timezone: "Etc/UTC",
+      theme: "dark",
+      style: "1",
+      locale: "en",
+      allow_symbol_change: true,
+      hide_top_toolbar: false,
+      hide_legend: false,
+      save_image: false,
+      calendar: false,
+      support_host: "https://www.tradingview.com",
+    });
+    el.appendChild(script);
+  }, [symbol, interval]);
+
+  return (
+    <div className="tradingview-widget-container overflow-hidden rounded-lg border border-zinc-800" style={{ height }}>
+      <div ref={containerRef} className="tradingview-widget-container__widget h-full w-full" />
+    </div>
+  );
+}
+
 export function TradingViewChart({
   symbol = "BINANCE:BTCUSDT",
   interval = "15",
@@ -16,6 +52,7 @@ export function TradingViewChart({
   const containerRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
   const libUrl = process.env.NEXT_PUBLIC_TV_LIBRARY;
+  const widgetId = useId().replace(/:/g, "");
 
   useEffect(() => {
     if (!libUrl || !containerRef.current) return;
@@ -38,7 +75,7 @@ export function TradingViewChart({
         overrides: {
           "paneProperties.background": "#09090b",
           "paneProperties.vertGridProperties.color": "#27272a",
-          "paneProperties.horzGridProperties.color": "#27272a",
+          "paneProperties.horGridProperties.color": "#27272a",
         },
       });
       setReady(true);
@@ -55,13 +92,8 @@ export function TradingViewChart({
         <CardHeader>
           <CardTitle>Chart — {symbol}</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div
-            className="flex items-center justify-center rounded-lg border border-dashed border-zinc-700 bg-zinc-900/50 text-sm text-zinc-500"
-            style={{ height }}
-          >
-            Set NEXT_PUBLIC_TV_LIBRARY to enable TradingView overlays (signals, OB, FVG, BOS).
-          </div>
+        <CardContent className="p-2">
+          <TvAdvancedWidget symbol={symbol} interval={interval} height={height} />
         </CardContent>
       </Card>
     );
@@ -70,7 +102,7 @@ export function TradingViewChart({
   return (
     <Card>
       <CardContent className="p-0 pt-2">
-        <div id={`tv-${symbol.replace(/[^a-zA-Z0-9]/g, "")}`} ref={containerRef} style={{ height }} />
+        <div id={`tv-${widgetId}`} ref={containerRef} style={{ height }} />
         {!ready && <p className="p-4 text-center text-xs text-zinc-500">Loading chart…</p>}
       </CardContent>
     </Card>

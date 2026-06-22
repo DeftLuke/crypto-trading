@@ -16,7 +16,10 @@ _MAX_ENTRY: dict[str, float] = {
 }
 
 _SYMBOL_RE = re.compile(r"#?([A-Z0-9]{2,12})(?:[/\-\s]?USDT|USDT)\b", re.IGNORECASE)
-_TRADE_HINT = re.compile(r"\b(long|short|buy|sell|entry|stop\s*loss|sl|tp|take\s*profit|target)\b", re.IGNORECASE)
+_TRADE_HINT = re.compile(
+    r"\b(long|short|buy|sell|entry|stop\s*loss|sl|tp|take\s*profit|target|from here|buy here|buy zone|bounce from)\b",
+    re.IGNORECASE,
+)
 
 
 def symbol_in_text(symbol: str, text: str) -> bool:
@@ -51,16 +54,30 @@ def acceptable_parsed_signal(signal: NormalizedSignal, context: ParseContext) ->
     meta = signal.metadata or {}
     levels = meta.get("levels_source") or "text"
 
+    # Caption + chart ("BSB long from here") — symbol may be in caption only
+    if context.has_image and text and _TRADE_HINT.search(text):
+        if not symbol_in_text(signal.symbol, text) and levels not in ("chart", "mixed", "group_hint", "inferred"):
+            if not re.search(rf"\b{re.escape(signal.symbol.replace('USDT', ''))}\b", text, re.IGNORECASE):
+                return False
+
     if context.has_image and not text:
         return False
 
-    if levels == "chart" and not symbol_in_text(signal.symbol, text):
+    if levels == "chart" and not symbol_in_text(signal.symbol, text) and not _TRADE_HINT.search(text):
         return False
 
-    if not entry_plausible(signal.symbol, float(signal.entry)):
+    entry = float(signal.entry or 0)
+    sl = float(signal.stop_loss or 0)
+    if entry > 0 and not entry_plausible(signal.symbol, entry):
+        return False
+    if sl > 0 and not entry_plausible(signal.symbol, sl):
         return False
 
-    if not entry_plausible(signal.symbol, float(signal.stop_loss)):
-        return False
+    # Direction-only / SMC will fill levels on backend
+    if entry <= 0 or sl <= 0:
+        meta_hint = meta.get("levels_source") in ("group_hint", "inferred", "smc_engine")
+        informal = bool(_TRADE_HINT.search(text))
+        if meta_hint or informal or levels in ("group_hint", "inferred"):
+            return True
 
     return True

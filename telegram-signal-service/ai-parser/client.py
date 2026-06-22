@@ -18,27 +18,25 @@ Return ONLY valid JSON (no markdown):
   "is_signal": true or false,
   "symbol": "SYMBOLUSDT",
   "side": "LONG" or "SHORT",
-  "entry": number,
-  "stop_loss": number,
-  "take_profit": [tp1, tp2, tp3],
+  "entry": number or 0,
+  "stop_loss": number or 0,
+  "take_profit": [tp1, tp2, tp3] or [],
   "confidence": 0-100,
-  "levels_source": "text" | "chart" | "mixed" | "inferred"
+  "levels_source": "text" | "chart" | "mixed" | "group_hint" | "inferred"
 }
 
 Rules:
 - is_signal=false for: TP hit updates, profit brags, ads, news, "top gainer", polls, emoji-only chat.
-- is_signal=true for actionable NEW trade setups (buy/sell/long/short) even if levels are only on a chart image.
-- symbol must end with USDT.
-- side: LONG for buy/long, SHORT for sell/short.
-- If the group message includes explicit SL/TP in text, USE THOSE EXACT VALUES (levels_source=text or mixed).
-- If levels are only on a TradingView chart screenshot: read entry zone, red stop zone low, green target zone (levels_source=chart).
-- If only one TP visible, still return it — downstream will derive TP2/TP3.
-- If entry is a zone, use the middle of the zone or the price label closest to current entry arrow.
-- For "#HBAR buy here" + chart: extract HBARUSDT LONG from caption + chart prices.
-- NEVER default to HBARUSDT or any example symbol — read the ACTUAL symbol from the message or chart ticker.
-- Chart-only messages with no symbol in caption: return {"is_signal": false}.
-- Never invent a signal from old result posts.
-- If unsure, return {"is_signal": false}.
+- is_signal=TRUE for informal setups: "BSB long", "BTC buy from here", "short eth here", chart + "bounce from here".
+- symbol must end with USDT (infer: BSB → BSBUSDT, #HBAR → HBARUSDT).
+- side: LONG for buy/long/here (bullish), SHORT for sell/short.
+- If group gives explicit SL/TP in text, USE THOSE (levels_source=text or mixed).
+- If only direction + chart caption ("from here", "buy zone"): is_signal=true, set entry/sl/tp to 0, levels_source=group_hint — backend fills from SMC engine.
+- IGNORE group risk instructions: leverage (3x, 50x), margin %, "use 2%", "risk 1%" — never parse those as trade params.
+- Chart screenshots: read ticker, direction arrow, red/green zones when visible (levels_source=chart).
+- If only one TP visible, return it — backend derives TP2/TP3.
+- NEVER default to random symbols — read actual ticker from message/chart.
+- Chart-only with zero symbol hint anywhere: {"is_signal": false}.
 """
 
 
@@ -60,35 +58,60 @@ class AiParserClient:
         ]
         return list(dict.fromkeys(u.rstrip("/") for u in urls if u))
 
+    def extract_raw(self, context: ParseContext) -> dict | None:
+        """Return raw AI JSON (including is_signal=false) for audit trail."""
+        if not self.enabled:
+            return None
+        return self._call_ai(context)
+
+    def signal_from_extracted(
+        self,
+        extracted: dict,
+        context: ParseContext,
+        provider: ProviderConfig,
+    ) -> NormalizedSignal | None:
+        if not extracted or not extracted.get("is_signal"):
+            return None
+        signal = NormalizedSignal(
+            provider=provider.name,
+            symbol=extracted["symbol"],
+            side=extracted["side"],
+            entry=float(extracted.get("entry") or 0),
+            stop_loss=float(extracted.get("stop_loss") or 0),
+            take_profit=[float(v) for v in extracted.get("take_profit", []) if v],
+            raw_message=context.combined_text() or context.text,
+            parser="ai",
+            confidence=float(extracted.get("confidence") or 70),
+            metadata={
+                "ai_model": self.vision_model if context.has_image else self.model,
+                "ai_detected": True,
+                "levels_source": extracted.get("levels_source") or ("chart" if context.has_image else "text"),
+                "group_title": context.group_title,
+                "has_image": context.has_image,
+            },
+        )
+        levels_src = extracted.get("levels_source") or signal.metadata.get("levels_source")
+        entry = float(signal.entry or 0)
+        sl = float(signal.stop_loss or 0)
+        if levels_src in ("group_hint", "inferred") or (sl <= 0 and entry >= 0):
+            signal.metadata["levels_source"] = levels_src or "group_hint"
+            signal.take_profit = signal.take_profit or [0.0, 0.0]
+            if entry > 0 and sl <= 0:
+                signal.metadata["entry_hint"] = entry
+            return signal
+        signal.ensure_take_profits()
+        return signal.validate()
+
     def parse(self, context: ParseContext, provider: ProviderConfig) -> NormalizedSignal | None:
         if not self.enabled:
             return None
 
-        extracted = self._call_ai(context)
+        extracted = self.extract_raw(context)
         if not extracted or not extracted.get("is_signal"):
             return None
 
         try:
-            signal = NormalizedSignal(
-                provider=provider.name,
-                symbol=extracted["symbol"],
-                side=extracted["side"],
-                entry=float(extracted["entry"]),
-                stop_loss=float(extracted["stop_loss"]),
-                take_profit=[float(v) for v in extracted.get("take_profit", [])],
-                raw_message=context.combined_text() or context.text,
-                parser="ai",
-                confidence=float(extracted.get("confidence") or 70),
-                metadata={
-                    "ai_model": self.vision_model if context.has_image else self.model,
-                    "ai_detected": True,
-                    "levels_source": extracted.get("levels_source") or ("chart" if context.has_image else "text"),
-                    "group_title": context.group_title,
-                    "has_image": context.has_image,
-                },
-            )
-            signal.ensure_take_profits()
-            return signal.validate()
+            return self.signal_from_extracted(extracted, context, provider)
         except (KeyError, TypeError, ValueError, SignalValidationError):
             return None
 

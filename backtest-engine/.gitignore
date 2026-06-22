@@ -1,0 +1,9 @@
+data/*.csv
+reports/*
+!reports/.gitkeep
+charts/*
+!charts/.gitkeep
+__pycache__/
+*.pyc
+.venv/
+venv/

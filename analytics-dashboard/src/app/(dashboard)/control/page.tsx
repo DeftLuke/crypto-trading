@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
+import { toast } from "sonner";
 import { PageHeader, StatusDot } from "@/components/shared/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +14,13 @@ import { formatUsd } from "@/lib/utils";
 
 type Service = {
   service_id?: string; name?: string; state?: string; health?: string;
-  cpu_pct?: number; ram_mb?: number; error_count?: number; queue_size?: number; uptime_sec?: number;
+  cpu_pct?: number; ram_mb?: number; memory_shared?: boolean; memory_note?: string;
+  error_count?: number; queue_size?: number; uptime_sec?: number;
+};
+type Runtime = {
+  node_heap_limit_mb?: number; node_heap_used_mb?: number; node_rss_mb?: number;
+  server_ram_total_mb?: number; server_ram_used_mb?: number; server_ram_free_mb?: number;
+  in_process_modules?: number;
 };
 type Exchange = {
   exchange_id?: string; connected?: boolean; dry_run?: boolean; latency_ms?: number;
@@ -35,6 +43,42 @@ export default function ControlCenterPage() {
   const risk = dash?.risk as { live?: { kill_switch?: boolean; active?: boolean }; paper?: Record<string, unknown> } | undefined;
   const positions = dash?.positions as { paper?: unknown[]; live?: unknown[] } | undefined;
   const memory = dash?.memory as { total_memories?: number } | undefined;
+  const runtime = dash?.runtime as Runtime | undefined;
+  const riskLimits = dash?.risk as { limits?: Record<string, number> } | undefined;
+
+  const [riskForm, setRiskForm] = useState({
+    risk_per_trade_pct: 1,
+    default_leverage: 50,
+    max_daily_loss_pct: 3,
+    max_open_trades: 5,
+    max_drawdown_pct: 10,
+    scanner_enabled: true,
+    telegram_signals_enabled: true,
+  });
+
+  useEffect(() => {
+    const s = dash?.settings as Record<string, unknown> | undefined;
+    const limits = riskLimits?.limits;
+    if (!s && !limits) return;
+    setRiskForm({
+      risk_per_trade_pct: Number(s?.risk_per_trade_pct ?? limits?.risk_per_trade_pct ?? 1),
+      default_leverage: Number(s?.default_leverage ?? limits?.default_leverage ?? 50),
+      max_daily_loss_pct: Number(s?.max_daily_loss_pct ?? limits?.max_daily_loss_pct ?? 3),
+      max_open_trades: Number(s?.max_open_trades ?? limits?.max_open_trades ?? 5),
+      max_drawdown_pct: Number(s?.max_drawdown_pct ?? limits?.max_drawdown_pct ?? 10),
+      scanner_enabled: s?.scanner_enabled !== false,
+      telegram_signals_enabled: s?.telegram_signals_enabled !== false,
+    });
+  }, [dash?.settings, riskLimits?.limits]);
+
+  const saveRisk = useMutation({
+    mutationFn: () => researchApi.controlSettings(riskForm),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["controlDashboard"] });
+      toast.success("Risk settings saved");
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
 
   const emergency = useMutation({
     mutationFn: (action: string) => researchApi.controlEmergency(action),
@@ -87,14 +131,93 @@ export default function ControlCenterPage() {
         </Badge>
       </div>
 
-      <div className="grid gap-3 sm:grid-cols-4">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <MetricCard label="Services" value={String(services.length)} />
         <MetricCard label="Open Positions" value={String(openCount)} />
         <MetricCard label="Pending Approvals" value={String(approvals.length)} />
         <MetricCard label="Memories" value={String(memory?.total_memories ?? "—")} />
       </div>
 
+      {runtime && (
+        <Card>
+          <CardHeader><CardTitle>Server Resources</CardTitle></CardHeader>
+          <CardContent className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4 text-sm">
+            <div>
+              <p className="text-xs text-zinc-500">Server RAM</p>
+              <p className="font-medium tabular-nums">
+                {(runtime.server_ram_used_mb ?? 0).toLocaleString()} / {(runtime.server_ram_total_mb ?? 0).toLocaleString()} MB
+              </p>
+              <p className="text-xs text-zinc-600">{(runtime.server_ram_free_mb ?? 0).toLocaleString()} MB free</p>
+            </div>
+            <div>
+              <p className="text-xs text-zinc-500">Backend process (RSS)</p>
+              <p className="font-medium tabular-nums">{(runtime.node_rss_mb ?? 0).toLocaleString()} MB</p>
+              <p className="text-xs text-zinc-600">Grows under load — not capped at 32 MB</p>
+            </div>
+            <div>
+              <p className="text-xs text-zinc-500">Node heap used / limit</p>
+              <p className="font-medium tabular-nums">
+                {(runtime.node_heap_used_mb ?? 0).toLocaleString()} / {(runtime.node_heap_limit_mb ?? 0).toLocaleString()} MB
+              </p>
+              <p className="text-xs text-zinc-600">Up to {(runtime.node_heap_limit_mb ?? 16384) / 1024} GB for scanner, backtests, AI</p>
+            </div>
+            <div>
+              <p className="text-xs text-zinc-500">In-process modules</p>
+              <p className="font-medium">{runtime.in_process_modules ?? "—"} services share one Node runtime</p>
+              <p className="text-xs text-zinc-600">Separate containers: Qdrant, n8n, research-api, Ollama</p>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <div className="grid gap-4 lg:grid-cols-2">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle>Risk Parameters</CardTitle>
+            <Button size="sm" onClick={() => saveRisk.mutate()} disabled={saveRisk.isPending}>
+              Save Risk Settings
+            </Button>
+          </CardHeader>
+          <CardContent className="grid gap-3 sm:grid-cols-2 text-sm">
+            {([
+              ["risk_per_trade_pct", "Risk per trade (%)", 0.1, 5],
+              ["default_leverage", "Default leverage", 1, 125],
+              ["max_daily_loss_pct", "Max daily loss (%)", 0.5, 20],
+              ["max_open_trades", "Max open trades", 1, 20],
+              ["max_drawdown_pct", "Max drawdown (%)", 1, 50],
+            ] as const).map(([key, label, min, max]) => (
+              <label key={key} className="space-y-1">
+                <span className="text-xs text-zinc-500">{label}</span>
+                <input
+                  type="number"
+                  min={min}
+                  max={max}
+                  step={key.includes("pct") ? 0.1 : 1}
+                  className="w-full rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 tabular-nums"
+                  value={riskForm[key]}
+                  onChange={(e) => setRiskForm((f) => ({ ...f, [key]: parseFloat(e.target.value) || 0 }))}
+                />
+              </label>
+            ))}
+            <label className="flex items-center gap-2 sm:col-span-2">
+              <input
+                type="checkbox"
+                checked={riskForm.scanner_enabled}
+                onChange={(e) => setRiskForm((f) => ({ ...f, scanner_enabled: e.target.checked }))}
+              />
+              <span>AI scanner enabled</span>
+            </label>
+            <label className="flex items-center gap-2 sm:col-span-2">
+              <input
+                type="checkbox"
+                checked={riskForm.telegram_signals_enabled}
+                onChange={(e) => setRiskForm((f) => ({ ...f, telegram_signals_enabled: e.target.checked }))}
+              />
+              <span>Telegram signals enabled</span>
+            </label>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle>Trading Controls</CardTitle>
@@ -124,25 +247,25 @@ export default function ControlCenterPage() {
             ))}
           </CardContent>
         </Card>
-
-        <Card>
-          <CardHeader><CardTitle>Exchanges</CardTitle></CardHeader>
-          <CardContent className="space-y-2">
-            {exchanges.map((ex) => (
-              <div key={ex.exchange_id} className="flex items-center justify-between rounded border border-zinc-800 p-2 text-sm">
-                <div>
-                  <span className="font-medium capitalize">{ex.exchange_id}</span>
-                  {ex.dry_run && <Badge variant="secondary" className="ml-2">Dry Run</Badge>}
-                </div>
-                <div className="text-right text-xs text-zinc-500">
-                  <StatusDot ok={!!ex.connected} label={ex.connected ? "Connected" : "Offline"} />
-                  <p>{formatUsd(ex.balance)} · {ex.latency_ms}ms · {ex.open_positions} pos</p>
-                </div>
-              </div>
-            ))}
-          </CardContent>
-        </Card>
       </div>
+
+      <Card>
+        <CardHeader><CardTitle>Exchanges</CardTitle></CardHeader>
+        <CardContent className="space-y-2">
+          {exchanges.map((ex) => (
+            <div key={ex.exchange_id} className="flex items-center justify-between rounded border border-zinc-800 p-2 text-sm">
+              <div>
+                <span className="font-medium capitalize">{ex.exchange_id}</span>
+                {ex.dry_run && <Badge variant="secondary" className="ml-2">Dry Run</Badge>}
+              </div>
+              <div className="text-right text-xs text-zinc-500">
+                <StatusDot ok={!!ex.connected} label={ex.connected ? "Connected" : "Offline"} />
+                <p>{formatUsd(ex.balance)} · {ex.latency_ms}ms · {ex.open_positions} pos</p>
+              </div>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
 
       {approvals.length > 0 && (
         <Card>
@@ -166,8 +289,15 @@ export default function ControlCenterPage() {
               <div>
                 <p className="font-medium">{svc.name}</p>
                 <p className="text-xs text-zinc-500">
-                  Phase {svc.service_id} · CPU {svc.cpu_pct?.toFixed(0)}% · RAM {svc.ram_mb}MB · Errors {svc.error_count}
+                  Phase {svc.service_id} · CPU {svc.cpu_pct?.toFixed(0)}% ·{" "}
+                  {svc.memory_shared
+                    ? `Backend RSS ${svc.ram_mb?.toLocaleString()} MB (shared)`
+                    : `RAM ${svc.ram_mb ?? 0} MB`}{" "}
+                  · Errors {svc.error_count}
                 </p>
+                {svc.memory_note && (
+                  <p className="text-[10px] text-zinc-600">{svc.memory_note}</p>
+                )}
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant={svc.state === "running" ? "success" : "secondary"}>{svc.state}</Badge>

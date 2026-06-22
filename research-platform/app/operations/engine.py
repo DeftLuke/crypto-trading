@@ -88,7 +88,12 @@ class OperationsEngine:
             "reports": len(self.store.reports),
             "workflows_run": len(self.store.workflows),
             "audit_logs": len(self.store.audit_logs),
-            "llm_configured": bool(self.settings.ai_gateway_url or self.settings.ai_openai_api_url),
+            "llm_configured": bool(
+                self.settings.openclaw_gateway_url and self.settings.openclaw_gateway_token
+            ) or bool(self.settings.ai_gateway_url or self.settings.ai_openai_api_url),
+            "openclaw_configured": bool(
+                self.settings.openclaw_gateway_url and self.settings.openclaw_gateway_token
+            ),
             "n8n_configured": bool(self.settings.n8n_base_url),
             "telegram_configured": bool(self.settings.telegram_bot_token),
         }

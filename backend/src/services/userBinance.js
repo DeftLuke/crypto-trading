@@ -3,6 +3,7 @@ import fs from 'fs';
 import { config } from '../config/index.js';
 import { getSupabase } from './supabase.js';
 import { ensureBinanceTime } from './binanceTime.js';
+import { isExchangeBlocked, noteExchangeRateLimit } from './exchangeRateLimit.js';
 import { loadStoredCredentials, saveStoredCredentials } from './credentialStore.js';
 import { getSymbolRules, roundToStep, roundPriceToTick, getUsdtBalance, isExchangeUnreachable, setLeverageWithFallback, capQtyToPositionLimit, isPositionLimitError, getMarkPrice, LEVERAGE_LADDER } from './binance.js';
 import { fetchWithTimeout } from '../utils/fetchTimeout.js';
@@ -238,6 +239,32 @@ export async function hasApiKeysConfigured(userId = null) {
   const liveOk = Boolean(state.live?.apiKey && (state.live?.apiSecret || state.live?.privateKeyPath || state.live?.privateKey));
   const activeOk = mode === 'live' ? liveOk : demoOk;
 
+  // Ensure live private key path is populated from environment if available
+  if (mode === 'live' && !state.live.privateKeyPath && process.env.BINANCE_PRIVATE_KEY_PATH) {
+    state.live.privateKeyPath = process.env.BINANCE_PRIVATE_KEY_PATH;
+    state.live.privateKey = null; // Ensure it's read from file
+  }
+  if (mode === 'demo' && !state.demo.privateKeyPath && process.env.BINANCE_DEMO_PRIVATE_KEY_PATH) {
+    state.demo.privateKeyPath = process.env.BINANCE_DEMO_PRIVATE_KEY_PATH;
+    state.demo.privateKey = null;
+  }
+
+  // Re-evaluate liveOk after potentially updating state.live.privateKeyPath
+  const re_liveOk = Boolean(state.live?.apiKey && (state.live?.apiSecret || state.live?.privateKeyPath || state.live?.privateKey));
+  return {
+    configured: mode === 'live' ? re_liveOk : demoOk,
+    source: userId ? (activeOk ? 'database' : 'none') : (activeOk ? 'runtime' : 'none'),
+    tradingMode: mode,
+    testnet: isDemoMode(mode),
+    demoConfigured: demoOk,
+    liveConfigured: re_liveOk,
+    restUrl: isDemoMode(mode) ? 'https://demo-fapi.binance.com' : 'https://fapi.binance.com',
+    updatedAt: state.updatedAt || fileMeta?.updatedAt || null,
+    demoUpdatedAt: demoOk ? state.updatedAt : null,
+    liveUpdatedAt: re_liveOk ? state.updatedAt : null,
+  };
+}
+
   const fileMeta = !userId ? loadStoredCredentials() : null;
 
   return {
@@ -255,6 +282,9 @@ export async function hasApiKeysConfigured(userId = null) {
 }
 
 async function signedRequest(credentials, method, endpoint, params = {}) {
+  if (isExchangeBlocked()) {
+    throw new Error('Binance REST paused (rate limit cooldown)');
+  }
   const restUrl = credentials.testnet
     ? 'https://demo-fapi.binance.com'
     : 'https://fapi.binance.com';
@@ -263,7 +293,7 @@ async function signedRequest(credentials, method, endpoint, params = {}) {
   const searchParams = new URLSearchParams(params);
   const timestamp = await ensureBinanceTime(restUrl);
   searchParams.set('timestamp', timestamp.toString());
-  searchParams.set('recvWindow', '10000');
+  searchParams.set('recvWindow', '60000');
   const payload = searchParams.toString();
   const keyPath = credentials.privateKeyPath;
   const privateKey = credentials.privateKey
@@ -278,8 +308,21 @@ async function signedRequest(credentials, method, endpoint, params = {}) {
     method,
     headers: { 'X-MBX-APIKEY': credentials.apiKey },
   }, 15000);
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.msg || `Binance error ${res.status}`);
+  const text = await res.text();
+  if (res.ok && (!text || text.trim() === 'ok')) {
+    return { ok: true };
+  }
+  let data = {};
+  try {
+    data = text ? JSON.parse(text) : {};
+  } catch {
+    throw new Error(`Binance non-JSON response (${res.status}): ${text.slice(0, 80)}`);
+  }
+  if (!res.ok) {
+    const msg = data.msg || `Binance error ${res.status}`;
+    noteExchangeRateLimit(msg);
+    throw new Error(msg);
+  }
   return data;
 }
 
@@ -296,6 +339,14 @@ export async function testUserConnection(credentials) {
 }
 
 export async function getBalanceForUser(userId = null) {
+  try {
+    const { getCachedBalance, isUserStreamLive } = await import('./binanceUserStream.js');
+    if (isUserStreamLive()) {
+      const cached = getCachedBalance();
+      if (cached?.total != null) return cached;
+    }
+  } catch { /* fall through */ }
+
   if (isExchangeUnreachable()) {
     return getUsdtBalance();
   }
@@ -326,7 +377,15 @@ export async function setLeverageWithCredentials(credentials, symbol, leverage) 
 }
 
 export async function executeWithCredentials(credentials, tradeParams) {
-  const { symbol, side, quantity, stopLoss, leverage = 50, skipLeverageSet = false } = tradeParams;
+  const {
+    symbol,
+    side,
+    quantity,
+    stopLoss,
+    leverage = 50,
+    skipLeverageSet = false,
+    skipProtection = false,
+  } = tradeParams;
 
   const usedLeverage = skipLeverageSet
     ? leverage
@@ -367,20 +426,23 @@ export async function executeWithCredentials(credentials, tradeParams) {
   }
   if (!order) throw lastError || new Error(`Exceeded the maximum allowable position at current leverage for ${symbol}`);
 
-  await new Promise((r) => setTimeout(r, 600));
+  if (!order) throw lastError || new Error(`Exceeded the maximum allowable position at current leverage for ${symbol}`);
 
-  const slSide = side === 'BUY' ? 'SELL' : 'BUY';
   let slOrder = null;
-  try {
-    slOrder = await placeAlgoOrderWithCredentials(credentials, {
-      symbol,
-      side: slSide,
-      type: 'STOP_MARKET',
-      triggerPrice: stopLoss,
-      closePosition: true,
-    });
-  } catch (err) {
-    console.error('[UserBinance] SL order failed:', err.message);
+  if (!skipProtection && stopLoss) {
+    await new Promise((r) => setTimeout(r, 600));
+    const slSide = side === 'BUY' ? 'SELL' : 'BUY';
+    try {
+      slOrder = await placeAlgoOrderWithCredentials(credentials, {
+        symbol,
+        side: slSide,
+        type: 'STOP_MARKET',
+        triggerPrice: stopLoss,
+        closePosition: true,
+      });
+    } catch (err) {
+      console.error('[UserBinance] SL order failed:', err.message);
+    }
   }
 
   return { order, slOrder, tp1Order: null, tp2Order: null, leverage: currentLeverage, qty: orderQty };
@@ -481,6 +543,59 @@ function mergeStoredCredentials() {
   if (stored.live?.apiKey && stored.live?.apiSecret) runtimeState.live = stored.live;
   if (stored.tradingMode) runtimeState.tradingMode = stored.tradingMode;
   if (stored.updatedAt) runtimeState.updatedAt = stored.updatedAt;
+}
+
+/** Sum Binance futures realized PnL for a symbol since open time (income API, userTrades fallback). */
+export async function getRealizedPnlSince(symbol, sinceMs, userId = null) {
+  const credentials = await getActiveApiKeys(userId);
+  if (!credentials) return null;
+
+  const sym = String(symbol).toUpperCase();
+  const startTime = sinceMs ? Math.floor(sinceMs) : undefined;
+
+  try {
+    const params = { symbol: sym, incomeType: 'REALIZED_PNL', limit: 100 };
+    if (startTime) params.startTime = startTime;
+    const rows = await signedRequest(credentials, 'GET', '/fapi/v1/income', params);
+    if (Array.isArray(rows)) {
+      const total = rows.reduce((sum, row) => sum + parseFloat(row.income || 0), 0);
+      return {
+        total: parseFloat(total.toFixed(8)),
+        source: 'income',
+        rows: rows.map((r) => ({
+          income: parseFloat(r.income),
+          asset: r.asset,
+          time: r.time,
+          tranId: r.tranId,
+        })),
+      };
+    }
+  } catch {
+    /* demo-fapi income can fail with RSA accounts — fall through */
+  }
+
+  try {
+    const params = { symbol: sym, limit: 1000 };
+    if (startTime) params.startTime = startTime;
+    const trades = await signedRequest(credentials, 'GET', '/fapi/v1/userTrades', params);
+    if (Array.isArray(trades)) {
+      const total = trades.reduce((sum, row) => sum + parseFloat(row.realizedPnl || 0), 0);
+      return {
+        total: parseFloat(total.toFixed(8)),
+        source: 'userTrades',
+        rows: trades.map((r) => ({
+          income: parseFloat(r.realizedPnl || 0),
+          asset: 'USDT',
+          time: r.time,
+          tranId: r.id,
+        })),
+      };
+    }
+  } catch (err) {
+    return { error: err.message, total: null, rows: [] };
+  }
+
+  return { error: 'No PnL data', total: null, rows: [] };
 }
 
 export async function initUserBinance() {

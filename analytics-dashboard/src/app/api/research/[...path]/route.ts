@@ -1,11 +1,22 @@
 import { NextRequest, NextResponse } from "next/server";
 
 const RESEARCH_API = (process.env.RESEARCH_API_URL || "http://research-api:8100").replace(/\/$/, "");
+const TRADING_API = (process.env.TRADING_API_URL || "http://127.0.0.1:3002").replace(/\/$/, "");
+
+async function proxyTo(url: string, req: NextRequest, init: RequestInit) {
+  const res = await fetch(url, init);
+  const body = await res.text();
+  return new NextResponse(body, {
+    status: res.status,
+    headers: { "Content-Type": res.headers.get("content-type") || "application/json" },
+  });
+}
 
 async function proxy(req: NextRequest, pathSegments: string[]) {
   const path = pathSegments.join("/");
   const search = req.nextUrl.search;
   const target = `${RESEARCH_API}/${path}${search}`;
+  const fallback = `${TRADING_API}/api/research/${path}${search}`;
 
   const headers: Record<string, string> = {
     "Content-Type": req.headers.get("content-type") || "application/json",
@@ -24,14 +35,23 @@ async function proxy(req: NextRequest, pathSegments: string[]) {
 
   try {
     const res = await fetch(target, init);
-    const body = await res.text();
-    return new NextResponse(body, {
-      status: res.status,
-      headers: { "Content-Type": res.headers.get("content-type") || "application/json" },
-    });
+    if (res.ok || res.status === 409) {
+      const body = await res.text();
+      return new NextResponse(body, {
+        status: res.status,
+        headers: { "Content-Type": res.headers.get("content-type") || "application/json" },
+      });
+    }
+    console.warn(`[research proxy] ${target} → ${res.status}, trying trading API fallback`);
+  } catch (err) {
+    console.warn(`[research proxy] ${target} failed:`, err instanceof Error ? err.message : err);
+  }
+
+  try {
+    return await proxyTo(fallback, req, init);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Proxy request failed";
-    return NextResponse.json({ error: message, target }, { status: 502 });
+    return NextResponse.json({ error: message, target, fallback }, { status: 502 });
   }
 }
 

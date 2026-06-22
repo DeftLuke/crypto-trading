@@ -36,9 +36,9 @@ async function requestTrading(path, timeoutMs = DASHBOARD_TIMEOUT_MS) {
 
 export async function fetchControlDashboard() {
   try {
-    return await request('GET', '/control/dashboard', undefined, DASHBOARD_TIMEOUT_MS);
+    return await requestTrading('/control/dashboard', DASHBOARD_TIMEOUT_MS);
   } catch {
-    return requestTrading('/control/dashboard', DASHBOARD_TIMEOUT_MS);
+    return request('GET', '/control/dashboard', undefined, DASHBOARD_TIMEOUT_MS);
   }
 }
 
@@ -48,4 +48,8 @@ export async function fetchControlSettings() {
 
 export async function updateControlSettings(updates) {
   return request('POST', '/control/settings', { ...updates, actor: 'dashboard' });
+}
+
+export async function fetchMarketDataProgress() {
+  return request('GET', '/market-data/jobs/progress', undefined, 8000);
 }

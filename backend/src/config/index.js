@@ -10,6 +10,10 @@ export const config = {
   publicApiUrl: PUBLIC_API,
   researchApiUrl: process.env.RESEARCH_API_URL || '',
 
+  redis: {
+    url: process.env.REDIS_URL || '',
+  },
+
   supabase: {
     url: process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL,
     serviceKey: process.env.SUPABASE_SERVICE_KEY,
@@ -49,11 +53,20 @@ export const config = {
     defaultLeverage: parseInt(process.env.TELEGRAM_DEFAULT_LEVERAGE || '50', 10),
     defaultMarginPct: parseFloat(process.env.TELEGRAM_DEFAULT_MARGIN_PCT || '0.01'),
     defaultPositionUsdt: parseFloat(process.env.TELEGRAM_DEFAULT_POSITION_USDT || '50'),
+    /** Comma-separated Telegram user IDs allowed to chat (defaults to owner TELEGRAM_CHAT_ID). */
+    allowedUsers: (process.env.TELEGRAM_ALLOWED_USERS || '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean),
+    tasksEnabled: process.env.TELEGRAM_TASKS_ENABLED !== 'false',
+    assistantEnabled: process.env.TELEGRAM_ASSISTANT_ENABLED !== 'false',
+    assistantRestricted: process.env.TELEGRAM_ASSISTANT_RESTRICTED !== 'false',
   },
 
   externalSignals: {
     ingestionKey: process.env.EXTERNAL_SIGNAL_INGESTION_KEY || '',
     minValidationScore: parseInt(process.env.EXTERNAL_SIGNAL_MIN_VALIDATION_SCORE || '60', 10),
+    telegramMinValidationScore: parseInt(process.env.TELEGRAM_MIN_VALIDATION_SCORE || '50', 10),
     maxSignalAgeMinutes: parseInt(process.env.EXTERNAL_SIGNAL_MAX_AGE_MINUTES || '15', 10),
     testMode: process.env.TG_TEST_MODE === 'true',
   },
@@ -71,6 +84,14 @@ export const config = {
     publicUrl: PUBLIC_AI,
     apiKey: process.env.AI_API_KEY || '',
     visionModel: process.env.AI_VISION_MODEL || 'llava:7b',
+  },
+
+  /** OpenClaw gateway — primary text LLM for assistant + strategy chat (no vision). */
+  openclaw: {
+    url: process.env.OPENCLAW_GATEWAY_URL || 'http://host.docker.internal:18789',
+    token: process.env.OPENCLAW_GATEWAY_TOKEN || '',
+    model: process.env.OPENCLAW_MODEL || 'openclaw/default',
+    enabled: process.env.OPENCLAW_ENABLED !== 'false',
   },
 
   n8n: {
@@ -138,6 +159,26 @@ export const config = {
     volatilityThreshold: parseFloat(process.env.VOLATILITY_THRESHOLD || '0.30'),
     entryTimeframe: process.env.DEFAULT_ENTRY_TIMEFRAME || '5m',
     scanIntervalMs: parseInt(process.env.SCAN_INTERVAL_MS || '60000', 10),
+    backtestGateMinScore: parseInt(process.env.BACKTEST_GATE_MIN_SCORE || '55', 10),
+    backtestGateMinWinRate: parseInt(process.env.BACKTEST_GATE_MIN_WIN_RATE || '45', 10),
+    backtestGateMinDays: parseInt(process.env.BACKTEST_GATE_MIN_DAYS || '300', 10),
+    backtestGateStrict: process.env.BACKTEST_GATE_STRICT === 'true',
+  },
+
+  /** Institutional SMC v2 — Python engine via research-api (CP0+) */
+  institutionalSmc: {
+    enabled: process.env.INSTITUTIONAL_SMC_ENABLED === 'true',
+    engineVersion: process.env.SMC_ENGINE_VERSION || 'v2',
+    minScore: parseInt(process.env.INSTITUTIONAL_SMC_MIN_SCORE || '80', 10),
+    researchApiUrl: process.env.RESEARCH_API_URL || '',
+    rejectOnEngineOffline: process.env.INSTITUTIONAL_SMC_REJECT_OFFLINE !== 'false',
+    batchSize: parseInt(process.env.INSTITUTIONAL_SMC_BATCH_SIZE || '25', 10),
+    timeframes: {
+      trend: process.env.INSTITUTIONAL_SMC_TF_TREND || '1d',
+      bias: process.env.INSTITUTIONAL_SMC_TF_BIAS || '4h',
+      setup: process.env.INSTITUTIONAL_SMC_TF_SETUP || '1h',
+      entry: process.env.INSTITUTIONAL_SMC_TF_ENTRY || '15m',
+    },
   },
 
   topPairs: [
@@ -161,5 +202,11 @@ export const config = {
     password: process.env.FREQTRADE_API_PASSWORD || '',
     enabled: process.env.FREQTRADE_ENABLED !== 'false',
     configPath: process.env.FREQTRADE_CONFIG_PATH || '',
+  },
+
+  tradeSafety: {
+    intervalMs: parseInt(process.env.TRADE_SAFETY_INTERVAL_MS || '30000', 10),
+    recoveryEnabled: process.env.TRADE_SAFETY_RECOVERY !== 'false',
+    emergencyCloseOnFailure: process.env.TRADE_SAFETY_EMERGENCY_CLOSE !== 'false',
   },
 };

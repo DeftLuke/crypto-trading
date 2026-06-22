@@ -119,6 +119,52 @@ ${data.hitTp1 ? 'Would have hit TP1.' : data.hitSl ? 'Would have hit SL.' : 'No 
 Confidence was ${signal.confidence}%. ${outcome === 'win' ? 'Setup validated — consider taking similar setups.' : 'Review OB retest quality before similar entries.'}`;
 }
 
+export async function generateClosedTradeLesson(trade, signal, closeFactors) {
+  const systemPrompt = `You are an SMC crypto trading analyst. Write a concise post-trade review (4-6 bullet points) explaining why this trade won or lost.
+Cover: market structure (TP hits, SL management), timing (signal-to-fill latency, hold time), slippage/stale entry if relevant, and one actionable rule for the strategy loop.`;
+
+  const prompt = `Closed Trade:
+- Symbol: ${trade.symbol}
+- Direction: ${trade.direction}
+- Entry: ${trade.entry_price} → Exit: ${trade.exit_price}
+- PnL: ${parseFloat(trade.pnl || 0).toFixed(2)} USDT
+- R-multiple: ${trade.r_multiple ?? 'N/A'}
+- Close reason: ${closeFactors.close_reason}
+- Outcome: ${closeFactors.outcome}
+
+Close factors:
+- TP1 hit: ${closeFactors.market_structure.tp1_hit}
+- TP2 hit: ${closeFactors.market_structure.tp2_hit}
+- SL breakeven: ${closeFactors.market_structure.sl_breakeven}
+- Signal→fill latency: ${closeFactors.timing.signal_to_fill_ms ?? 'N/A'} ms
+- Hold duration: ${closeFactors.timing.hold_duration_ms ?? 'N/A'} ms
+- Entry slippage: ${closeFactors.slippage.entry_drift_pct}%
+- Stale/adapted entry: ${closeFactors.stale_entry}
+- Validation score: ${closeFactors.validation_score ?? 'N/A'}
+
+${signal ? `Original signal confidence: ${signal.confidence}%, MTF: ${JSON.stringify(signal.mtf_status || {})}` : 'No linked signal row.'}
+
+Write the lesson:`;
+
+  try {
+    const { text: lessonText, model: usedModel } = await ollamaGenerate(prompt, systemPrompt);
+    const embedding = await ollamaEmbed(lessonText);
+    return { lesson_text: lessonText, embedding, ai_model: usedModel };
+  } catch (err) {
+    console.error('[Ollama] Closed trade lesson failed:', err.message);
+    const fallback = buildClosedTradeFallback(trade, closeFactors);
+    return { lesson_text: fallback, embedding: null, ai_model: 'fallback' };
+  }
+}
+
+function buildClosedTradeFallback(trade, closeFactors) {
+  return `Closed ${trade.symbol} ${trade.direction}: ${closeFactors.outcome.toUpperCase()} (${closeFactors.close_reason}).
+PnL ${parseFloat(trade.pnl || 0).toFixed(2)} USDT, R=${trade.r_multiple ?? 'N/A'}.
+TP1 ${closeFactors.market_structure.tp1_hit ? 'hit' : 'missed'}, TP2 ${closeFactors.market_structure.tp2_hit ? 'hit' : 'missed'}.
+${closeFactors.stale_entry ? 'Entry was stale or adapted — tighten freshness gate.' : 'Entry timing acceptable.'}
+${closeFactors.outcome === 'win' ? 'Repeat similar structure when validation score is high.' : 'Review MTF alignment and OB quality before re-entry.'}`;
+}
+
 export async function checkOllamaHealth() {
   try {
     const res = await fetch(ollamaUrl('/api/tags'), {

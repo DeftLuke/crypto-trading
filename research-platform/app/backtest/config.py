@@ -11,6 +11,7 @@ class BacktestMode(str, Enum):
     PORTFOLIO = "portfolio"
     WALKFORWARD = "walkforward"
     MONTE_CARLO = "monte_carlo"
+    E5 = "e5"
 
 
 class ExitMode(str, Enum):

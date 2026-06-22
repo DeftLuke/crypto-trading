@@ -19,7 +19,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { tradingApi } from "@/services/api";
 import { cn } from "@/lib/utils";
-import { getPipelineStage, stageBadgeVariant } from "@/lib/pipelineStage";
+import { getPipelineStage, pipelineProgress, stageBadgeVariant } from "@/lib/pipelineStage";
 import { useNotificationStore } from "@/store/notificationStore";
 import { toast } from "sonner";
 
@@ -58,6 +58,13 @@ export type InboxMessage = {
     ai_analysis?: { side?: string; confidence?: number; reason?: string; source?: string };
     pipeline_stage?: string;
     live?: boolean;
+    scrape?: boolean;
+    levels_adapted?: boolean;
+    adapt_mark_price?: number;
+    auto_executed?: boolean;
+    auto_skip_reason?: string;
+    trade_id?: string;
+    protection?: { ok?: boolean; verify?: { slCount?: number; tpCount?: number; positionQty?: number } };
     validation?: { score?: number; checks?: Array<{ rule: string; passed: boolean; message: string }> };
     signal?: { symbol?: string; side?: string; entry?: number; stop_loss?: number; tp1?: number; tp2?: number };
     execution?: { success?: boolean; error?: string };
@@ -74,8 +81,12 @@ type InboxStats = {
   validated: number;
   rejected: number;
   stale: number;
+  executing?: number;
+  executed?: number;
+  failed?: number;
   approved?: number;
   needs_revalidation?: number;
+  live_signals?: number;
 };
 
 function formatTime(value?: string) {
@@ -98,24 +109,24 @@ function ageLabel(value?: string) {
   return `${Math.round(hrs / 24)}d ago`;
 }
 
-type Filter = "signals" | "approved";
+type Filter = "all" | "validated" | "executed" | "failed" | "stale";
 
 type FollowedSource = { id: string; title?: string; telegram_chat_id: number; is_followed?: boolean };
 
 export function TelegramInbox({ onScrapeQueued }: { onScrapeQueued?: () => void }) {
   const qc = useQueryClient();
-  const [filter, setFilter] = useState<Filter>("signals");
+  const [filter, setFilter] = useState<Filter>("all");
   const [groupChatId, setGroupChatId] = useState<number | "all">("all");
   const [search, setSearch] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [customSizes, setCustomSizes] = useState<Record<string, string>>({});
 
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["telegramInbox", filter, groupChatId],
+    queryKey: ["telegramInbox", groupChatId],
     queryFn: () =>
       tradingApi.telegramInbox(
-        200,
-        filter === "signals" ? "parsed" : "parsed",
+        500,
+        "all",
         groupChatId === "all" ? undefined : groupChatId
       ),
     refetchInterval: 10_000,
@@ -133,6 +144,8 @@ export function TelegramInbox({ onScrapeQueued }: { onScrapeQueued?: () => void 
   });
 
   const liveListener = data?.live_listener !== false;
+  const control = data?.control as { auto_trading?: boolean; manual_approval?: boolean; mode?: string } | undefined;
+  const lastLiveAt = data?.last_live_at as string | undefined;
 
   const followedGroups = (data?.followed_sources || []) as FollowedSource[];
 
@@ -235,8 +248,24 @@ export function TelegramInbox({ onScrapeQueued }: { onScrapeQueued?: () => void 
   const testMode = Boolean(data?.test_mode);
 
   const filtered = useMemo(() => {
-    let rows = [...messages];
-    if (filter === "approved") rows = rows.filter((m) => m.api_result?.approved || m.api_result?.executed);
+    let rows = messages.filter((m) => m.parse_status === "parsed");
+    if (filter === "validated") {
+      rows = rows.filter((m) => m.api_result?.passed || m.api_result?.ready_to_approve);
+    } else if (filter === "executed") {
+      rows = rows.filter((m) => m.api_result?.executed);
+    } else if (filter === "failed") {
+      rows = rows.filter(
+        (m) =>
+          !m.api_result?.executed
+          && (Boolean(m.api_result?.last_error)
+            || m.api_result?.pipeline_stage === "approve_failed"
+            || m.api_result?.pipeline_stage === "rejected")
+      );
+    } else if (filter === "stale") {
+      rows = rows.filter(
+        (m) => m.api_result?.stale || m.api_result?.pipeline_stage === "stale"
+      );
+    }
     const q = search.trim().toLowerCase();
     if (!q) return rows;
     return rows.filter((m) => {
@@ -263,8 +292,19 @@ export function TelegramInbox({ onScrapeQueued }: { onScrapeQueued?: () => void 
     <div className="space-y-4">
       {liveListener && (
         <div className="rounded-lg border border-blue-900/40 bg-blue-950/20 px-4 py-2 text-xs text-blue-200">
-          <span className="font-medium">Live monitoring ON</span> — new VIP messages save to the database automatically.
-          This list reads from the database (latest signal per group). Use one-time sync only if you need to backfill.
+          <span className="font-medium">Live listener ON</span>
+          {lastLiveAt ? ` — last live signal ${ageLabel(lastLiveAt)}` : " — waiting for next VIP message"}
+          {control?.auto_trading && !control?.manual_approval ? (
+            <span className="ml-2 text-emerald-300">· Auto-trade active</span>
+          ) : control?.manual_approval ? (
+            <span className="ml-2 text-amber-300">· Manual approval required</span>
+          ) : null}
+        </div>
+      )}
+
+      {control && !control.auto_trading && (
+        <div className="rounded-lg border border-amber-900/50 bg-amber-950/30 px-4 py-2 text-xs text-amber-200">
+          Auto-trade is OFF in Control Center — signals validate but won&apos;t open until you enable Auto Trade or click Approve.
         </div>
       )}
 
@@ -274,28 +314,30 @@ export function TelegramInbox({ onScrapeQueued }: { onScrapeQueued?: () => void 
         </div>
       ) : (
         <div className="rounded-lg border border-emerald-900/40 bg-emerald-950/20 px-4 py-2 text-xs text-emerald-200">
-          Auto mode — trades size at <strong>1% account risk</strong> from entry vs stop loss. Custom $ overrides notional. Auto-trade ON in Control Center.
+          Auto mode — trades size at <strong>1% account risk</strong> (30/40/30 protection at open). Custom $ overrides notional.
         </div>
       )}
 
-      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
-        <StatPill label="Signals" value={stats.parsed ?? 0} tone="emerald" />
-        <StatPill label="Ready" value={stats.validated ?? 0} tone="emerald" />
-        <StatPill label="Pending" value={stats.needs_revalidation ?? 0} tone={stats.needs_revalidation ? "warning" : undefined} />
-        <StatPill label="Approved" value={stats.approved ?? 0} />
-        <StatPill label="Groups" value={data?.followed_count ?? 0} />
-        <StatPill label="Skipped" value={stats.skipped ?? 0} />
-        <StatPill label="Default size" value={defaultNotional ? `~$${Math.round(defaultNotional)}` : riskLabel} />
-      </div>
-
       <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex flex-wrap gap-2">
-          <Button size="sm" variant={filter === "signals" ? "default" : "secondary"} onClick={() => setFilter("signals")}>
-            Signal list
-          </Button>
-          <Button size="sm" variant={filter === "approved" ? "default" : "secondary"} onClick={() => setFilter("approved")}>
-            Approved
-          </Button>
+          {(
+            [
+              ["all", "All signals", stats.parsed ?? 0],
+              ["validated", "Validated", stats.validated ?? 0],
+              ["executed", "Opened", stats.executed ?? 0],
+              ["failed", "Failed", stats.failed ?? 0],
+              ["stale", "Stale", stats.stale ?? 0],
+            ] as const
+          ).map(([key, label, count]) => (
+            <Button
+              key={key}
+              size="sm"
+              variant={filter === key ? "default" : "secondary"}
+              onClick={() => setFilter(key)}
+            >
+              {label} ({count})
+            </Button>
+          ))}
         </div>
         <div className="flex flex-wrap gap-2">
           <Button size="sm" variant="secondary" onClick={() => refetch()}>
@@ -371,12 +413,6 @@ export function TelegramInbox({ onScrapeQueued }: { onScrapeQueued?: () => void 
         </div>
       )}
 
-      {scrapeMutation.isSuccess && !isScraping && (
-        <p className="text-xs text-emerald-400">
-          {(scrapeMutation.data as { message?: string })?.message || "Scrape complete"}
-        </p>
-      )}
-
       {error && (
         <div className="flex items-center gap-2 rounded-lg border border-red-900/50 bg-red-950/30 p-3 text-sm text-red-300">
           <AlertCircle className="h-4 w-4" />
@@ -397,10 +433,11 @@ export function TelegramInbox({ onScrapeQueued }: { onScrapeQueued?: () => void 
       <Card className="overflow-hidden">
         <CardHeader className="border-b border-zinc-800 bg-zinc-950/80 py-3">
           <CardTitle className="text-sm font-medium text-zinc-300">
-            {groupChatId === "all" ? "All groups — recent signals" : "Group inbox — recent signals"}
+            {groupChatId === "all" ? "All groups" : "Group"} — {filtered.length} signal{filtered.length === 1 ? "" : "s"}
+            {filter !== "all" ? ` (${filter})` : ""}
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-0">
+        <CardContent className="max-h-[min(560px,60vh)] overflow-y-auto p-0">
           {isLoading ? (
             <div className="space-y-2 p-4">
               {[1, 2, 3].map((i) => (
@@ -410,9 +447,11 @@ export function TelegramInbox({ onScrapeQueued }: { onScrapeQueued?: () => void 
           ) : filtered.length === 0 ? (
             <div className="p-10 text-center">
               <Inbox className="mx-auto mb-3 h-10 w-10 text-zinc-700" />
-              <p className="text-sm text-zinc-400">No signals yet</p>
+              <p className="text-sm text-zinc-400">No signals in this view</p>
               <p className="mt-1 text-xs text-zinc-600">
-                Follow groups on the Groups tab — new messages appear here automatically from the database
+                {messages.length === 0
+                  ? "Follow groups on the Groups tab — new VIP messages appear here automatically"
+                  : "Try “All signals” or run a one-time sync"}
               </p>
             </div>
           ) : (
@@ -438,6 +477,17 @@ export function TelegramInbox({ onScrapeQueued }: { onScrapeQueued?: () => void 
           )}
         </CardContent>
       </Card>
+
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-8">
+        <StatPill label="Signals" value={stats.parsed ?? 0} tone="emerald" />
+        <StatPill label="Validated" value={stats.validated ?? 0} tone="emerald" />
+        <StatPill label="Executing" value={stats.executing ?? 0} tone={stats.executing ? "warning" : undefined} />
+        <StatPill label="Opened" value={stats.executed ?? 0} tone="emerald" />
+        <StatPill label="Failed" value={stats.failed ?? 0} tone={stats.failed ? "danger" : undefined} />
+        <StatPill label="Stale" value={stats.stale ?? 0} tone={stats.stale ? "warning" : undefined} />
+        <StatPill label="Groups" value={data?.followed_count ?? 0} />
+        <StatPill label="Live" value={stats.live_signals ?? 0} />
+      </div>
     </div>
   );
 }
@@ -510,7 +560,11 @@ function InboxRow({
           <p className="mt-1 text-[10px] text-zinc-600">
             {formatTime(message.message_date || message.received_at)} · {ageLabel(message.message_date || message.received_at)}
             {sig.parser ? ` · ${sig.parser}` : ""}
+            {result.live ? " · live" : result.scrape ? " · sync" : ""}
           </p>
+          {pipeline.detail && (
+            <p className="mt-0.5 text-[10px] text-zinc-500">{pipeline.detail}</p>
+          )}
         </button>
 
         <div className="flex flex-wrap items-center gap-2 lg:justify-end">
@@ -586,6 +640,18 @@ function InboxRow({
 
       {expanded && (
         <div className="border-t border-zinc-800/80 bg-zinc-950 px-4 py-3 text-xs">
+          <PipelineTimeline stage={pipeline.stage} progress={pipelineProgress(pipeline.stage)} />
+          {result.last_error && !executed && (
+            <p className="mb-2 rounded border border-red-900/40 bg-red-950/30 px-2 py-1.5 text-red-300">
+              {String(result.last_error)}
+            </p>
+          )}
+          {result.levels_adapted && (
+            <p className="mb-2 text-emerald-400/90">
+              Levels adapted to market
+              {result.adapt_mark_price != null ? ` @ $${Number(result.adapt_mark_price).toFixed(5)}` : ""}
+            </p>
+          )}
           <p className="mb-2 whitespace-pre-wrap text-zinc-400">{message.raw_message}</p>
           {result.ai_analysis && (
             <div className="mt-2 rounded border border-amber-900/40 bg-amber-950/20 p-2 text-amber-100">
@@ -616,8 +682,37 @@ function InboxRow({
             </div>
           )}
           {result.reason && <p className="mt-2 text-zinc-600">Reason: {result.reason}</p>}
+          {result.executed && result.trade_id && (
+            <p className="mt-2 text-emerald-400/90">
+              Trade opened · ID <code>{result.trade_id}</code>
+              {result.protection?.ok ? " · 30/40/30 protection verified on Binance" : result.protection ? " · protection pending verify" : ""}
+            </p>
+          )}
         </div>
       )}
+    </div>
+  );
+}
+
+function PipelineTimeline({ stage, progress }: { stage: string; progress: number }) {
+  const steps = ["Received", "Parsed", "Validated", "Trade", "Opened"];
+  const failed = progress < 0;
+  return (
+    <div className="mb-3">
+      <div className="mb-1 flex justify-between text-[10px] text-zinc-500">
+        {steps.map((s) => (
+          <span key={s}>{s}</span>
+        ))}
+      </div>
+      <div className="h-1.5 overflow-hidden rounded-full bg-zinc-800">
+        <div
+          className={cn(
+            "h-full transition-all",
+            failed ? "bg-red-500 w-full" : stage === "executed" ? "bg-emerald-500" : "bg-blue-500"
+          )}
+          style={{ width: failed ? "100%" : `${Math.max(progress, 8)}%` }}
+        />
+      </div>
     </div>
   );
 }

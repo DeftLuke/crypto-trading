@@ -1,8 +1,25 @@
 import { config } from '../config/index.js';
-import { generateSignal } from '../strategy/signalEngine.js';
 import { getPairStats, logEvent, saveSignal } from './supabase.js';
+import { scheduleSignalOutcomeCheck } from '../jobs/signalOutcomeTracker.js';
+import { validateAgainstLessons } from './signalGuard.js';
+import { buildLineage, applyLineageToSignal, resolveStrategyName } from './signalLineage.js';
+import { validateBacktestGate, applyBacktestGateToScore, isBacktestGateStrict } from './strategyGate.js';
+import {
+  enrichTelegramSignalWithSmc,
+  isTelegramExternalSignal,
+  needsSmcEnrichment,
+  stripGroupRiskHints,
+  telegramMinValidationScore,
+} from './telegramSignalEnrichment.js';
+import { isSymbolTradable } from './tradeExecutionGate.js';
 
-async function generateSignalSafe(external) {
+async function generateSignalSafe(external, options = {}) {
+  const isTelegram = options.telegram || isTelegramExternalSignal(external);
+  if (isTelegram) {
+    const { generateSignal: institutionalGenerate } = await import('../strategies/institutional-smc/index.js');
+    return institutionalGenerate(external.symbol);
+  }
+  const { generateSignal } = await import('../strategy/signalEngine.js');
   try {
     return await generateSignal(external.symbol);
   } catch (err) {
@@ -139,15 +156,48 @@ export async function ingestExternalSignal(payload = {}, options = {}) {
   const testMode = options.testMode === true || config.externalSignals.testMode === true;
   const skipScoreGate = options.skipScoreGate === true || testMode;
 
-  const external = normalizeExternalPayload(payload);
+  let external = normalizeExternalPayload(payload);
+  const isTelegram = isTelegramExternalSignal(external) || options.telegram === true;
+  let working = { ...external, raw_message: stripGroupRiskHints(external.raw_message) };
+
+  if (isTelegram && (needsSmcEnrichment(working) || !validateShape(working).passed)) {
+    working = await enrichTelegramSignalWithSmc(working, payload);
+  }
+
+  external = working;
   const shape = validateShape(external);
   if (!shape.passed) {
     await logEvent('warn', 'externalSignalIngestion', 'External signal rejected by shape validation', {
-      provider: external.provider,
-      symbol: external.symbol,
+      provider: working.provider,
+      symbol: working.symbol,
       checks: shape.checks,
+      enrichment: working.enrichment,
     });
-    return { accepted: false, passed: false, reason: 'shape_validation_failed', checks: shape.checks, signal: external };
+    return {
+      accepted: false,
+      passed: false,
+      reason: 'shape_validation_failed',
+      checks: shape.checks,
+      signal: working,
+      enrichment: working.enrichment,
+    };
+  }
+
+  if (isTelegram && external.symbol) {
+    const symCheck = await isSymbolTradable(external.symbol);
+    if (!symCheck.ok) {
+      await logEvent('warn', 'externalSignalIngestion', 'Telegram symbol not tradable on exchange', {
+        symbol: external.symbol,
+        reason: symCheck.reason,
+      });
+      return {
+        accepted: false,
+        passed: false,
+        reason: 'symbol_not_tradable',
+        checks: { symbol: symCheck.reason },
+        signal: external,
+      };
+    }
   }
 
   const freshness = validateFreshness(external.timestamp);
@@ -167,13 +217,52 @@ export async function ingestExternalSignal(payload = {}, options = {}) {
     };
   }
 
-  const generated = await generateSignalSafe(external);
+  const generated = await generateSignalSafe(external, { telegram: isTelegram });
   const { data: pairStats } = await getPairStats();
   const historical = scoreHistoricalPerformance(pairStats, external.symbol);
   const aiConfidence = external.external_confidence ?? null;
-  const validationScore = scoreTelegramValidation(generated, external, historical, aiConfidence);
-  const minScore = config.externalSignals.minValidationScore;
-  const scorePassed = skipScoreGate || validationScore >= minScore;
+  let validationScore;
+  if (isTelegram) {
+    const instScore = external.metadata?.institutional_score
+      ?? external.metadata?.smc_confidence
+      ?? generated.confidence
+      ?? 0;
+    validationScore = Math.round(instScore);
+    if (external.metadata?.direction_aligned === false) {
+      validationScore = 0;
+    } else if (generated.direction !== 'IGNORE' && external.direction && generated.direction !== external.direction) {
+      validationScore = Math.max(0, validationScore - 40);
+    }
+    if (generated.reasons?.volatility?.status === 'fail') {
+      validationScore = Math.max(0, validationScore - 10);
+    }
+  } else {
+    validationScore = scoreTelegramValidation(generated, external, historical, aiConfidence);
+  }
+
+  const strategyName = resolveStrategyName(payload, options);
+  const lessonCheck = await validateAgainstLessons({
+    symbol: external.symbol,
+    direction: external.direction,
+    mtf_status: generated.mtf_status || {},
+  });
+  if (lessonCheck.penalty && !isTelegram) {
+    validationScore = Math.max(0, validationScore - lessonCheck.penalty);
+  } else if (lessonCheck.penalty && isTelegram) {
+    validationScore = Math.max(0, validationScore - Math.min(lessonCheck.penalty, 10));
+  }
+
+  let gateResult;
+  if (isTelegram) {
+    gateResult = { passed: true, reason: 'Telegram VIP — backtest gate advisory only', advisory: true };
+  } else {
+    gateResult = await validateBacktestGate(strategyName);
+    validationScore = applyBacktestGateToScore(validationScore, gateResult);
+  }
+
+  const minScore = isTelegram ? telegramMinValidationScore() : config.externalSignals.minValidationScore;
+  const gateBlocks = !isTelegram && isBacktestGateStrict() && !gateResult.passed;
+  const scorePassed = !gateBlocks && (skipScoreGate || validationScore >= minScore);
 
   const signalTime = new Date(external.timestamp);
   const maxAgeMinutes = config.externalSignals.maxSignalAgeMinutes || 15;
@@ -195,12 +284,36 @@ export async function ingestExternalSignal(payload = {}, options = {}) {
         passed: scorePassed,
         message: skipScoreGate ? `Test mode — score ${validationScore} (gate skipped)` : `Score ${validationScore}/${minScore}`,
       },
+      {
+        rule: 'institutional_smc',
+        passed: external.metadata?.smc_engine === 'institutional-smc-v2' && external.metadata?.direction_aligned !== false,
+        message: external.metadata?.institutional_explanation
+          || `Institutional SMC v2 score ${validationScore}`,
+      },
       { rule: 'volatility', passed: generated.reasons?.volatility?.status !== 'fail', message: generated.reasons?.volatility?.detail || 'Volatility check' },
       { rule: 'ema_gate', passed: true, message: 'Skipped for Telegram VIP signal' },
       { rule: 'rsi_gate', passed: true, message: 'Skipped for Telegram VIP signal' },
       { rule: 'ob_gate', passed: true, message: 'Skipped for Telegram VIP signal' },
+      {
+        rule: 'lesson_patterns',
+        passed: lessonCheck.allowed !== false,
+        message: lessonCheck.allowed === false ? lessonCheck.reason : `Pattern penalty ${lessonCheck.penalty || 0}`,
+      },
+      {
+        rule: 'backtest_gate',
+        passed: gateResult.passed,
+        message: gateResult.passed ? `Backtest gate OK (${gateResult.reason})` : gateResult.reason,
+        gate: gateResult,
+      },
     ],
     historical,
+    institutional: {
+      engine: external.metadata?.smc_engine || 'institutional-smc-v2',
+      score: external.metadata?.institutional_score ?? generated.confidence,
+      direction_aligned: external.metadata?.direction_aligned,
+      setup_direction: generated.direction,
+      requested_direction: external.direction,
+    },
   };
 
   const tradePassed = scorePassed && freshnessOk;
@@ -215,7 +328,7 @@ export async function ingestExternalSignal(payload = {}, options = {}) {
       test_mode: testMode,
       ready_to_approve: tradePassed,
       signal: {
-        symbol: external.symbol,
+        symbol: working.symbol,
         direction: external.direction,
         side: external.side,
         entry: external.entry_price,
@@ -241,9 +354,9 @@ export async function ingestExternalSignal(payload = {}, options = {}) {
     };
   }
 
-  const signal = {
+  const lineage = buildLineage(payload, { ...options, validationScore, strategyName, sourceGroup: payload.metadata?.group || payload.metadata?.source_title });
+  const signal = applyLineageToSignal({
     id: payload.id || payload.signal_id,
-    source: 'telegram',
     symbol: external.symbol,
     direction: external.direction,
     confidence: validationScore,
@@ -253,7 +366,7 @@ export async function ingestExternalSignal(payload = {}, options = {}) {
     tp2: external.tp2,
     tp3: external.tp3,
     timeframe_entry: generated.timeframe_entry || '5m',
-    strategy_name: 'telegram-vip-smc-validation',
+    strategy_name: strategyName,
     status: scorePassed ? 'pending' : 'rejected',
     expires_at: expiresAt,
     reasons: {
@@ -281,18 +394,24 @@ export async function ingestExternalSignal(payload = {}, options = {}) {
         signal_age_minutes: freshness.ageMinutes,
         historical,
         telegram_validation: true,
+        lesson_penalty: lessonCheck.penalty || 0,
+        backtest_gate: gateResult,
       },
     },
     mtf_status: generated.mtf_status || {},
-  };
+  }, lineage);
 
   const { data: savedSignal, error } = await saveSignal(signal);
   if (error) {
     await logEvent('error', 'externalSignalIngestion', `Failed to save external signal: ${error.message || error}`, {
       provider: external.provider,
-      symbol: external.symbol,
+      symbol: working.symbol,
     });
     return { accepted: false, passed: false, reason: 'save_failed', error, signal };
+  }
+
+  if (savedSignal?.id && scorePassed) {
+    scheduleSignalOutcomeCheck({ ...signal, id: savedSignal.id });
   }
 
   await logEvent(scorePassed ? 'info' : 'warn', 'externalSignalIngestion', `Telegram signal ${scorePassed ? 'passed' : 'rejected'} validation`, {

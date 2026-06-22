@@ -1,6 +1,7 @@
 import re
 
 from models.signal import NormalizedSignal
+from parser.informal_parser import parse_informal_signal
 from providers.config import ProviderConfig
 
 
@@ -21,6 +22,7 @@ COMPACT_SIGNAL_RE = re.compile(
     r"\b([A-Za-z][A-Za-z0-9]{1,11})\s+(long|short|buy|sell)\s+([0-9]+(?:\.[0-9]+)?)\b",
     re.IGNORECASE,
 )
+EMOJI_RE = re.compile(r"[📈📉🔼🔽⬇️⬆️]+")
 
 
 def _first_float(match: re.Match[str] | None) -> float | None:
@@ -99,10 +101,13 @@ def _try_compact_signal(cleaned: str, provider: ProviderConfig) -> NormalizedSig
 
 
 def parse_generic_signal(message: str, provider: ProviderConfig) -> NormalizedSignal | None:
-    cleaned = message.replace(",", "").replace(":", " ")
+    cleaned = EMOJI_RE.sub(" ", message.replace(",", "").replace(":", " "))
     compact = _try_compact_signal(cleaned, provider)
     if compact:
         return compact
+    informal = parse_informal_signal(message, provider)
+    if informal:
+        return informal
     symbol = _normalize_symbol(cleaned, provider.symbols_quote_asset)
     entry = _first_float(ENTRY_RE.search(cleaned))
     stop_loss = _first_float(SL_RE.search(cleaned))

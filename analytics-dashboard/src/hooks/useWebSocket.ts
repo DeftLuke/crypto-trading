@@ -64,14 +64,21 @@ export function useWebSocket(enabled = true) {
       const titles: Record<string, string> = {
         received: "Message received",
         parsing: "Parsing signal",
+        validating: "Validating signal",
         validated: "Signal validated",
-        ready: "Ready to approve",
+        ready: "Ready to trade",
+        executing: "Opening trade…",
         rejected: "Signal rejected",
-        executed: "Trade executed",
-        approve_failed: "Approve failed",
+        executed: "Trade opened",
+        approve_failed: "Trade failed",
+        stale: "Signal too old for auto-trade",
+        execution_blocked: "Execution blocked",
       };
       const title = titles[stage] || `Telegram: ${stage}`;
-      const message = symbol ? `${group} — ${symbol}` : group;
+      const reason = data.reason ? String(data.reason) : "";
+      const message = symbol
+        ? `${group} — ${symbol}${reason ? ` (${reason.slice(0, 80)})` : ""}`
+        : group;
       const dedupeKey = `telegram:${data.message_id || symbol}:${stage}`;
 
       if (isDismissed(dedupeKey)) return;
@@ -79,10 +86,11 @@ export function useWebSocket(enabled = true) {
       const added = addNotification({ type: "telegram", title, message, ts: now, dedupeKey });
       if (!added) return;
 
-      if (["validated", "ready", "executed", "rejected", "approve_failed"].includes(stage)) {
+      if (["validated", "ready", "executing", "executed", "rejected", "approve_failed", "stale", "execution_blocked"].includes(stage)) {
         const opts = { description: message, id: dedupeKey };
         if (stage === "executed") toast.success(title, opts);
-        else if (stage.includes("fail") || stage === "rejected") toast.error(title, opts);
+        else if (stage.includes("fail") || stage === "rejected" || stage === "execution_blocked") toast.error(title, opts);
+        else if (stage === "executing") toast.loading(title, opts);
         else toast.info(title, opts);
       }
     },
@@ -151,6 +159,14 @@ export function useWebSocket(enabled = true) {
 
           if (data.type === "trade_event") {
             handleTradeEvent(data);
+            return;
+          }
+
+          if (data.type === "account_update") {
+            qc.invalidateQueries({ queryKey: ["trades"] });
+            qc.invalidateQueries({ queryKey: ["openTrades"] });
+            qc.invalidateQueries({ queryKey: ["balance"] });
+            qc.invalidateQueries({ queryKey: ["topnavTradingDashboard"] });
             return;
           }
 

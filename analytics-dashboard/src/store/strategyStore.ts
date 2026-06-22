@@ -4,37 +4,15 @@ import type { BacktestMetrics, BacktestSummary, StrategyRanking } from "@/types"
 export interface StrategyRecord {
   id: string;
   name: string;
-  status: "draft" | "testing" | "validated" | "rejected" | "deployed";
+  // Status reflects the real strategy_catalog lifecycle from the backend.
+  status: "draft" | "candidate" | "testing" | "validated" | "rejected" | "production" | "deployed" | "archived";
+  engine?: string;
+  source?: string;
   rules?: string[];
   metrics?: BacktestMetrics;
   deployment?: string;
+  last_backtest_at?: string | null;
 }
-
-const DEFAULT_STRATEGIES: StrategyRecord[] = [
-  {
-    id: "smc-v2",
-    name: "SMC Liquidity Sweep v2",
-    status: "validated",
-    rules: ["Bearish BOS", "OB retest", "RSI > 70"],
-    metrics: { win_rate: 58, profit_factor: 2.1, sharpe_ratio: 1.8, max_drawdown_pct: 12.4 },
-    deployment: "paper",
-  },
-  {
-    id: "ema-align",
-    name: "EMA Alignment Scalper",
-    status: "testing",
-    rules: ["EMA 9/21 cross", "Volume spike"],
-    metrics: { win_rate: 52, profit_factor: 1.6, sharpe_ratio: 1.2, max_drawdown_pct: 18 },
-  },
-  {
-    id: "session-bias",
-    name: "London Session Bias",
-    status: "validated",
-    rules: ["London open", "Asian range break"],
-    metrics: { win_rate: 61, profit_factor: 2.4, sharpe_ratio: 2.0, max_drawdown_pct: 9.8 },
-    deployment: "live",
-  },
-];
 
 interface StrategyState {
   strategies: StrategyRecord[];
@@ -46,7 +24,7 @@ interface StrategyState {
 }
 
 export const useStrategyStore = create<StrategyState>((set) => ({
-  strategies: DEFAULT_STRATEGIES,
+  strategies: [],
   rankings: [],
   selectedId: null,
   setStrategies: (strategies) => set({ strategies }),

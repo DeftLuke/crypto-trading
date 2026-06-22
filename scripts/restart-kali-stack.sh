@@ -6,17 +6,8 @@ DEPLOY="$ROOT/deploy"
 cd "$DEPLOY"
 
 recover_backend() {
-  echo "Recovery mode: fresh backend on 127.0.0.1:3002 (frozen container bypass)..."
-  docker compose --profile telegram-ingestion build backend telegram-signal-service
-  docker stop backend-recovery 2>/dev/null || true
-  docker rm backend-recovery 2>/dev/null || true
-  docker run -d --name backend-recovery --network crypto-trading_trading \
-    -p 127.0.0.1:3002:3001 --env-file .env -e PORT=3001 -e NODE_ENV=production \
-    -e RESEARCH_API_URL= \
-    --dns 8.8.8.8 --dns 1.1.1.1 \
-    --add-host=host.docker.internal:host-gateway \
-    -v "$DEPLOY/keys:/app/keys:ro" \
-    crypto-trading-backend:latest
+  echo "Recovery mode: backend on 127.0.0.1:3002 (--restart always)..."
+  bash "$ROOT/scripts/run-backend-recovery.sh"
 
   if grep -q '127.0.0.1:3001' "${HOME}/.cloudflared/config.yml" 2>/dev/null; then
     sed -i 's|127.0.0.1:3001|127.0.0.1:3002|' "${HOME}/.cloudflared/config.yml"
