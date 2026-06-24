@@ -24,6 +24,12 @@ import { filterReadySymbols } from './candleIngestion.js';
 let scanning = false;
 let scanInterval = null;
 
+// Track engine health so we alert ONCE when it goes down and ONCE when it
+// recovers — instead of silently producing zero signals for hours/days.
+let engineOffline = false;
+let lastOfflineAlertAt = 0;
+const OFFLINE_REALERT_MS = 30 * 60 * 1000; // re-nag every 30 min while down
+
 function broadcastScanProgress(extra = {}) {
   const payload = {
     type: 'scanner_progress',
@@ -71,8 +77,24 @@ export async function scanMarkets() {
       const health = await checkInstitutionalSmcHealth();
       if (!health.ok) {
         console.warn(`[Scanner] Institutional engine offline: ${health.error}`);
-        await logEvent('warn', 'scanner', 'Institutional SMC offline — scan skipped', { error: health.error });
+        await logEvent('error', 'scanner', 'Institutional SMC offline — no signals being generated', { error: health.error });
+        const now = Date.now();
+        if (!engineOffline || now - lastOfflineAlertAt > OFFLINE_REALERT_MS) {
+          engineOffline = true;
+          lastOfflineAlertAt = now;
+          await sendAlert(
+            '🚨 <b>Signal engine OFFLINE</b>\nResearch engine (institutional-smc) is unreachable, so '
+            + 'the scanner is producing <b>zero signals</b>.\n'
+            + `Reason: ${health.error || 'health check failed'}\n`
+            + 'Check the research-platform container on the server.',
+          ).catch(() => {});
+        }
         return;
+      }
+      if (engineOffline) {
+        engineOffline = false;
+        await logEvent('info', 'scanner', 'Institutional SMC recovered — scanning resumed', {});
+        await sendAlert('✅ <b>Signal engine back online</b>\nScanner resumed generating signals.').catch(() => {});
       }
     } else {
       console.warn('[Scanner] Legacy smc-mtf scan skipped — set SIGNAL_ENGINE=institutional-smc');
@@ -115,6 +137,7 @@ export async function scanMarkets() {
     });
 
     const batchSize = config.institutionalSmc?.batchSize || 25;
+    let batchFailures = 0;
     let topScore = { symbol: null, score: 0, direction: null, status: null };
 
     for (let i = 0; i < sortedPairs.length; i += batchSize) {
@@ -133,8 +156,16 @@ export async function scanMarkets() {
       }
       const batchResult = await analyzeInstitutionalBatch(ready);
       if (!batchResult.ok) {
-        console.warn(`[Scanner] Batch analyze failed: ${batchResult.error}`);
-        break;
+        // A single slow/timed-out batch must NOT abort the whole scan — skip it
+        // and keep going. Only bail if the engine is clearly degraded (many fails).
+        batchFailures += 1;
+        console.warn(`[Scanner] Batch analyze failed (${batchFailures}): ${batchResult.error} — skipping batch`);
+        pairsScanned += ready.length;
+        if (batchFailures >= 5) {
+          console.warn('[Scanner] Too many batch failures — ending scan early');
+          break;
+        }
+        continue;
       }
       const results = batchResult.data?.results || [];
       batchSignals = results.map((setup) => mapSetupToSignal(setup, setup.symbol));

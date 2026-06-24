@@ -468,4 +468,30 @@ export const tradingApi = {
   apiKeyStatus: () => fetchJson<Record<string, unknown>>(`${getTradingApi()}/settings/api-keys`),
   pairs: () => fetchJson<string[]>(`${getTradingApi()}/pairs`),
   strategyCatalog: () => fetchJson<{ strategies: StrategyCatalogRow[] }>(`${getTradingApi()}/strategies/catalog`),
+  rsiScalperStatus: () =>
+    fetchJson<{
+      running: boolean;
+      mode: string;
+      equity?: number;
+      balance?: number;
+      position?: {
+        symbol: string;
+        direction: string;
+        entry_price: number;
+        current_price: number;
+        quantity: number;
+        unrealized_pnl: number;
+        stop_loss: number;
+        take_profit: number;
+      } | null;
+      last_heartbeat?: string;
+      last_signal_at?: string;
+      daily_pnl?: number;
+      daily_limit?: number;
+      errors_last_hour?: number;
+    }>(`${getTradingApi()}/bots/rsi-scalper/status`),
+  rsiScalperSignals: (limit = 50) =>
+    fetchJson<{ signals: unknown[] }>(`${getTradingApi()}/bots/rsi-scalper/signals?limit=${limit}`),
+  rsiScalperTrades: (limit = 100) =>
+    fetchJson<{ trades: unknown[] }>(`${getTradingApi()}/bots/rsi-scalper/trades?limit=${limit}`),
 };

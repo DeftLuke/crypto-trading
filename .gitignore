@@ -17,3 +17,7 @@ Thumbs.db
 research-platform/data/
 data/market_data/
 deploy/.env
+
+# Core dumps
+core.*
+*.core

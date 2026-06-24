@@ -1,4 +1,9 @@
 import { config } from '../config/index.js';
+import { openclawChat, isOpenClawConfigured } from './openclaw.js';
+
+// Ollama is now a fallback only. Set OLLAMA_ENABLED=false once the container is
+// removed so we never wait on a dead local model (was a 120s timeout per call).
+const OLLAMA_ENABLED = process.env.OLLAMA_ENABLED !== 'false';
 
 function useGateway() {
   return config.ollama.viaGateway || config.ollama.url.includes('deftluke.online');
@@ -21,6 +26,20 @@ function ollamaUrl(endpoint) {
 }
 
 export async function ollamaGenerate(prompt, systemPrompt = '') {
+  // OpenClaw-first: route text generation to the OpenClaw gateway when configured.
+  if (isOpenClawConfigured()) {
+    try {
+      const { answer, model } = await openclawChat({ system: systemPrompt, prompt, maxTokens: 500 });
+      return { text: answer, model: model || 'openclaw' };
+    } catch (err) {
+      console.warn(`[AI] OpenClaw generate failed: ${err.message}${OLLAMA_ENABLED ? ' — falling back to Ollama' : ''}`);
+      if (!OLLAMA_ENABLED) throw err;
+    }
+  }
+  if (!OLLAMA_ENABLED) {
+    throw new Error('Ollama disabled (OLLAMA_ENABLED=false) and OpenClaw unavailable');
+  }
+
   const models = [config.ollama.model, config.ollama.fallbackModel].filter(Boolean);
   const fullPrompt = systemPrompt ? `${systemPrompt}\n\n${prompt}` : prompt;
 
@@ -52,6 +71,8 @@ export async function ollamaGenerate(prompt, systemPrompt = '') {
 }
 
 export async function ollamaEmbed(text) {
+  // Skip entirely when Ollama is disabled — lessons store without a vector.
+  if (!OLLAMA_ENABLED) return null;
   const res = await fetch(ollamaUrl('/api/embeddings'), {
     method: 'POST',
     headers: ollamaHeaders(),

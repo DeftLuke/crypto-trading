@@ -25,6 +25,7 @@ import {
   getPositionRiskWithCredentials,
 } from '../services/userBinance.js';
 import { notifyTradePhase } from '../services/tradeExecution.js';
+import { sendAlert } from '../services/telegram.js';
 import { config } from '../config/index.js';
 import { broadcastTradeEvent } from '../services/wsBroadcast.js';
 import {
@@ -576,23 +577,61 @@ class PositionMonitor {
       return;
     }
 
-    if (shouldUpdate) {
-      try {
-        const slOk = await repositionProtectiveStop({
-          symbol: trade.symbol,
-          direction: trade.direction,
-          stopPrice: newSL,
-          quantity: runnerQty,
-        });
-        if (!slOk) throw new Error('Trail SL reposition failed');
-        await updateTrade(trade.id, { stop_loss: newSL, peak_price: peak, sl_updated_at: new Date().toISOString() });
-        await logEvent('info', 'positionMonitor', `Trail SL → ${newSL}`, { tradeId: trade.id, peak });
-      } catch (err) {
-        await logEvent('warn', 'positionMonitor', `Trail SL failed: ${err.message}`);
-      }
-    } else if (peakChanged) {
-      await updateTrade(trade.id, { peak_price: peak });
+    // Always persist the high-water mark first, even if the SL move fails below.
+    // This is the core fix: peak must survive between 15s ticks so the runner
+    // trails from the real high instead of resetting to entry_price every cycle.
+    if (peakChanged) {
+      await updateTrade(trade.id, { peak_price: peak }).catch((err) =>
+        logEvent('warn', 'positionMonitor', `Peak persist failed: ${err.message}`, { tradeId: trade.id }),
+      );
     }
+
+    if (!shouldUpdate) return;
+
+    let slOk = false;
+    try {
+      slOk = await repositionProtectiveStop({
+        symbol: trade.symbol,
+        direction: trade.direction,
+        stopPrice: newSL,
+        quantity: runnerQty,
+      });
+    } catch (err) {
+      slOk = false;
+      await logEvent('error', 'positionMonitor', `Trail SL reposition threw: ${err.message}`, { tradeId: trade.id });
+    }
+
+    if (!slOk) {
+      // Do NOT silently continue — the runner is now trailing in the DB but the
+      // exchange may still hold the old stop. Surface it loudly; next tick retries.
+      await logEvent('error', 'positionMonitor', 'Trail SL reposition failed — exchange stop NOT updated', {
+        tradeId: trade.id, symbol: trade.symbol, attemptedSL: newSL, currentSL,
+      });
+      await sendAlert(
+        `⚠️ <b>Trailing SL not updated</b>\n${trade.symbol} ${trade.direction}\n`
+        + `Wanted SL → ${newSL}, exchange may still hold ${currentSL}. Retrying next cycle.`,
+      ).catch(() => {});
+      return;
+    }
+
+    // Verify the stop actually exists on the exchange before trusting the DB.
+    const verify = await verifyExchangeProtection(trade.symbol).catch(() => null);
+    if (verify && (verify.slCount ?? 0) < 1) {
+      await logEvent('error', 'positionMonitor', 'Trail SL placed but exchange shows no stop — runner unprotected', {
+        tradeId: trade.id, symbol: trade.symbol,
+      });
+      await sendAlert(`🚨 <b>Runner UNPROTECTED</b>\n${trade.symbol}: trailing SL not on exchange after reposition.`)
+        .catch(() => {});
+      // Leave stop_loss unchanged in DB so we don't claim protection we don't have.
+      return;
+    }
+
+    await updateTrade(trade.id, {
+      stop_loss: newSL,
+      peak_price: peak,
+      sl_updated_at: new Date().toISOString(),
+    });
+    await logEvent('info', 'positionMonitor', `Trail SL → ${newSL}`, { tradeId: trade.id, peak });
   }
 
   async closeTrade(trade, exitPrice, status, reason) {

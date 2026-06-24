@@ -4,6 +4,7 @@ import { getDefaultTradeParams } from './telegramTrade.js';
 import { getOpenTrades, getSupabase, logEvent, updateTelegramSignalMessage } from './supabase.js';
 import { broadcastTelegramPipeline, broadcastTradeEvent } from './wsBroadcast.js';
 import { getControlSettings } from './researchApi.js';
+import { getLocalControlSettings } from './controlCenter.js';
 import { internalApiHeaders, internalApiUrl } from '../lib/internalFetch.js';
 import { prepareTelegramSignalForExecution } from './telegramSignalLevels.js';
 
@@ -393,9 +394,16 @@ export async function approveTelegramInboxMessage(messageId, { marginUsdt = 0, l
 
 /** Auto-execute when control auto_trading is on and signal validation passed. */
 export async function tryAutoExecuteTelegramMessage(messageId) {
+  // Fail-safe gate: only auto-execute when BOTH the remote control settings and
+  // the local control file agree auto-trading is on and manual approval is off.
+  // If they diverge (the scanner reads local, this path read remote), we fall
+  // through to the Telegram approval buttons instead of silently auto-trading.
   const settings = await getControlSettings();
-  if (!settings?.auto_trading) return { ok: false, reason: 'auto_trading_off' };
-  if (settings?.manual_approval) return { ok: false, reason: 'manual_approval_required' };
+  const localSettings = await getLocalControlSettings().catch(() => settings);
+  const autoOn = Boolean(settings?.auto_trading) && Boolean(localSettings?.auto_trading);
+  const manualRequired = Boolean(settings?.manual_approval) || Boolean(localSettings?.manual_approval);
+  if (!autoOn) return { ok: false, reason: 'auto_trading_off' };
+  if (manualRequired) return { ok: false, reason: 'manual_approval_required' };
 
   const { data: message, error } = await getTelegramMessageById(messageId);
   if (error || !message) return { ok: false, reason: 'not_found' };

@@ -479,8 +479,12 @@ async function enrichTrade(trade, exchangePosition = null) {
 }
 
 async function enrichTrades(trades = []) {
-  const livePositions = await listExchangePositions();
-  const positions = Object.fromEntries(livePositions.map((p) => [p.symbol, p]));
+  // Only hit the exchange for live positions. History/closed-only lists (the
+  // common dashboard case) skip the Binance round-trip entirely.
+  const hasLive = (trades || []).some((t) => ['open', 'partial'].includes(t.status));
+  const positions = hasLive
+    ? Object.fromEntries((await listExchangePositions()).map((p) => [p.symbol, p]))
+    : {};
   return Promise.all((trades || []).map((trade) => enrichTrade(trade, positions[trade.symbol])));
 }
 
@@ -2034,6 +2038,26 @@ router.get('/trades/:id/lifecycle', async (req, res) => {
   try {
     const { getTradeLifecycle } = await import('../services/tradeAuditAnalytics.js');
     res.json(await getTradeLifecycle(req.params.id));
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+/** Full audit trail for a trade: every execution event + every partial close
+ * (TP1/TP2 fills, SL moves, fees). This data was already being recorded — this
+ * endpoint exposes it so the dashboard can show a per-trade timeline. */
+router.get('/trades/:id/audit', async (req, res) => {
+  try {
+    const { getTradeEvents, getTradePartials } = await import('../services/tradeEventAudit.js');
+    const [eventsRes, partialsRes] = await Promise.all([
+      getTradeEvents(req.params.id, parseInt(req.query.limit || '200', 10)),
+      getTradePartials(req.params.id),
+    ]);
+    res.json({
+      trade_id: req.params.id,
+      events: eventsRes?.data || [],
+      partial_closes: partialsRes?.data || [],
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

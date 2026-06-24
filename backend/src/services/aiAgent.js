@@ -171,8 +171,17 @@ Answer using ONLY the data above when discussing trades/stats. For OPEN position
     }
   }
 
-  const { text, model } = await ollamaGenerate(prompt, systemPrompt);
-  return { answer: text, model, source: 'ollama' };
+  try {
+    const { text, model } = await ollamaGenerate(prompt, systemPrompt);
+    return { answer: text, model, source: model === 'openclaw' ? 'openclaw' : 'ollama' };
+  } catch (err) {
+    console.warn('[AI Agent] All text backends unavailable:', err.message);
+    return {
+      answer: 'The AI assistant is temporarily unavailable (LLM gateway offline). Trading and signals are unaffected.',
+      model: 'unavailable',
+      source: 'fallback',
+    };
+  }
 }
 
 export async function getLessonsSummary(type = 'all') {

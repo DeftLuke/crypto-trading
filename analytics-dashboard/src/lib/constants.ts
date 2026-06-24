@@ -40,6 +40,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/system", label: "System", icon: Activity, roles: ["admin"] },
   { href: "/paper", label: "Paper Trading", icon: Wallet },
   { href: "/live", label: "Live Trading", icon: Zap },
+  { href: "/rsi-scalper", label: "RSI Scalper", icon: Zap },
   { href: "/assistant", label: "AI Assistant", icon: Bot },
   { href: "/settings", label: "Settings", icon: Settings },
 ];

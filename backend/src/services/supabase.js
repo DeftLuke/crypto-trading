@@ -97,7 +97,7 @@ export const TRADE_COLUMNS = [
   'binance_order_id', 'binance_sl_order_id', 'risk_amount', 'leverage',
   'notional_usdt', 'margin_usdt', 'sizing_mode', 'lesson', 'opened_at', 'closed_at',
   'tp1_hit_at', 'tp2_hit_at', 'sl_updated_at', 'exchange_realized_pnl',
-  'last_mark_price', 'last_mark_at',
+  'peak_price', 'last_mark_price', 'last_mark_at',
   'signal_received_at', 'execution_latency_ms', 'signal_source', 'strategy_name', 'close_factors',
   'exchange', 'risk_percentage', 'lifecycle_stage', 'exchange_qty', 'db_exchange_sync_ok', 'protection_verified_at',
 ];
@@ -113,7 +113,17 @@ function toTradeRow(trade) {
 export async function updateTrade(id, updates) {
   const db = getSupabase();
   if (!db) return { data: null, error: 'No DB' };
-  return db.from('trades').update(updates).eq('id', id).select().single();
+  let result = await db.from('trades').update(updates).eq('id', id).select().single();
+  // If a column hasn't been migrated yet (e.g. peak_price), don't lose the whole
+  // update — strip unknown columns and retry so SL/TP state still persists.
+  if (result.error && isMissingColumnError(result.error)) {
+    const known = {};
+    for (const col of TRADE_COLUMNS) {
+      if (updates[col] !== undefined) known[col] = updates[col];
+    }
+    result = await db.from('trades').update(known).eq('id', id).select().single();
+  }
+  return result;
 }
 
 export async function getOpenTrades() {
@@ -163,8 +173,10 @@ export async function getTrades(limit = 500, options = {}) {
     return getOpenTrades();
   }
 
+  // Only fetch `limit` from each source — the merge below slices to `limit`
+  // anyway, so pulling 500 closed rows for a 20-row dashboard was wasted I/O.
   const [closedRes, recentRes] = await Promise.all([
-    getClosedTrades(Math.min(limit, 500)),
+    getClosedTrades(limit),
     db.from('trades').select('*').order('opened_at', { ascending: false }).limit(limit),
   ]);
 

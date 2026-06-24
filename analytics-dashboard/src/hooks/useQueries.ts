@@ -21,10 +21,11 @@ export function useBalance() {
     queryKey: ["balance"],
     queryFn: () => tradingApi.balance(),
     refetchInterval: 15_000,
+    staleTime: 10_000,
   });
 }
 
-export function useTrades(limit = 500) {
+export function useTrades(limit = 200) {
   const filters = useSettingsStore((s) => s.filters);
   return useQuery({
     queryKey: ["trades", limit, filters],
@@ -32,7 +33,10 @@ export function useTrades(limit = 500) {
       const raw = (await tradingApi.trades(limit)) as Trade[];
       return applyTradeFilters(raw, filters);
     },
-    refetchInterval: 5_000,
+    // History changes slowly — 15s background refresh (was 5s) + staleTime keeps
+    // the cached view instant on navigation instead of re-fetching every mount.
+    refetchInterval: 15_000,
+    staleTime: 10_000,
   });
 }
 
@@ -41,6 +45,7 @@ export function useOpenTrades() {
     queryKey: ["openTrades"],
     queryFn: () => tradingApi.openTrades() as Promise<Trade[]>,
     refetchInterval: 10_000,
+    staleTime: 5_000,
   });
 }
 
